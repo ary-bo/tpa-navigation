@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102b46">
+  <title>TPA Navigation</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      color: #172b43;
+    }
+    header {
+      background: #102b46;
+      color: white;
+      padding: 22px 18px;
+    }
+    header h1 { margin: 0 0 7px; font-size: 23px; }
+    header p { margin: 0; color: #cbd5e1; font-size: 13px; }
+    main { padding: 18px; max-width: 650px; margin: auto; }
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px #0000000d;
+    }
+    label { display: block; margin-bottom: 9px; font-weight: bold; }
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+      font-size: 16px;
+    }
+    button {
+      border: 0;
+      border-radius: 9px;
+      padding: 13px 17px;
+      background: #147d64;
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      width: 100%;
+      margin-top: 12px;
+    }
+    .secondary { background: #245477; }
+    .status { color: #64748b; font-size: 13px; line-height: 1.8; }
+    .map {
+      min-height: 190px;
+      border-radius: 12px;
+      background: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #475569;
+      padding: 20px;
+      line-height: 2;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>TPA Navigation</h1>
+    <p>سیستم جست‌وجو و مسیریابی فروشگاه‌ها</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <label for="search">جست‌وجوی فروشگاه یا کد مشتری</label>
+      <input id="search" placeholder="نام یا کد مشتری را وارد کنید">
+      <button onclick="searchStore()">جست‌وجو</button>
+      <p id="result" class="status">هنوز اطلاعات فروشگاه‌ها بارگذاری نشده است.</p>
+    </section>
+
+    <section class="card">
+      <label>نقشه فروشگاه‌ها</label>
+      <div class="map">
+        نقشه در مرحله بعد به سیستم متصل خواهد شد.
+      </div>
+    </section>
+
+    <section class="card">
+      <label>اطلاعات فروشگاه</label>
+      <p class="status">پس از اتصال فایل‌های اطلاعاتی، مشخصات و محصولات خریداری‌شده نمایش داده می‌شود.</p>
+      <button class="secondary" onclick="alert('اطلاعات فروشگاه هنوز متصل نشده است.')">
+        مشاهده اطلاعات فروشگاه
+      </button>
+    </section>
+  </main>
+
+  <script>
+    function searchStore() {
+      const value = document.getElementById('search').value.trim();
+      document.getElementById('result').textContent =
+        value ? 'اطلاعات فروشگاه پس از اتصال فایل‌ها جست‌وجو خواهد شد.' :
+        'لطفاً نام یا کد مشتری را وارد کنید.';
+    }
+  </script>
+</body>
+</html>
