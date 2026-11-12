@@ -1,192 +1,76 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#102b46">
-<meta name="description" content="TPA Navigation - Auditor visit planning and store information">
+<meta name="description" content="TPA Navigation — Store map and auditor visit planning">
 <title>TPA Navigation</title>
-
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-
 <link rel="stylesheet" href="./style.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="./js/app.js" defer></script>
 </head>
-
 <body>
-<header>
- <div class="head">
-  <div>
-   <h1>TPA Navigation</h1>
-   <div class="sub">مسیر‌یاب و اطلاعات فروشگاه‌ها</div>
-  </div>
-  <div class="status" id="status">آماده</div>
- </div>
+<header class="topbar">
+ <div class="brand"><span class="brand-mark">TPA</span><div><h1>TPA Navigation</h1><p>نقشه فروشگاه‌ها و برنامه بازدید Auditor</p></div></div>
+ <span id="status" class="status">آماده</span>
 </header>
-
 <main>
- <div class="layout">
-  <div>
-   <section class="panel map-panel">
-    <div class="section-title">۳. نقشه فروشگاه‌ها</div>
-    <div id="map"></div>
-    <div class="legend">
-     <span><i class="dot" style="background:#15966b"></i>دارای فروش</span>
-     <span><i class="dot" style="background:#e69a27"></i>بدون فروش</span>
-     <span><i class="dot" style="background:#3478d4"></i>فقط در گزارش فروش</span>
-    </div>
-   </section>
-  </div>
-
-  <div>
-   <section class="panel">
-    <div class="section-title">۴. جستجو و فیلتر</div>
-    <input id="search" type="search" placeholder="نام، کد یا آدرس فروشگاه...">
-    <div class="filters" style="margin-top:8px">
-     <select id="typeFilter"><option value="all">همه وضعیت فروش</option><option value="sales">دارای سابقه فروش</option><option value="nosales">بدون سابقه فروش</option></select>
-     <select id="customerTypeFilter"><option value="all">همه انواع مشتری</option><option value="jp">فقط Journey Plan</option><option value="salesOnly">فقط TPA</option></select>
-     <select id="gpsFilter"><option value="all">همه وضعیت GPS</option><option value="yes">GPS موجود</option><option value="no">بدون GPS</option></select>
-     <select id="areaFilter"><option value="all">همه مناطق</option></select>
-     <select id="routeFilter"><option value="all">همه مسیرها</option></select>
-     <select id="personFilter"><option value="all">همه ویزیتورها</option></select>
-     <select id="classFilter"><option value="all">همه کلاس‌های مشتری</option></select>
-     <select id="dayFilter">
-      <option value="all">همه روزها</option><option value="today">ویزیت امروز</option>
-      <option value="Saturday">شنبه</option><option value="Sunday">یکشنبه</option><option value="Monday">دوشنبه</option><option value="Tuesday">سه‌شنبه</option><option value="Wednesday">چهارشنبه</option><option value="Thursday">پنجشنبه</option><option value="Friday">جمعه</option>
-     </select>
-    </div>
-    <button id="clearFiltersBtn" class="smallbtn secondary full" type="button">پاک کردن همه فیلترها</button>
-   </section>
-
-   <section class="panel">
-    <div class="section-title">۵. فهرست فروشگاه‌ها</div>
-    <div id="resultCount" style="font-size:11px;color:#8292a0;margin-bottom:9px">هنوز اطلاعاتی بارگذاری نشده است</div>
-    <div id="storeList"><div class="empty">ابتدا فایل‌ها را بارگذاری کن.</div></div>
-   </section>
-  </div>
+<section id="mapPage" class="page active">
+ <div class="map-shell panel">
+  <div class="map-heading"><div><span class="eyebrow">STORE EXPLORER</span><h2>نقشه فروشگاه‌ها</h2></div><span class="live-indicator">● داده‌های محلی</span></div>
+  <div class="map-search"><input id="search" type="search" placeholder="جستجوی نام، کد یا آدرس فروشگاه" autocomplete="off"><span class="search-symbol">⌕</span></div>
+  <div class="map-tools"><button id="clearFiltersBtn" class="tool-button" type="button">پاک‌کردن فیلترها</button><span class="filter-count">فیلتر فعال: <b id="activeFilterCount">۰</b></span></div>
+  <div id="map" role="application" aria-label="نقشه فروشگاه‌ها"></div>
+  <div class="legend"><span><i class="dot green-dot"></i>JP با سابقه سفارش</span><span><i class="dot orange-dot"></i>JP بدون سابقه سفارش</span><span><i class="dot blue-dot"></i>فقط TPA</span></div>
  </div>
-
- <nav class="appnav" aria-label="بخش‌های برنامه">
-  <button class="active" data-page="mapPage">نقشه و فروشگاه‌ها</button>
-  <button data-page="planPage">برنامه بازدید من</button>
-  <button data-page="analysisPage">تحلیل و خروجی</button>
-  <button data-page="settingsPage">تنظیمات و همگام‌سازی</button>
- </nav>
-
- <section id="planPage" class="page">
-  <section class="panel">
-   <div class="section-title">برنامه هفتگی Auditor</div>
-   <div class="notice">فروشگاه‌هایی که از داخل برنامه انتخاب می‌کنی با منبع Internal ثبت می‌شوند. ردیف‌هایی که از فایل اکسل وارد می‌شوند External خواهند بود و قبل از افزودن به برنامه نهایی قابل بررسی هستند.</div>
-   <div class="grid2">
-    <div class="field">
-     <label>روز بازدید</label>
-     <select id="planDay">
-      <option>Saturday</option><option>Sunday</option><option>Monday</option>
-      <option>Tuesday</option><option>Wednesday</option><option>Thursday</option>
-      <option>Friday</option>
-     </select>
-    </div>
-    <div class="field">
-     <label>تاریخ بازدید (شمسی یا میلادی)</label>
-     <input id="planDate" placeholder="1405/08/20">
-    </div>
-   </div>
-   <div class="field">
-    <label>جستجوی فروشگاه برای افزودن به برنامه</label>
-    <input id="planSearch" type="search" placeholder="کد یا نام فروشگاه">
-   </div>
-   <div id="planSearchResults"></div>
-   <div class="field">
-    <label>فروشگاه‌های برنامه انتخاب‌شده</label>
-    <div id="planList"><div class="empty">ابتدا اطلاعات را بارگذاری کن.</div></div>
-   </div>
-   <button id="exportPlanBtn" class="full green">خروجی اکسل Audit_Visit_Plan.xlsx</button>
-   <div class="field">
-    <label>بارگذاری فایل مدیران (همان قالب خروجی)</label>
-    <input id="importPlanFile" type="file" accept=".xlsx,.xls">
-   </div>
-   <button id="importPlanBtn" class="full">بررسی و وارد کردن پیشنهادهای فایل</button>
-   <div id="importReport" style="font-size:11px;line-height:1.9;margin-top:8px"></div>
-  </section>
+ <section class="panel filter-panel">
+  <div class="section-heading"><div><span class="eyebrow">FILTERS</span><h2>فیلتر فروشگاه‌ها</h2></div><span class="hint">انتخاب چندگانه · اعمال فوری</span></div>
+  <div class="filter-grid">
+   <label>نوع مشتری<select id="customerTypeFilter"><option value="all">همه مشتریان</option><option value="jp">Journey Plan</option><option value="salesOnly">فقط TPA</option></select></label>
+   <label>سابقه سفارش<select id="typeFilter"><option value="all">همه</option><option value="sales">دارای سفارش معتبر</option><option value="nosales">بدون سفارش</option></select></label>
+   <label>وضعیت GPS<select id="gpsFilter"><option value="all">همه</option><option value="yes">GPS موجود</option><option value="no">بدون GPS</option></select></label>
+   <label>منطقه (چند انتخاب)<select id="areaFilter" multiple size="3" aria-label="فیلتر چندانتخابی منطقه"></select></label>
+   <label>Route Name (چند انتخاب)<select id="routeFilter" multiple size="3" aria-label="فیلتر چندانتخابی مسیر"></select></label>
+   <label>ویزیتور (چند انتخاب)<select id="personFilter" multiple size="3" aria-label="فیلتر چندانتخابی ویزیتور"></select></label>
+   <label>Customer Class (چند انتخاب)<select id="classFilter" multiple size="3" aria-label="فیلتر چندانتخابی کلاس مشتری"></select></label>
+   <label>روز بازدید (چند انتخاب)<select id="dayFilter" multiple size="3" aria-label="فیلتر چندانتخابی روز بازدید"></select></label>
+  </div>
  </section>
+ <section class="panel store-panel"><div class="section-heading"><div><span class="eyebrow">RESULTS</span><h2>فروشگاه‌ها</h2></div><span id="resultCount" class="result-count">۰ فروشگاه</span></div><div id="storeList"><div class="empty">برای شروع، فایل‌ها را از بخش تنظیمات دریافت کن.</div></div></section>
+</section>
 
- <section id="analysisPage" class="page">
-  <section class="panel">
-   <div class="section-title">تحلیل فروشگاه‌ها و سفارش‌ها</div>
-   <div class="stats">
-    <div class="stat"><b id="noGpsCount">۰</b><span>بدون مختصات</span></div>
-    <div class="stat"><b id="openOrderCount">۰</b><span>سفارش باز</span></div>
-    <div class="stat"><b id="noPurchaseCount">۰</b><span>بدون خرید</span></div>
-   </div>
-   <div class="rowactions">
-    <button class="smallbtn" id="nearbyBtn">فروشگاه‌های نزدیک من</button>
-    <button class="smallbtn secondary" id="noGpsBtn">فهرست بدون GPS</button>
-    <button class="smallbtn secondary" id="noPurchaseBtn">فروشگاه‌های بدون خرید</button>
-    <button class="smallbtn secondary" id="openOrdersBtn">سفارش‌های باز</button>
-   </div>
-   <div id="analysisResults"></div>
-  </section>
- </section>
-
- <section id="settingsPage" class="page">
+<section id="planPage" class="page">
+ <section class="panel page-intro"><span class="eyebrow">AUDITOR WORKSPACE</span><h2>برنامه بازدید من</h2><p>برنامه مستقل Auditor؛ فروشگاه‌های دارای GPS را انتخاب کن، برنامه را ویرایش کن و خروجی Excel بگیر.</p></section>
  <section class="panel">
-  <div class="section-title">۱. دریافت اطلاعات</div>
-  <button id="driveBtn" class="full green">اتصال به Google Drive و دریافت آخرین فایل‌ها</button>
-  <div style="font-size:11px;color:#718393;margin-top:7px">
-   با حساب Google دارای دسترسی به پوشه Navigation وارد شو. پس از کلیک، پنجره مجوز Google باید باز شود.
-  </div>
-  <div style="border-top:1px solid #edf0f3;margin:13px 0"></div>
-  <div class="section-title">یا بارگذاری دستی فایل‌ها</div>
-  <div class="uploads">
-   <div class="upload">
-    <strong>Journey Plan</strong>
-    <input id="jpFile" type="file" accept=".xlsx,.xls">
-   </div>
-   <div class="upload">
-    <strong>گزارش فروش TPA</strong>
-    <input id="salesFile" type="file" accept=".xlsx,.xls">
-   </div>
-   <div class="upload">
-    <strong>Product Mapping (اختیاری)</strong>
-    <input id="mappingFile" type="file" accept=".xlsx,.xls">
-   </div>
-  </div>
-  <button id="loadBtn" class="full">پردازش فایل‌های انتخاب‌شده</button>
-  <div id="message">برای شروع، از Google Drive دریافت کن یا فایل‌ها را دستی انتخاب کن.</div>
+  <div class="section-heading"><h2>افزودن بازدید</h2><span class="hint">فروشگاه‌های JP</span></div>
+  <div class="form-grid"><label>روز بازدید<select id="planDay"><option value="Saturday">شنبه</option><option value="Sunday">یکشنبه</option><option value="Monday">دوشنبه</option><option value="Tuesday">سه‌شنبه</option><option value="Wednesday">چهارشنبه</option><option value="Thursday">پنجشنبه</option><option value="Friday">جمعه</option></select></label><label>تاریخ بازدید<input id="planDate" type="text" placeholder="مثلاً 1405/08/20"></label></div>
+  <label class="block-label">جستجوی فروشگاه<input id="planSearch" type="search" placeholder="نام یا کد مشتری"></label><div id="planSearchResults"></div>
  </section>
+ <section class="panel"><div class="section-heading"><h2>فهرست برنامه</h2><span class="hint">وضعیت هر بازدید مستقل است</span></div><div id="planList"><div class="empty">هنوز بازدیدی ثبت نشده است.</div></div><button id="exportPlanBtn" class="primary-button full-button">خروجی Excel برنامه بازدید</button></section>
+ <section class="panel"><h2>دریافت برنامه پیشنهادی مدیر</h2><p class="hint">فایل Excel با ستون‌های قالب خروجی را انتخاب کن. ردیف‌ها قبل از ورود اعتبارسنجی می‌شوند.</p><input id="importPlanFile" type="file" accept=".xlsx,.xls"><button id="importPlanBtn" class="secondary-button full-button">بررسی فایل و نمایش پیشنهادها</button><div id="importReport" class="import-report"></div></section>
+</section>
 
- <section class="panel">
-  <div class="section-title">۲. خلاصه اطلاعات</div>
-  <div class="stats">
-   <div class="stat"><b id="total">۰</b><span>کل فروشگاه‌ها</span></div>
-   <div class="stat"><b id="withSales">۰</b><span>دارای سابقه فروش</span></div>
-   <div class="stat"><b id="withoutSales">۰</b><span>بدون سابقه فروش</span></div>
-  </div>
- </section>
+<section id="analysisPage" class="page">
+ <section class="panel page-intro"><span class="eyebrow">INSIGHTS</span><h2>تحلیل و بررسی</h2><p>نمای سریع از کیفیت داده و وضعیت سفارش‌ها.</p></section>
+ <section class="stats-grid"><div class="stat-card"><b id="noGpsCount">۰</b><span>مشتری بدون GPS</span></div><div class="stat-card"><b id="openOrderCount">۰</b><span>سفارش بدون فاکتور</span></div><div class="stat-card"><b id="noPurchaseCount">۰</b><span>بدون سابقه سفارش</span></div></section>
+ <section class="panel"><h2>فهرست‌های تحلیلی</h2><div class="action-grid"><button id="nearbyBtn" class="secondary-button">فروشگاه‌های نزدیک من</button><button id="noGpsBtn" class="secondary-button">بدون GPS</button><button id="noPurchaseBtn" class="secondary-button">بدون سفارش</button><button id="openOrdersBtn" class="secondary-button">سفارش‌های بدون فاکتور</button></div><div id="analysisResults"></div></section>
+</section>
 
-  <section class="panel">
-   <div class="section-title">تنظیمات، اتصال و ذخیره‌سازی</div>
-   <button id="themeBtn" class="full secondary">تغییر حالت روشن / تاریک</button>
-   <button id="langBtn" class="full secondary">English / فارسی</button>
-   <div class="notice" style="margin-top:10px">اطلاعات پردازش‌شده و برنامه بازدید در حافظه همین دستگاه ذخیره می‌شوند. نقشه پایه و مسیریابی برای بارگذاری به اینترنت نیاز دارند. برای همگام‌سازی فایل‌های اصلی، اتصال Google Drive لازم است.</div>
-   <div id="lastSync" style="font-size:11px;color:var(--muted);margin-top:9px">آخرین همگام‌سازی: ثبت نشده</div>
-   <button id="clearLocalBtn" class="full secondary">پاک کردن داده‌های ذخیره‌شده این دستگاه</button>
-  </section>
- </section>
+<section id="settingsPage" class="page">
+ <section class="panel page-intro"><span class="eyebrow">DATA & SETTINGS</span><h2>تنظیمات و همگام‌سازی</h2><p>دریافت نسخه‌های جدید فایل‌ها از پوشه Google Drive یا بارگذاری دستی.</p></section>
+ <section class="panel"><h2>اتصال به Google Drive</h2><button id="driveBtn" class="primary-button full-button">اتصال و دریافت آخرین فایل‌ها</button><div id="message" class="message">برای شروع، اطلاعات را از Drive دریافت کن یا فایل‌ها را دستی بارگذاری کن.</div></section>
+ <section class="panel"><h2>بارگذاری دستی فایل‌ها</h2><div class="upload-grid"><label>Journey Plan<input id="jpFile" type="file" accept=".xlsx,.xls"></label><label>گزارش فروش TPA<input id="salesFile" type="file" accept=".xlsx,.xls"></label><label>Product Mapping<input id="mappingFile" type="file" accept=".xlsx,.xls"></label></div><button id="loadBtn" class="secondary-button full-button">پردازش فایل‌های انتخاب‌شده</button></section>
+ <section class="panel"><h2>خلاصه داده‌های بارگذاری‌شده</h2><div class="stats-grid"><div class="stat-card"><b id="total">۰</b><span>کل مشتریان</span></div><div class="stat-card"><b id="withSales">۰</b><span>دارای سفارش</span></div><div class="stat-card"><b id="withoutSales">۰</b><span>JP بدون سفارش</span></div></div><p id="lastSync" class="hint">آخرین همگام‌سازی: ثبت نشده</p></section>
+ <section class="panel"><h2>تنظیمات دستگاه</h2><button id="themeBtn" class="secondary-button full-button">تغییر حالت روشن / تاریک</button><button id="langBtn" class="secondary-button full-button">English / فارسی</button><button id="clearLocalBtn" class="danger-button full-button">پاک‌کردن داده‌های محلی این دستگاه</button><p class="hint">در حالت آفلاین، اطلاعات و برنامه بازدید ذخیره‌شده در این دستگاه در دسترس می‌مانند. نقشه پایه و مسیریابی به اینترنت نیاز دارند.</p></section>
+</section>
 </main>
-
-<div id="modal">
- <div id="modalbox">
-  <div class="modalhead">
-   <b id="modalTitle">اطلاعات فروشگاه</b>
-   <button class="close" id="closeModal">×</button>
-  </div>
-  <div id="modalContent"></div>
- </div>
-</div>
-
-<script src="./js/app.js"></script>
+<nav class="bottom-nav" aria-label="ناوبری اصلی"><button class="active" data-page="mapPage"><span>⌖</span>نقشه</button><button data-page="planPage"><span>▣</span>برنامه من</button><button data-page="analysisPage"><span>▥</span>تحلیل</button><button data-page="settingsPage"><span>⚙</span>تنظیمات</button></nav>
+<div id="modal" class="modal-overlay"><section id="modalbox" class="modal-sheet"><div class="modal-handle"></div><div class="modal-heading"><h2 id="modalTitle">جزئیات فروشگاه</h2><button id="closeModal" class="close-button" aria-label="بستن">×</button></div><div id="modalContent"></div></section></div>
 </body>
 </html>
