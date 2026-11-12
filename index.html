@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -28,44 +27,9 @@
 </header>
 
 <main>
- <section class="panel">
-  <div class="section-title">۱. دریافت اطلاعات</div>
-  <button id="driveBtn" class="full green">اتصال به Google Drive و دریافت آخرین فایل‌ها</button>
-  <div style="font-size:11px;color:#718393;margin-top:7px">
-   با حساب Google دارای دسترسی به پوشه Navigation وارد شو. پس از کلیک، پنجره مجوز Google باید باز شود.
-  </div>
-  <div style="border-top:1px solid #edf0f3;margin:13px 0"></div>
-  <div class="section-title">یا بارگذاری دستی فایل‌ها</div>
-  <div class="uploads">
-   <div class="upload">
-    <strong>Journey Plan</strong>
-    <input id="jpFile" type="file" accept=".xlsx,.xls">
-   </div>
-   <div class="upload">
-    <strong>گزارش فروش TPA</strong>
-    <input id="salesFile" type="file" accept=".xlsx,.xls">
-   </div>
-   <div class="upload">
-    <strong>Product Mapping (اختیاری)</strong>
-    <input id="mappingFile" type="file" accept=".xlsx,.xls">
-   </div>
-  </div>
-  <button id="loadBtn" class="full">پردازش فایل‌های انتخاب‌شده</button>
-  <div id="message">برای شروع، از Google Drive دریافت کن یا فایل‌ها را دستی انتخاب کن.</div>
- </section>
-
- <section class="panel">
-  <div class="section-title">۲. خلاصه اطلاعات</div>
-  <div class="stats">
-   <div class="stat"><b id="total">۰</b><span>کل فروشگاه‌ها</span></div>
-   <div class="stat"><b id="withSales">۰</b><span>دارای سابقه فروش</span></div>
-   <div class="stat"><b id="withoutSales">۰</b><span>بدون سابقه فروش</span></div>
-  </div>
- </section>
-
  <div class="layout">
   <div>
-   <section class="panel">
+   <section class="panel map-panel">
     <div class="section-title">۳. نقشه فروشگاه‌ها</div>
     <div id="map"></div>
     <div class="legend">
@@ -81,25 +45,19 @@
     <div class="section-title">۴. جستجو و فیلتر</div>
     <input id="search" type="search" placeholder="نام، کد یا آدرس فروشگاه...">
     <div class="filters" style="margin-top:8px">
-     <select id="typeFilter">
-      <option value="all">همه فروشگاه‌ها</option>
-      <option value="sales">دارای سابقه فروش</option>
-      <option value="nosales">بدون سابقه فروش</option>
-      <option value="salesOnly">فقط در گزارش فروش</option>
-     </select>
+     <select id="typeFilter"><option value="all">همه وضعیت فروش</option><option value="sales">دارای سابقه فروش</option><option value="nosales">بدون سابقه فروش</option></select>
+     <select id="customerTypeFilter"><option value="all">همه انواع مشتری</option><option value="jp">فقط Journey Plan</option><option value="salesOnly">فقط TPA</option></select>
+     <select id="gpsFilter"><option value="all">همه وضعیت GPS</option><option value="yes">GPS موجود</option><option value="no">بدون GPS</option></select>
      <select id="areaFilter"><option value="all">همه مناطق</option></select>
+     <select id="routeFilter"><option value="all">همه مسیرها</option></select>
      <select id="personFilter"><option value="all">همه ویزیتورها</option></select>
+     <select id="classFilter"><option value="all">همه کلاس‌های مشتری</option></select>
      <select id="dayFilter">
-      <option value="all">همه روزها</option>
-      <option value="today">ویزیت امروز</option>
-      <option value="Saturday">شنبه</option>
-      <option value="Sunday">یکشنبه</option>
-      <option value="Monday">دوشنبه</option>
-      <option value="Tuesday">سه‌شنبه</option>
-      <option value="Wednesday">چهارشنبه</option>
-      <option value="Thursday">پنجشنبه</option>
+      <option value="all">همه روزها</option><option value="today">ویزیت امروز</option>
+      <option value="Saturday">شنبه</option><option value="Sunday">یکشنبه</option><option value="Monday">دوشنبه</option><option value="Tuesday">سه‌شنبه</option><option value="Wednesday">چهارشنبه</option><option value="Thursday">پنجشنبه</option><option value="Friday">جمعه</option>
      </select>
     </div>
+    <button id="clearFiltersBtn" class="smallbtn secondary full" type="button">پاک کردن همه فیلترها</button>
    </section>
 
    <section class="panel">
@@ -173,6 +131,41 @@
  </section>
 
  <section id="settingsPage" class="page">
+ <section class="panel">
+  <div class="section-title">۱. دریافت اطلاعات</div>
+  <button id="driveBtn" class="full green">اتصال به Google Drive و دریافت آخرین فایل‌ها</button>
+  <div style="font-size:11px;color:#718393;margin-top:7px">
+   با حساب Google دارای دسترسی به پوشه Navigation وارد شو. پس از کلیک، پنجره مجوز Google باید باز شود.
+  </div>
+  <div style="border-top:1px solid #edf0f3;margin:13px 0"></div>
+  <div class="section-title">یا بارگذاری دستی فایل‌ها</div>
+  <div class="uploads">
+   <div class="upload">
+    <strong>Journey Plan</strong>
+    <input id="jpFile" type="file" accept=".xlsx,.xls">
+   </div>
+   <div class="upload">
+    <strong>گزارش فروش TPA</strong>
+    <input id="salesFile" type="file" accept=".xlsx,.xls">
+   </div>
+   <div class="upload">
+    <strong>Product Mapping (اختیاری)</strong>
+    <input id="mappingFile" type="file" accept=".xlsx,.xls">
+   </div>
+  </div>
+  <button id="loadBtn" class="full">پردازش فایل‌های انتخاب‌شده</button>
+  <div id="message">برای شروع، از Google Drive دریافت کن یا فایل‌ها را دستی انتخاب کن.</div>
+ </section>
+
+ <section class="panel">
+  <div class="section-title">۲. خلاصه اطلاعات</div>
+  <div class="stats">
+   <div class="stat"><b id="total">۰</b><span>کل فروشگاه‌ها</span></div>
+   <div class="stat"><b id="withSales">۰</b><span>دارای سابقه فروش</span></div>
+   <div class="stat"><b id="withoutSales">۰</b><span>بدون سابقه فروش</span></div>
+  </div>
+ </section>
+
   <section class="panel">
    <div class="section-title">تنظیمات، اتصال و ذخیره‌سازی</div>
    <button id="themeBtn" class="full secondary">تغییر حالت روشن / تاریک</button>
