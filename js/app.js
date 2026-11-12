@@ -96,7 +96,6 @@ function buildData(){
  }
  saveOfflineSnapshot();
 }
-
 /* Leaflet map */
 function initMap(){if(map)return;if(!window.L){setMessage('کتابخانه نقشه بارگذاری نشده است. اتصال اینترنت را بررسی کن.','نقشه در دسترس نیست');return;}map=L.map('map',{zoomControl:false}).setView([35.84,50.94],10);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);L.control.zoom({position:'bottomleft'}).addTo(map);}
 function markerColor(s){return !s.inJP?'#3478d4':s.hasSales?'#15966b':'#e69a27';}
