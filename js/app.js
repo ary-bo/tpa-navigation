@@ -1,4 +1,3 @@
-
 "use strict";
 
 const GOOGLE_CLIENT_ID =
@@ -325,15 +324,10 @@ function buildDataCore(){
 }
 
 function isTodayVisit(row){
- const days=[
-  "Sunday","Monday","Tuesday","Wednesday",
-  "Thursday","Friday","Saturday"
- ];
-
+ const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
  const today=days[new Date().getDay()];
- const value=clean(row[today]);
-
- return value!==""&&value!=="0"&&value!=="0.0";
+ const value=clean(row[today]).toLowerCase();
+ return !['','0','0.0','no','false','n','-'].includes(value);
 }
 
 /* نقشه */
@@ -392,54 +386,47 @@ function renderMap(list){
 
 /* فیلترها */
 function fillFilters(){
- const areas=[
-  ...new Set(stores.map(s=>s.area).filter(Boolean))
- ].sort();
-
- const people=[
-  ...new Set(stores.map(s=>s.salesman).filter(Boolean))
- ].sort();
-
- $("areaFilter").innerHTML=
-  '<option value="all">همه مناطق</option>'+
-  areas.map(x=>
-   `<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`
-  ).join("");
-
- $("personFilter").innerHTML=
-  '<option value="all">همه ویزیتورها</option>'+
-  people.map(x=>
-   `<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`
-  ).join("");
+ const setOptions=(id,values,label)=>{
+  const el=$(id),old=el.value;
+  const unique=[...new Set(values.map(x=>clean(x)).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'fa'));
+  el.innerHTML=`<option value="all">${label}</option>`+unique.map(x=>`<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join('');
+  if([...el.options].some(o=>o.value===old))el.value=old;
+ };
+ setOptions('areaFilter',stores.filter(s=>s.inJP).map(s=>s.area),'همه مناطق');
+ setOptions('routeFilter',stores.filter(s=>s.inJP).map(s=>s.routeName),'همه مسیرها');
+ setOptions('personFilter',stores.filter(s=>s.inJP).map(s=>s.salesman),'همه ویزیتورها');
+ setOptions('classFilter',stores.filter(s=>s.inJP).map(s=>s.customerClass),'همه کلاس‌های مشتری');
 }
 
 function filteredStores(){
- const q=norm($("search").value).toLowerCase();
- const type=$("typeFilter").value;
- const area=$("areaFilter").value;
- const person=$("personFilter").value;
- const day=$("dayFilter").value;
-
+ const q=norm($('search').value).toLowerCase();
+ const type=$('typeFilter').value, customerType=$('customerTypeFilter')?.value||'all';
+ const gps=$('gpsFilter')?.value||'all', area=$('areaFilter').value;
+ const route=$('routeFilter')?.value||'all', person=$('personFilter').value;
+ const cls=$('classFilter')?.value||'all', day=$('dayFilter').value;
  return stores.filter(s=>{
-  const hay=norm([
-   s.name,s.code,s.address,s.area,s.salesman
-  ].join(" ")).toLowerCase();
-
+  const hay=norm([s.name,s.code,s.address,s.area,s.routeName,s.salesman,s.customerClass].join(' ')).toLowerCase();
   if(q&&!hay.includes(q))return false;
-  if(type==="sales"&&!s.hasSales)return false;
-  if(type==="nosales"&&(!s.inJP||s.hasSales))return false;
-  if(type==="salesOnly"&&s.inJP)return false;
-  if(area!=="all"&&s.area!==area)return false;
-  if(person!=="all"&&s.salesman!==person)return false;
-  if(day==="today"&&!s.today)return false;
-
-  if([
-   "Saturday","Sunday","Monday",
-   "Tuesday","Wednesday","Thursday"
-  ].includes(day)&&!s.visitDays?.includes(day)){
-   return false;
+  if(type==='sales'&&!s.hasSales)return false;
+  if(type==='nosales'&&(!s.inJP||s.hasSales))return false;
+  if(customerType==='jp'&&!s.inJP)return false;
+  if(customerType==='salesOnly'&&s.inJP)return false;
+  // فیلترهای اطلاعات Journey Plan فقط روی فروشگاه‌های JP اعمال می‌شوند.
+  if(s.inJP){
+   if(area!=='all'&&s.area!==area)return false;
+   if(route!=='all'&&s.routeName!==route)return false;
+   if(person!=='all'&&s.salesman!==person)return false;
+   if(cls!=='all'&&s.customerClass!==cls)return false;
+   if(gps==='yes'&&!s.hasCoords)return false;
+   if(gps==='no'&&s.hasCoords)return false;
+   if(day==='today'&&!s.today)return false;
+   if(day!=='all'&&day!=='today'&&!s.visitDays?.includes(day))return false;
+  } else {
+   // TPA-only مستقل از ویزیتور، مسیر، روز و کلاس JP است؛ GPS هم برای این گروه موجود نیست.
+   if(gps==='yes')return false;
+   if(gps==='no'&&s.hasCoords)return false;
+   if(day!=='all')return false;
   }
-
   return true;
  });
 }
@@ -559,7 +546,6 @@ function showStore(id){
 function closeModal(){
  $("modal").style.display="none";
 }
-
 /* ورود و مجوز Google */
 function getDriveToken(){
  return new Promise((resolve,reject)=>{
@@ -906,7 +892,7 @@ function enrichStoreFields(){
  for(const row of salesRows){
   const status=first(row,statusKeys).trim().toLowerCase();
 
-  if(status==="closex"||status==="expired")continue;
+  if(status==="closed/expired")continue;
 
   const cust=first(row,[
    "کد مشتری","Customer Code","Account Number"
@@ -971,7 +957,7 @@ function enrichStoreFields(){
   s.visitDays=raw?
    [
     "Saturday","Sunday","Monday",
-    "Tuesday","Wednesday","Thursday"
+    "Tuesday","Wednesday","Thursday","Friday"
    ].filter(d=>{
     const v=clean(raw[d]);
     return v!==""&&v!=="0"&&v!=="0.0";
@@ -981,18 +967,13 @@ function enrichStoreFields(){
 }
 
 function buildData(){
- const excluded=new Set(["closex","expired"]);
-
- salesRows=salesRows.filter(r=>
-  !excluded.has(
-   first(r,[
-    "Status","Order Status","وضعیت سفارش","OrderStatus"
-   ]).toLowerCase()
-  )
+ // فقط وضعیت دقیق Closed/expired حذف می‌شود؛ سایر وضعیت‌ها معتبر باقی می‌مانند.
+ const sourceRows=salesRows;
+ salesRows=sourceRows.filter(r=>
+  first(r,['Status','Order Status','وضعیت سفارش','OrderStatus']).trim().toLowerCase()!=='closed/expired'
  );
-
- buildDataCore();
- enrichStoreFields();
+ try{ buildDataCore(); enrichStoreFields(); }
+ finally{ salesRows=sourceRows; }
  saveOfflineSnapshot();
 }
 
@@ -1052,7 +1033,6 @@ function restoreOfflineSnapshot(){
   return false;
  }
 }
-
 function addStoreToPlan(id){
  const s=stores.find(x=>String(x.id)===String(id));
  if(!s)return;
@@ -1333,7 +1313,6 @@ function showPage(id){
   setTimeout(()=>map?.invalidateSize(),100);
  }
 }
-
 function renderAnalysis(){
  if(!$("noGpsCount"))return;
 
@@ -1456,13 +1435,19 @@ $("modal").addEventListener("click",event=>{
 });
 
 [
- "search","typeFilter","areaFilter",
- "personFilter","dayFilter"
+ "search","typeFilter","customerTypeFilter","gpsFilter","areaFilter",
+ "routeFilter","personFilter","classFilter","dayFilter"
 ].forEach(id=>{
  $(id).addEventListener(
   id==="search"?"input":"change",
   applyFilters
  );
+});
+
+const clearFilters=$('clearFiltersBtn');
+if(clearFilters)clearFilters.addEventListener('click',()=>{
+ ['search','typeFilter','customerTypeFilter','gpsFilter','areaFilter','routeFilter','personFilter','classFilter','dayFilter'].forEach(id=>{const el=$(id);if(el)el.value=id==='search'?'':'all';});
+ applyFilters();
 });
 
 /* رویدادهای بخش برنامه بازدید و تحلیل */
