@@ -10,60 +10,59 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <style>
-:root{--navy:#102b46;--blue:#1677c8;--bg:#f2f5f8;--green:#15966b;--orange:#e69a27;--red:#d94c4c}
+:root{--navy:#102b46;--blue:#1677c8;--bg:#f2f5f8;--green:#15966b;--orange:#e69a27;--purple:#3478d4}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);font-family:Tahoma,Arial,sans-serif;color:#182b3b}
-header{background:var(--navy);color:white;padding:16px 15px 13px}
-.head{display:flex;align-items:center;justify-content:space-between}
+header{background:var(--navy);color:white;padding:16px 15px}
+.head{display:flex;align-items:center;justify-content:space-between;gap:10px}
 h1{font-size:19px;margin:0}
 .sub{font-size:11px;color:#b8ccdd;margin-top:5px}
 .status{font-size:11px;background:#24445f;border-radius:20px;padding:7px 10px}
-main{max-width:1100px;margin:auto;padding:12px}
+main{max-width:1150px;margin:auto;padding:12px}
 .panel{background:white;border-radius:13px;padding:13px;margin-bottom:12px;box-shadow:0 2px 9px #142d4210}
+.section-title{font-size:14px;font-weight:bold;margin:0 0 11px}
 .uploads{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .upload{border:1px dashed #9aafc1;border-radius:10px;padding:12px 7px;text-align:center;font-size:12px}
 .upload strong{display:block;margin-bottom:7px;color:var(--navy)}
 input[type=file]{width:100%;font-size:11px}
-#loadBtn,.btn{border:0;border-radius:9px;padding:11px 14px;background:var(--blue);color:white;font-weight:bold;font-family:inherit;cursor:pointer}
-#loadBtn{width:100%;margin-top:10px}
-button:disabled{opacity:.45}
+button,.btn{border:0;border-radius:9px;padding:11px 14px;background:var(--blue);color:white;font-weight:bold;font-family:inherit;cursor:pointer}
+button:disabled{opacity:.5}
+.full{width:100%;margin-top:9px}
+.green{background:var(--green)}
+#message{font-size:12px;line-height:1.9;color:#526779;margin-top:9px;white-space:pre-wrap;overflow-wrap:anywhere}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .stat{background:#f3f7fa;border-radius:10px;padding:10px 5px;text-align:center}
 .stat b{display:block;font-size:20px;color:var(--navy)}
 .stat span{font-size:10px;color:#64798a}
-.searchrow{display:flex;gap:7px;margin-bottom:9px}
 input[type=search],select{min-width:0;width:100%;border:1px solid #d7e0e7;border-radius:9px;padding:11px;font-family:inherit;background:white}
 .filters{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:#526779;margin-top:10px}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-left:4px}
 #map{height:390px;border-radius:12px;z-index:1}
-.section-title{font-size:14px;font-weight:bold;margin:0 0 11px}
+.layout{display:block}
 #storeList{display:flex;flex-direction:column;gap:8px}
 .store{border:1px solid #e5ebf0;border-radius:10px;padding:11px;display:flex;gap:10px;align-items:center;cursor:pointer}
 .store:active{background:#f1f7fc}
-.store .pin{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.pin{width:11px;height:11px;border-radius:50%;flex-shrink:0}
 .storeinfo{flex:1;min-width:0}
 .storeinfo b{font-size:13px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.storeinfo small{font-size:10px;color:#718393;display:block;margin-top:5px;line-height:1.7}
-.store .arrow{color:#7e91a1;font-size:18px}
-#details{display:none}
-.product{padding:10px 0;border-bottom:1px solid #edf0f3;font-size:12px;line-height:1.8}
-.product:last-child{border:0}
-.product small{color:#748493;display:block}
-#message{font-size:12px;line-height:1.9;color:#526779;margin-top:9px}
+.storeinfo small{font-size:10px;color:#718393;display:block;margin-top:5px;line-height:1.8}
+.arrow{color:#7e91a1;font-size:18px}
+.empty{text-align:center;color:#8797a5;padding:25px 8px;font-size:12px}
 #modal{display:none;position:fixed;inset:0;background:#0008;z-index:9999;align-items:flex-end;justify-content:center}
-#modalbox{background:white;width:100%;max-width:600px;max-height:82vh;overflow:auto;border-radius:18px 18px 0 0;padding:18px}
-.modalhead{display:flex;justify-content:space-between;align-items:center}
-.close{border:0;background:#edf2f6;border-radius:50%;width:34px;height:34px;font-size:20px}
+#modalbox{background:white;width:100%;max-width:650px;max-height:85vh;overflow:auto;border-radius:18px 18px 0 0;padding:18px}
+.modalhead{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.close{background:#edf2f6;color:#25394a;width:35px;height:35px;padding:0;border-radius:50%;font-size:20px}
+.product{padding:10px 0;border-bottom:1px solid #edf0f3;font-size:12px;line-height:1.8}
+.product small{color:#748493;display:block}
 .actions{display:flex;gap:8px;margin-top:12px}
 .actions a{flex:1;text-align:center;text-decoration:none;background:var(--blue);color:white;padding:11px;border-radius:9px;font-size:12px}
-.empty{text-align:center;color:#8797a5;padding:25px 8px;font-size:12px}
 @media(min-width:760px){
  .layout{display:grid;grid-template-columns:1.1fr .9fr;gap:12px;align-items:start}
  #map{height:570px}
- .leftcol{min-width:0}
 }
 </style>
 </head>
@@ -75,25 +74,35 @@ input[type=search],select{min-width:0;width:100%;border:1px solid #d7e0e7;border
    <h1>TPA Navigation</h1>
    <div class="sub">مسیر‌یاب و اطلاعات فروشگاه‌ها</div>
   </div>
-  <div class="status" id="status">منتظر دریافت فایل‌ها</div>
+  <div class="status" id="status">آماده</div>
  </div>
 </header>
 
 <main>
  <section class="panel">
-  <div class="section-title">۱. بارگذاری فایل‌های اطلاعاتی</div>
+  <div class="section-title">۱. دریافت اطلاعات</div>
+  <button id="driveBtn" class="full green">اتصال به Google Drive و دریافت آخرین فایل‌ها</button>
+  <div style="font-size:11px;color:#718393;margin-top:7px">
+   برای دریافت فایل‌ها باید با حساب Google دارای دسترسی به پوشه وارد شوی.
+  </div>
+  <div style="border-top:1px solid #edf0f3;margin:13px 0"></div>
+  <div class="section-title">یا بارگذاری دستی فایل‌ها</div>
   <div class="uploads">
    <div class="upload">
-    <strong>فایل Journey Plan</strong>
+    <strong>Journey Plan</strong>
     <input id="jpFile" type="file" accept=".xlsx,.xls">
    </div>
    <div class="upload">
-    <strong>فایل گزارش فروش</strong>
+    <strong>گزارش فروش TPA</strong>
     <input id="salesFile" type="file" accept=".xlsx,.xls">
    </div>
+   <div class="upload">
+    <strong>Product Mapping (اختیاری)</strong>
+    <input id="mappingFile" type="file" accept=".xlsx,.xls">
+   </div>
   </div>
-  <button id="loadBtn">بارگذاری و پردازش اطلاعات</button>
-  <div id="message">فایل‌های JP و Sales را انتخاب کن. اطلاعات در همین مرورگر پردازش می‌شوند.</div>
+  <button id="loadBtn" class="full">پردازش فایل‌های انتخاب‌شده</button>
+  <div id="message">برای شروع، از Google Drive دریافت کن یا فایل‌ها را دستی انتخاب کن.</div>
  </section>
 
  <section class="panel">
@@ -106,7 +115,7 @@ input[type=search],select{min-width:0;width:100%;border:1px solid #d7e0e7;border
  </section>
 
  <div class="layout">
-  <div class="leftcol">
+  <div>
    <section class="panel">
     <div class="section-title">۳. نقشه فروشگاه‌ها</div>
     <div id="map"></div>
@@ -118,25 +127,19 @@ input[type=search],select{min-width:0;width:100%;border:1px solid #d7e0e7;border
    </section>
   </div>
 
-  <div class="rightcol">
+  <div>
    <section class="panel">
-    <div class="section-title">۴. جستجو و فیلتر فروشگاه‌ها</div>
-    <div class="searchrow">
-     <input id="search" type="search" placeholder="نام، کد یا آدرس فروشگاه...">
-    </div>
-    <div class="filters">
+    <div class="section-title">۴. جستجو و فیلتر</div>
+    <input id="search" type="search" placeholder="نام، کد یا آدرس فروشگاه...">
+    <div class="filters" style="margin-top:8px">
      <select id="typeFilter">
       <option value="all">همه فروشگاه‌ها</option>
       <option value="sales">دارای سابقه فروش</option>
       <option value="nosales">بدون سابقه فروش</option>
       <option value="salesOnly">فقط در گزارش فروش</option>
      </select>
-     <select id="areaFilter">
-      <option value="all">همه مناطق</option>
-     </select>
-     <select id="personFilter">
-      <option value="all">همه ویزیتورها</option>
-     </select>
+     <select id="areaFilter"><option value="all">همه مناطق</option></select>
+     <select id="personFilter"><option value="all">همه ویزیتورها</option></select>
      <select id="dayFilter">
       <option value="all">همه روزها</option>
       <option value="today">ویزیت امروز</option>
@@ -151,209 +154,296 @@ input[type=search],select{min-width:0;width:100%;border:1px solid #d7e0e7;border
    </section>
   </div>
  </div>
-
- <section class="panel" id="details">
-  <div class="section-title">اطلاعات فروشگاه</div>
-  <div id="detailContent"></div>
- </section>
 </main>
 
 <div id="modal">
  <div id="modalbox">
   <div class="modalhead">
    <b id="modalTitle">اطلاعات فروشگاه</b>
-   <button class="close" onclick="closeModal()">×</button>
+   <button class="close" id="closeModal">×</button>
   </div>
   <div id="modalContent"></div>
  </div>
 </div>
 
 <script>
-let stores=[];
-let map;
-let markers=[];
+"use strict";
+
+/* Google Drive settings */
+const GOOGLE_CLIENT_ID =
+"1098731892951-2e7jipvf33evn0a69tt0tje94oor54lm.apps.googleusercontent.com";
+
+const DRIVE_FOLDER_ID =
+"1sgTsZu2zzSBi-pz2M9pVBHtjCtQELYhk";
+
+/* App data */
 let jpRows=[];
 let salesRows=[];
-let productMap={};
+let productRows=[];
+let stores=[];
+let map=null;
+let markers=[];
+let driveTokenClient=null;
+let lastAccessToken=null;
 
 const $=id=>document.getElementById(id);
-const clean=v=>String(v??"").trim();
-const norm=v=>clean(v).replace(/\s/g,"").replace(/[۰-۹]/g,d=>"۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d));
-const num=v=>{let n=Number(String(v??"").replace(/,/g,""));return Number.isFinite(n)?n:0};
-const first=(obj,keys)=>{for(const k of keys){if(obj[k]!==undefined&&clean(obj[k]))return clean(obj[k])}return""};
 
-function readExcel(file,headerRow){
- return new Promise((resolve,reject)=>{
-  const reader=new FileReader();
-  reader.onload=e=>{
-   try{
-    const wb=XLSX.read(e.target.result,{type:"array",cellDates:false});
-    const ws=wb.Sheets[wb.SheetNames[0]];
-    const rows=XLSX.utils.sheet_to_json(ws,{range:headerRow,defval:""});
-    resolve(rows);
-   }catch(err){reject(err)}
-  };
-  reader.onerror=reject;
-  reader.readAsArrayBuffer(file);
- });
+function clean(v){
+ return String(v??"").trim();
 }
 
-function customerKeys(v){
+function norm(v){
+ return clean(v)
+  .replace(/\s/g,"")
+  .replace(/[۰-۹]/g,d=>"۰۱۲۳۴۵۶۷۸۹".indexOf(d))
+  .replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d));
+}
+
+function keyVariants(v){
  const s=norm(v);
  if(!s)return[];
- const parts=s.split("|");
- return [...new Set([s,parts[parts.length-1]])];
+ const result=[s];
+ if(s.includes("|"))result.push(s.split("|").pop());
+ return [...new Set(result)];
+}
+
+function first(row,keys){
+ for(const key of keys){
+  if(row[key]!==undefined&&clean(row[key])!==""){
+   return clean(row[key]);
+  }
+ }
+ return "";
+}
+
+function numeric(v){
+ const n=Number(String(v??"").replace(/,/g,""));
+ return Number.isFinite(n)?n:0;
 }
 
 function validCoord(lat,lng){
  return lat>10&&lat<60&&lng>20&&lng<70;
 }
 
-function todayColumn(){
- // JavaScript: Sunday=0. Journey Plan: Saturday-first.
- return ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][new Date().getDay()];
+function escapeHtml(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
 }
 
-function isTodayVisit(row){
- const col=todayColumn();
- const v=clean(row[col]);
- return v!==""&&v!=="0"&&v!=="0.0";
+function setMessage(text,status){
+ $("message").textContent=text;
+ if(status)$("status").textContent=status;
 }
 
-function buildData(){
- const salesByCustomer=new Map();
-
- for(const row of salesRows){
-  const keys=[
-   ...customerKeys(first(row,["کد مشتری","Account Number","Customer Code"])),
-   ...customerKeys(first(row,["Account Number","کد مشتری"]))
-  ];
-  const code=first(row,["کد کالا","Item Code"]);
-  const name=first(row,["نام کالا","Item","Product Name"]);
-  const date=first(row,["invoicedate","تاریخ"]);
-  for(const key of keys){
-   if(!salesByCustomer.has(key))salesByCustomer.set(key,[]);
-   if(code||name)salesByCustomer.get(key).push({code,name,date});
-  }
- }
-
- const productByCode={};
- for(const row of productRows){
-  const code=norm(first(row,["Item Code"]));
-  if(code)productByCode[code]=first(row,["Product  Name","Product Name","Item"])||code;
- }
-
- const jpMap=new Map();
- for(const row of jpRows){
-  const customer=first(row,["CustomerI","New Customer Code","Oracle Code"]);
-  const keys=customerKeys(customer);
-  const code=first(row,["New Customer Code","Oracle Code","CustomerI"]);
-  const name=first(row,["Customer Name","DescriptionAR"]);
-  const lat=num(row["Latitude"]),lng=num(row["Longitude"]);
-  const saleList=[];
-  const seen=new Set();
-  for(const key of keys){
-   for(const item of salesByCustomer.get(key)||[]){
-    const id=item.code+"|"+item.name+"|"+item.date;
-    if(!seen.has(id)){seen.add(id);saleList.push(item)}
-   }
-  }
-  const id=keys[0]||code||name;
-  if(!id)continue;
-  jpMap.set(id,{
-   id,code,name:name||"فروشگاه بدون نام",
-   address:first(row,[" Address","Address"]),
-   area:first(row,["Area Name"]),
-   territory:first(row,["TerritoryNo"]),
-   salesman:first(row,["Salesman Name"]),
-   salesmanCode:first(row,["Salesman Code"]),
-   lat,lng,hasCoords:validCoord(lat,lng),
-   hasSales:saleList.length>0,
-   inJP:true,today:isTodayVisit(row),
-   products:saleList
-  });
- }
-
- // Add sales customers not matched with the Journey Plan.
- const salesOnly=new Map();
- for(const row of salesRows){
-  const code=first(row,["کد مشتری","Account Number"]);
-  const keys=customerKeys(code);
-  const id=keys[0];
-  if(!id)continue;
-  const already=[...keys].some(k=>[...jpMap.values()].some(s=>customerKeys(s.code).includes(k)||s.id===k));
-  if(already)continue;
-  if(!salesOnly.has(id)){
-   salesOnly.set(id,{
-    id,code,name:first(row,["نام مشتری"])||"مشتری گزارش فروش",
-    address:first(row,["آدرس"]),area:first(row,["گروه مشتری"]),
-    salesman:first(row,["نام فروشنده"]),
-    lat:0,lng:0,hasCoords:false,hasSales:true,
-    inJP:false,today:false,products:[]
-   });
-  }
-  const s=salesOnly.get(id);
-  const itemCode=first(row,["کد کالا"]);
-  s.products.push({
-   code:itemCode,
-   name:productByCode[norm(itemCode)]||first(row,["نام کالا"])||itemCode,
-   date:first(row,["invoicedate","تاریخ"])
-  });
- }
-
- stores=[...jpMap.values(),...salesOnly.values()];
- for(const s of stores){
-  s.products=s.products.map(p=>({
-   ...p,name:productByCode[norm(p.code)]||p.name||p.code
-  }));
-  const unique=new Map();
-  s.products.forEach(p=>unique.set([p.code,p.name,p.date].join("|"),p));
-  s.products=[...unique.values()];
- }
+function readExcel(file,headerRow){
+ return new Promise((resolve,reject)=>{
+  const reader=new FileReader();
+  reader.onload=e=>{
+   try{
+    const workbook=XLSX.read(e.target.result,{type:"array"});
+    const sheet=workbook.Sheets[workbook.SheetNames[0]];
+    resolve(XLSX.utils.sheet_to_json(sheet,{
+     range:headerRow,
+     defval:""
+    }));
+   }catch(error){reject(error)}
+  };
+  reader.onerror=()=>reject(new Error("خواندن فایل ممکن نشد."));
+  reader.readAsArrayBuffer(file);
+ });
 }
 
-let productRows=[];
-
-async function loadFiles(){
+/* Manual file loading */
+async function loadManualFiles(){
  const jpFile=$("jpFile").files[0];
  const salesFile=$("salesFile").files[0];
+ const mappingFile=$("mappingFile").files[0];
+
  if(!jpFile||!salesFile){
-  $("message").textContent="لطفاً هر دو فایل Journey Plan و گزارش فروش را انتخاب کن.";
+  setMessage("لطفاً هر دو فایل Journey Plan و Sales را انتخاب کن.");
   return;
  }
+
  $("loadBtn").disabled=true;
- $("status").textContent="در حال پردازش...";
- $("message").textContent="در حال خواندن فایل‌ها...";
  try{
-  // JP headers are on Excel row 2; sales headers are on Excel row 4.
+  setMessage("در حال خواندن فایل‌ها...","در حال پردازش");
   jpRows=await readExcel(jpFile,1);
   salesRows=await readExcel(salesFile,3);
-
-  // Product mapping is optional. Product names in the sales report remain available.
-  productRows=[];
+  productRows=mappingFile?await readExcel(mappingFile,0):[];
   buildData();
   renderAll();
-
-  const located=stores.filter(s=>s.hasCoords).length;
-  $("status").textContent="اطلاعات آماده است";
-  $("message").textContent=
-   "پردازش انجام شد: "+stores.length.toLocaleString("fa-IR")+
-   " فروشگاه، "+located.toLocaleString("fa-IR")+
-   " دارای مختصات. برای نام استاندارد محصولات، فایل Product Mapping را هم می‌توانیم در مرحله بعد اضافه کنیم.";
- }catch(err){
-  console.error(err);
-  $("status").textContent="خطا";
-  $("message").textContent="خواندن فایل ناموفق بود. لطفاً مطمئن شو فایل‌ها Excel معتبر و از نوع مورد انتظار هستند. جزئیات: "+err.message;
+  setMessage("اطلاعات با موفقیت بارگذاری شد. تعداد فروشگاه‌ها: "+
+   stores.length.toLocaleString("fa-IR"),"آماده");
+ }catch(error){
+  console.error(error);
+  setMessage("خطا در خواندن فایل: "+error.message,"خطا");
  }finally{
   $("loadBtn").disabled=false;
  }
 }
 
-function colorOf(s){
- if(!s.inJP)return"#3478d4";
- return s.hasSales?"#15966b":"#e69a27";
+/* Build product code to standard product name mapping */
+function buildProductMap(){
+ const result={};
+ for(const row of productRows){
+  const code=norm(first(row,["Item Code"]));
+  const name=first(row,["Product  Name","Product Name","Item"]);
+  if(code&&name)result[code]=name;
+ }
+ return result;
 }
 
+/* Match sales to Journey Plan customers */
+function buildData(){
+ const productMap=buildProductMap();
+ const salesByCustomer=new Map();
+
+ for(const row of salesRows){
+  const customerCode=first(row,["کد مشتری"]);
+  const accountNumber=first(row,["Account Number"]);
+  const keys=[...new Set([
+   ...keyVariants(customerCode),
+   ...keyVariants(accountNumber)
+  ])];
+
+  const itemCode=first(row,["کد کالا"]);
+  const rawName=first(row,["نام کالا"]);
+  const item={
+   code:itemCode,
+   name:productMap[norm(itemCode)]||rawName||itemCode||"محصول نامشخص",
+   date:first(row,["invoicedate","تاریخ"]),
+   quantity:first(row,["تعداد"])
+  };
+
+  for(const key of keys){
+   if(!salesByCustomer.has(key))salesByCustomer.set(key,[]);
+   if(item.code||rawName)salesByCustomer.get(key).push(item);
+  }
+ }
+
+ const jpMap=new Map();
+
+ for(const row of jpRows){
+  const customerI=first(row,["CustomerI"]);
+  const newCode=first(row,["New Customer Code"]);
+  const oracleCode=first(row,["Oracle Code"]);
+  const keys=[...new Set([
+   ...keyVariants(customerI),
+   ...keyVariants(newCode),
+   ...keyVariants(oracleCode)
+  ])];
+
+  const products=[];
+  const seen=new Set();
+
+  for(const key of keys){
+   for(const item of salesByCustomer.get(key)||[]){
+    const itemId=[item.code,item.name,item.date].join("|");
+    if(!seen.has(itemId)){
+     seen.add(itemId);
+     products.push(item);
+    }
+   }
+  }
+
+  const id=customerI||newCode||oracleCode;
+  if(!id)continue;
+
+  const lat=numeric(row["Latitude"]);
+  const lng=numeric(row["Longitude"]);
+
+  jpMap.set(id,{
+   id,
+   code:newCode||customerI,
+   name:first(row,["Customer Name","DescriptionAR","DescriptionE"])||"فروشگاه بدون نام",
+   address:first(row,[" Address","Address"]),
+   area:first(row,["Area Name"]),
+   territory:first(row,["TerritoryNo"]),
+   salesman:first(row,["Salesman Name"]),
+   salesmanCode:first(row,["Salesman Code"]),
+   lat,lng,
+   hasCoords:validCoord(lat,lng),
+   hasSales:products.length>0,
+   inJP:true,
+   today:isTodayVisit(row),
+   products
+  });
+ }
+
+ /* Add sales customers not found in JP */
+ const salesOnly=new Map();
+
+ for(const row of salesRows){
+  const customerCode=first(row,["کد مشتری"]);
+  const accountNumber=first(row,["Account Number"]);
+  const keys=[...new Set([
+   ...keyVariants(customerCode),
+   ...keyVariants(accountNumber)
+  ])];
+
+  const matched=keys.some(key=>{
+   for(const store of jpMap.values()){
+    const storeKeys=[
+     ...keyVariants(store.id),
+     ...keyVariants(store.code)
+    ];
+    if(storeKeys.includes(key))return true;
+   }
+   return false;
+  });
+
+  if(matched)continue;
+
+  const id=customerCode||accountNumber;
+  if(!id)continue;
+
+  if(!salesOnly.has(id)){
+   salesOnly.set(id,{
+    id,
+    code:customerCode||accountNumber,
+    name:first(row,["نام مشتری"])||"مشتری گزارش فروش",
+    address:first(row,["آدرس"]),
+    area:first(row,["گروه مشتری"]),
+    territory:"",
+    salesman:first(row,["نام فروشنده"]),
+    salesmanCode:first(row,["کد فروشنده"]),
+    lat:0,lng:0,hasCoords:false,
+    hasSales:true,inJP:false,today:false,products:[]
+   });
+  }
+
+  const itemCode=first(row,["کد کالا"]);
+  const productName=buildProductMap()[norm(itemCode)]||
+   first(row,["نام کالا"])||itemCode||"محصول نامشخص";
+
+  salesOnly.get(id).products.push({
+   code:itemCode,name:productName,
+   date:first(row,["invoicedate","تاریخ"]),
+   quantity:first(row,["تعداد"])
+  });
+ }
+
+ stores=[...jpMap.values(),...salesOnly.values()];
+
+ /* Remove duplicate products */
+ for(const store of stores){
+  const unique=new Map();
+  for(const p of store.products){
+   unique.set([p.code,p.name,p.date].join("|"),p);
+  }
+  store.products=[...unique.values()];
+ }
+}
+
+function isTodayVisit(row){
+ const days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+ const today=days[new Date().getDay()];
+ const value=clean(row[today]);
+ return value!==""&&value!=="0"&&value!=="0.0";
+}
+
+/* Map */
 function initMap(){
  if(map)return;
  map=L.map("map").setView([35.84,50.94],10);
@@ -362,44 +452,57 @@ function initMap(){
  }).addTo(map);
 }
 
+function storeColor(store){
+ if(!store.inJP)return"#3478d4";
+ return store.hasSales?"#15966b":"#e69a27";
+}
+
 function renderMap(list){
  initMap();
- markers.forEach(m=>map.removeLayer(m));
+ markers.forEach(marker=>map.removeLayer(marker));
  markers=[];
+
  const points=[];
- list.filter(s=>s.hasCoords).forEach(s=>{
-  const marker=L.circleMarker([s.lat,s.lng],{
-   radius:7,color:"#fff",weight:1.5,fillColor:colorOf(s),fillOpacity:1
+ list.forEach(store=>{
+  if(!store.hasCoords)return;
+  const marker=L.circleMarker([store.lat,store.lng],{
+   radius:7,color:"#fff",weight:1.5,
+   fillColor:storeColor(store),fillOpacity:1
   }).addTo(map);
-  marker.bindTooltip(s.name);
-  marker.on("click",()=>showStore(s.id));
+
+  marker.bindTooltip(escapeHtml(store.name));
+  marker.on("click",()=>showStore(store.id));
   markers.push(marker);
-  points.push([s.lat,s.lng]);
+  points.push([store.lat,store.lng]);
  });
- if(points.length){
-  if(points.length===1)map.setView(points[0],14);
-  else map.fitBounds(points,{padding:[20,20],maxZoom:13});
- }
+
+ if(points.length===1)map.setView(points[0],14);
+ else if(points.length>1)map.fitBounds(points,{padding:[20,20],maxZoom:13});
+
  setTimeout(()=>map.invalidateSize(),150);
 }
 
+/* Filters and list */
 function fillFilters(){
  const areas=[...new Set(stores.map(s=>s.area).filter(Boolean))].sort();
  const people=[...new Set(stores.map(s=>s.salesman).filter(Boolean))].sort();
- $("areaFilter").innerHTML='<option value="all">همه مناطق</option>'+areas.map(x=>`<option>${escapeHtml(x)}</option>`).join("");
- $("personFilter").innerHTML='<option value="all">همه ویزیتورها</option>'+people.map(x=>`<option>${escapeHtml(x)}</option>`).join("");
+
+ $("areaFilter").innerHTML=
+  '<option value="all">همه مناطق</option>'+
+  areas.map(x=>`<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join("");
+
+ $("personFilter").innerHTML=
+  '<option value="all">همه ویزیتورها</option>'+
+  people.map(x=>`<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join("");
 }
 
-function escapeHtml(s){
- return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-}
-
-function filtered(){
+function filteredStores(){
  const q=norm($("search").value).toLowerCase();
  const type=$("typeFilter").value;
  const area=$("areaFilter").value;
  const person=$("personFilter").value;
  const day=$("dayFilter").value;
+
  return stores.filter(s=>{
   const hay=norm([s.name,s.code,s.address,s.area,s.salesman].join(" ")).toLowerCase();
   if(q&&!hay.includes(q))return false;
@@ -416,23 +519,33 @@ function filtered(){
 function renderList(list){
  $("resultCount").textContent=list.length.toLocaleString("fa-IR")+" فروشگاه";
  const shown=list.slice(0,300);
+
  if(!shown.length){
   $("storeList").innerHTML='<div class="empty">فروشگاهی پیدا نشد.</div>';
   return;
  }
- $("storeList").innerHTML=shown.map(s=>`
-  <div class="store" onclick="showStore('${escapeHtml(s.id)}')">
-   <i class="pin" style="background:${colorOf(s)}"></i>
-   <div class="storeinfo">
-    <b>${escapeHtml(s.name)}</b>
-    <small>${escapeHtml(s.code)} · ${escapeHtml(s.area||"بدون منطقه")}<br>
-    ${s.hasSales?"دارای سابقه فروش":"بدون سابقه فروش"} · ${s.hasCoords?"دارای مختصات":"بدون مختصات"}</small>
-   </div>
-   <span class="arrow">‹</span>
-  </div>`).join("");
- if(list.length>300){
-  $("resultCount").textContent+=" — برای سرعت، ۳۰۰ نتیجه اول نمایش داده شده است.";
- }
+
+ $("storeList").innerHTML=shown.map(s=>{
+  const index=stores.indexOf(s);
+  return `
+   <div class="store" data-store-index="${index}">
+    <i class="pin" style="background:${storeColor(s)}"></i>
+    <div class="storeinfo">
+     <b>${escapeHtml(s.name)}</b>
+     <small>${escapeHtml(s.code)} · ${escapeHtml(s.area||"بدون منطقه")}<br>
+     ${s.hasSales?"دارای سابقه فروش":"بدون سابقه فروش"} ·
+     ${s.hasCoords?"دارای مختصات":"بدون مختصات"}</small>
+    </div>
+    <span class="arrow">‹</span>
+   </div>`;
+ }).join("");
+
+ $("storeList").querySelectorAll("[data-store-index]").forEach(el=>{
+  el.addEventListener("click",()=>{
+   const store=stores[Number(el.dataset.storeIndex)];
+   if(store)showStore(store.id);
+  });
+ });
 }
 
 function renderAll(){
@@ -444,49 +557,217 @@ function renderAll(){
 }
 
 function applyFilters(){
- const list=filtered();
+ const list=filteredStores();
  renderList(list);
  renderMap(list);
 }
 
+/* Store details */
 function showStore(id){
- const s=stores.find(x=>x.id===id);
- if(!s)return;
- const products=s.products||[];
- $("modalTitle").textContent=s.name;
- const productHtml=products.length?products.map(p=>`
-  <div class="product">
-   <b>${escapeHtml(p.name||p.code||"محصول")}</b>
-   <small>کد کالا: ${escapeHtml(p.code||"—")} · تاریخ: ${escapeHtml(p.date||"—")}</small>
-  </div>`).join(""):'<div class="empty">برای این فروشگاه محصولی در گزارش فروش پیدا نشد.</div>';
- const mapsUrl=s.hasCoords?
-  `https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}`:
-  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address||s.name)}`;
+ const store=stores.find(s=>s.id===id);
+ if(!store)return;
+
+ $("modalTitle").textContent=store.name;
+
+ const productHtml=store.products.length?
+  store.products.map(p=>`
+   <div class="product">
+    <b>${escapeHtml(p.name)}</b>
+    <small>کد کالا: ${escapeHtml(p.code||"—")} ·
+    تاریخ: ${escapeHtml(p.date||"—")} ·
+    تعداد: ${escapeHtml(p.quantity||"—")}</small>
+   </div>`).join("")
+  :'<div class="empty">برای این فروشگاه محصولی در گزارش فروش پیدا نشد.</div>';
+
+ const mapsUrl=store.hasCoords?
+  `https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lng}`:
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(store.address||store.name)}`;
+
  $("modalContent").innerHTML=`
   <div style="font-size:12px;line-height:2;color:#617487;margin:12px 0">
-   کد مشتری: ${escapeHtml(s.code||"—")}<br>
-   منطقه: ${escapeHtml(s.area||"—")}<br>
-   ویزیتور: ${escapeHtml(s.salesman||"—")}<br>
-   آدرس: ${escapeHtml(s.address||"—")}<br>
-   وضعیت: ${s.inJP?"در Journey Plan":"فقط در گزارش فروش"} · ${s.hasSales?"دارای فروش":"بدون فروش"}
+   کد مشتری: ${escapeHtml(store.code||"—")}<br>
+   منطقه: ${escapeHtml(store.area||"—")}<br>
+   شماره مسیر/قلمرو: ${escapeHtml(store.territory||"—")}<br>
+   ویزیتور: ${escapeHtml(store.salesman||"—")}<br>
+   آدرس: ${escapeHtml(store.address||"—")}<br>
+   وضعیت: ${store.inJP?"در Journey Plan":"فقط در گزارش فروش"} ·
+   ${store.hasSales?"دارای فروش":"بدون فروش"}
   </div>
-  <div class="section-title">محصولات ثبت‌شده در گزارش فروش (${products.length})</div>
+  <div class="section-title">محصولات ثبت‌شده (${store.products.length})</div>
   ${productHtml}
   <div class="actions">
    <a href="${mapsUrl}" target="_blank" rel="noopener">مسیریابی با Google Maps</a>
-   ${s.hasCoords?`<a href="https://www.google.com/maps?q=${s.lat},${s.lng}" target="_blank" rel="noopener">نمایش موقعیت</a>`:""}
+   ${store.hasCoords?`<a href="https://www.google.com/maps?q=${store.lat},${store.lng}" target="_blank" rel="noopener">نمایش موقعیت</a>`:""}
   </div>`;
+
  $("modal").style.display="flex";
 }
 
-function closeModal(){$("modal").style.display="none"}
+function closeModal(){
+ $("modal").style.display="none";
+}
 
-$("loadBtn").addEventListener("click",loadFiles);
+/* Google OAuth */
+function getDriveToken(){
+ return new Promise((resolve,reject)=>{
+  if(!window.google?.accounts?.oauth2){
+   reject(new Error("کتابخانه ورود گوگل هنوز بارگذاری نشده است. چند لحظه صبر و دوباره تلاش کن."));
+   return;
+  }
+
+  if(!driveTokenClient){
+   driveTokenClient=google.accounts.oauth2.initTokenClient({
+    client_id:GOOGLE_CLIENT_ID,
+    scope:"https://www.googleapis.com/auth/drive.readonly",
+    callback:response=>{
+     if(response.error){
+      reject(new Error(response.error_description||response.error));
+     }else{
+      lastAccessToken=response.access_token;
+      resolve(response.access_token);
+     }
+    },
+    error_callback:error=>{
+     reject(new Error(error.message||"ورود گوگل لغو شد."));
+    }
+   });
+  }
+
+  driveTokenClient.requestAccessToken({
+   prompt:lastAccessToken?"":"consent"
+  });
+ });
+}
+
+async function driveRequest(url,token){
+ const response=await fetch(url,{
+  headers:{Authorization:"Bearer "+token}
+ });
+ if(!response.ok){
+  const detail=await response.text();
+  throw new Error("Google Drive API ("+response.status+"): "+detail.slice(0,500));
+ }
+ return response;
+}
+
+function dateFromFilename(name){
+ const match=name.match(/(\d{8})/);
+ return match?match[1]:"00000000";
+}
+
+function newestFile(files,predicate){
+ return files.filter(f=>
+  predicate(f)&&/\.(xlsx|xls)$/i.test(f.name)
+ ).sort((a,b)=>{
+  const dateCompare=dateFromFilename(b.name).localeCompare(dateFromFilename(a.name));
+  if(dateCompare!==0)return dateCompare;
+  return String(b.modifiedTime||"").localeCompare(String(a.modifiedTime||""));
+ })[0]||null;
+}
+
+async function listDriveFiles(token){
+ let all=[];
+ let pageToken="";
+
+ do{
+  const params=new URLSearchParams({
+   q:`'${DRIVE_FOLDER_ID}' in parents and trashed=false`,
+   fields:"nextPageToken,files(id,name,mimeType,modifiedTime)",
+   pageSize:"1000"
+  });
+  if(pageToken)params.set("pageToken",pageToken);
+
+  const response=await driveRequest(
+   "https://www.googleapis.com/drive/v3/files?"+params.toString(),
+   token
+  );
+  const data=await response.json();
+  all=all.concat(data.files||[]);
+  pageToken=data.nextPageToken||"";
+ }while(pageToken);
+
+ return all;
+}
+
+async function downloadDriveExcel(file,token,headerRow){
+ const response=await driveRequest(
+  "https://www.googleapis.com/drive/v3/files/"+
+  encodeURIComponent(file.id)+"?alt=media",
+  token
+ );
+ const buffer=await response.arrayBuffer();
+ const workbook=XLSX.read(buffer,{type:"array"});
+ const sheet=workbook.Sheets[workbook.SheetNames[0]];
+ return XLSX.utils.sheet_to_json(sheet,{
+  range:headerRow,
+  defval:""
+ });
+}
+
+async function syncFromDrive(){
+ const button=$("driveBtn");
+ button.disabled=true;
+
+ try{
+  setMessage("در حال دریافت مجوز Google Drive...","در حال اتصال");
+  const token=await getDriveToken();
+
+  setMessage("در حال جستجو در پوشه Navigation...");
+  const files=await listDriveFiles(token);
+
+  const jpFile=newestFile(files,f=>/^JP_/i.test(f.name));
+  const salesFile=newestFile(files,f=>/^TPA_Alborz/i.test(f.name));
+  const mappingFile=newestFile(files,f=>/^Product Mapping/i.test(f.name));
+
+  if(!jpFile)throw new Error("فایل JP با نامی که با JP_ شروع شود در پوشه پیدا نشد.");
+  if(!salesFile)throw new Error("فایل فروش با نامی که با TPA_Alborz شروع شود در پوشه پیدا نشد.");
+
+  setMessage(
+   "فایل‌های پیدا شده:\n"+jpFile.name+"\n"+salesFile.name+
+   (mappingFile?"\n"+mappingFile.name:"\nProduct Mapping پیدا نشد.")+
+   "\nدر حال دانلود..."
+  );
+
+  jpRows=await downloadDriveExcel(jpFile,token,1);
+  salesRows=await downloadDriveExcel(salesFile,token,3);
+  productRows=mappingFile?
+   await downloadDriveExcel(mappingFile,token,0):[];
+
+  buildData();
+  renderAll();
+
+  setMessage(
+   "همگام‌سازی با موفقیت انجام شد.\n"+
+   "Journey Plan: "+jpFile.name+"\n"+
+   "Sales: "+salesFile.name+"\n"+
+   "Product Mapping: "+(mappingFile?mappingFile.name:"یافت نشد")+
+   "\nتعداد فروشگاه‌ها: "+stores.length.toLocaleString("fa-IR"),
+   "همگام‌سازی موفق"
+  );
+
+ }catch(error){
+  console.error(error);
+  setMessage(
+   "دریافت اطلاعات انجام نشد:\n"+error.message+
+   "\n\nاگر خطای 403 یا 401 دیدی، تنظیمات مجوز Google Drive یا حساب انتخاب‌شده را بررسی می‌کنیم.",
+   "خطا در اتصال"
+  );
+ }finally{
+  button.disabled=false;
+ }
+}
+
+/* Event listeners */
+$("loadBtn").addEventListener("click",loadManualFiles);
+$("driveBtn").addEventListener("click",syncFromDrive);
+$("closeModal").addEventListener("click",closeModal);
+
+$("modal").addEventListener("click",event=>{
+ if(event.target.id==="modal")closeModal();
+});
+
 ["search","typeFilter","areaFilter","personFilter","dayFilter"].forEach(id=>{
  $(id).addEventListener(id==="search"?"input":"change",applyFilters);
-});
-$("modal").addEventListener("click",e=>{
- if(e.target.id==="modal")closeModal();
 });
 </script>
 </body>
