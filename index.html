@@ -211,3 +211,1130 @@ body.dark .notice{background:#44351d;color:#ffe0a3;border-color:#765c2a}
   <div id="modalContent"></div>
  </div>
 </div>
+ <script>
+"use strict";
+
+const GOOGLE_CLIENT_ID =
+"1098731892951-2e7jipvf33evn0a69tt0tje94oor54lm.apps.googleusercontent.com";
+
+const DRIVE_FOLDER_ID =
+"1sgTsZu2zzSBi-pz2M9pVBHtjCtQELYhk";
+
+let jpRows=[];
+let salesRows=[];
+let productRows=[];
+let stores=[];
+let map=null;
+let markers=[];
+let driveTokenClient=null;
+let lastAccessToken=null;
+
+const $=id=>document.getElementById(id);
+
+const driveButtonElement=$("driveBtn");
+if(driveButtonElement){
+ driveButtonElement.addEventListener("click",()=>{
+  setMessage("درخواست اتصال به Google Drive ثبت شد...","در حال اتصال");
+  syncFromDrive();
+ });
+}
+
+window.addEventListener("error",event=>{
+ const box=$("message");
+ if(box)box.textContent="خطای اجرایی برنامه: "+(event.message||"خطای نامشخص");
+});
+
+function clean(v){return String(v??"").trim();}
+
+function norm(v){
+ return clean(v).replace(/\s/g,"")
+  .replace(/[۰-۹]/g,d=>"۰۱۲۳۴۵۶۷۸۹".indexOf(d))
+  .replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d));
+}
+
+function keyVariants(v){
+ const s=norm(v);
+ if(!s)return[];
+ const result=[s];
+ if(s.includes("|"))result.push(s.split("|").pop());
+ return [...new Set(result)];
+}
+
+function first(row,keys){
+ for(const key of keys){
+  if(row[key]!==undefined&&clean(row[key])!=="")return clean(row[key]);
+ }
+ return "";
+}
+
+function numeric(v){
+ const n=Number(String(v??"").replace(/,/g,""));
+ return Number.isFinite(n)?n:0;
+}
+
+function validCoord(lat,lng){
+ return lat>10&&lat<60&&lng>20&&lng<70;
+}
+
+function escapeHtml(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
+}
+
+function setMessage(text,status){
+ $("message").textContent=text;
+ if(status)$("status").textContent=status;
+}
+
+function readExcel(file,headerRow){
+ return new Promise((resolve,reject)=>{
+  const reader=new FileReader();
+  reader.onload=e=>{
+   try{
+    const workbook=XLSX.read(e.target.result,{type:"array",cellDates:true});
+    const sheet=workbook.Sheets[workbook.SheetNames[0]];
+    resolve(XLSX.utils.sheet_to_json(sheet,{range:headerRow,defval:""}));
+   }catch(error){reject(error);}
+  };
+  reader.onerror=()=>reject(new Error("خواندن فایل ممکن نشد."));
+  reader.readAsArrayBuffer(file);
+ });
+}
+
+/* بارگذاری دستی */
+async function loadManualFiles(){
+ const jpFile=$("jpFile").files[0];
+ const salesFile=$("salesFile").files[0];
+ const mappingFile=$("mappingFile").files[0];
+
+ if(!jpFile||!salesFile){
+  setMessage("لطفاً هر دو فایل Journey Plan و Sales را انتخاب کن.");
+  return;
+ }
+
+ $("loadBtn").disabled=true;
+ try{
+  setMessage("در حال خواندن فایل‌ها...","در حال پردازش");
+  const newJP=await readExcel(jpFile,1);
+  const newSales=await readExcel(salesFile,3);
+  const newMapping=mappingFile?await readExcel(mappingFile,0):[];
+
+  if(!newJP.length||!newSales.length)
+   throw new Error("یکی از فایل‌ها خالی است یا ردیف عنوان ستون‌ها درست تشخیص داده نشده است.");
+
+  jpRows=newJP;
+  salesRows=newSales;
+  productRows=newMapping;
+  buildData();
+  renderAll();
+  setMessage("اطلاعات با موفقیت بارگذاری شد. تعداد فروشگاه‌ها: "+stores.length.toLocaleString("fa-IR"),"آماده");
+ }catch(error){
+  console.error(error);
+  setMessage("خطا در خواندن فایل: "+error.message,"خطا");
+ }finally{
+  $("loadBtn").disabled=false;
+ }
+}
+
+/* نگاشت کد کالا */
+function buildProductMap(){
+ const result={};
+ for(const row of productRows){
+  const code=norm(first(row,["Item Code","ItemCode"]));
+  const name=first(row,["Product Name","Product  Name","Item"]);
+  if(code&&name)result[code]=name;
+ }
+ return result;
+}
+
+/* ساخت بانک اصلی فروشگاه‌ها */
+function buildDataCore(){
+ const salesByCode=new Map();
+ for(const row of salesRows){
+  const code=first(row,["کد مشتری","Customer Code","Account Number","CustomerI","Customer ID"]);
+  if(!code)continue;
+  const k=norm(code);
+  if(!salesByCode.has(k))salesByCode.set(k,[]);
+  salesByCode.get(k).push(row);
+ }
+
+ const jpByCode=new Map();
+ for(const row of jpRows){
+  const code=first(row,["CustomerI","Customer ID","Customer Code","New Customer Code"]);
+  if(code)jpByCode.set(norm(code),row);
+ }
+
+ const ids=new Set([...jpByCode.keys(),...salesByCode.keys()]);
+ const result=[];
+
+ for(const id of ids){
+  const jp=jpByCode.get(id)||{};
+  const saleList=salesByCode.get(id)||[];
+  const code=first(jp,["CustomerI","Customer ID","Customer Code"])||
+   first(saleList[0]||{},["کد مشتری","Customer Code","Account Number","CustomerI"]);
+
+  const name=first(jp,["Customer Name","CustomerName","نام مشتری"])||
+   first(saleList[0]||{},["Customer Name","نام مشتری","Customer"]);
+
+  const address=first(jp,["Address","Customer Address","آدرس"]);
+  const lat=numeric(first(jp,["Latitude","latitude","Lat"]));
+  const lng=numeric(first(jp,["Longitude","longitude","Long","Lng"]));
+
+  const route=first(jp,["Route Name"]);
+  const area=route||first(jp,["Area Name","Area"]);
+  const salesperson=first(jp,["Salesman Name","Salesperson Name","Salesman"]);
+
+  result.push({
+   id:code||id,code:code||id,name:name||"بدون نام",
+   address,lat,lng,hasCoords:validCoord(lat,lng),
+   routeName:route,area,salesperson,
+   customerClass:first(jp,["Customer Class"]),
+   hasJP:!!jp.CustomerI||!!jp["Customer ID"],
+   hasSales:saleList.length>0,
+   rawJP:jp,rawSales:saleList
+  });
+ }
+
+ stores=result;
+}
+
+/* تبدیل تاریخ میلادی به شمسی */
+function gregorianToJalali(gy,gm,gd){
+ const gdm=[0,31,59,90,120,151,181,212,243,273,304,334];
+ let gy2=gm>2?gy+1:gy;
+ let days=355666+365*gy+Math.floor((gy2+3)/4)-Math.floor((gy2+99)/100)+Math.floor((gy2+399)/400)+gd+gdm[gm-1];
+ let jy=-1595+33*Math.floor(days/12053);
+ days%=12053;
+ jy+=4*Math.floor(days/1461);
+ days%=1461;
+ if(days>365){jy+=Math.floor((days-1)/365);days=(days-1)%365;}
+ let jm,jd;
+ if(days<186){jm=1+Math.floor(days/31);jd=1+days%31;}
+ else{jm=7+Math.floor((days-186)/30);jd=1+(days-186)%30;}
+ return [jy,jm,jd];
+}
+
+function formatJalali(gy,gm,gd){
+ const j=gregorianToJalali(gy,gm,gd);
+ return j.map((x,i)=>String(x).padStart(i===0?4:2,"0")).join("/");
+}
+
+function excelDateToGregorian(value){
+ if(value instanceof Date&&!isNaN(value)){
+  return [value.getFullYear(),value.getMonth()+1,value.getDate()];
+ }
+ if(typeof value==="number"&&value>20000&&value<80000){
+  const d=new Date(Date.UTC(1899,11,30)+value*86400000);
+  return [d.getUTCFullYear(),d.getUTCMonth()+1,d.getUTCDate()];
+ }
+ return null;
+}
+
+function jalaliDateText(value,filenameYear){
+ if(value===null||value===undefined||value==="")return "";
+ const excel=excelDateToGregorian(value);
+ if(excel)return formatJalali(...excel);
+
+ let s=clean(value).replace(/[۰-۹]/g,d=>"۰۱۲۳۴۵۶۷۸۹".indexOf(d));
+ s=s.replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d));
+
+ const full=s.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+ if(full){
+  const a=Number(full[1]),b=Number(full[2]),c=Number(full[3]);
+  if(a>=1300&&a<=1500)return `${a}/${String(b).padStart(2,"0")}/${String(c).padStart(2,"0")}`;
+  if(a>=1900&&a<=2200)return formatJalali(a,b,c);
+ }
+
+ const short=s.match(/^(\d{2})(\d{2})(\d{2})$/);
+ if(short){
+  const year=Number(filenameYear||"");
+  const y=year>=1300?year:1400+Number(short[1]);
+  return `${y}/${short[2]}/${short[3]}`;
+ }
+ return s;
+}
+
+function filenameYear(name){
+ const m=String(name||"").match(/(?:^|[_-])(14\d{2})(?:[_-]|$)/);
+ return m?m[1]:"";
+}
+
+/* تشخیص نام فروشگاه از انتهای آدرس */
+function storeNameFromAddress(address){
+ const s=clean(address);
+ const words=["سوپرمارکت","سوپر مارکت","هایپر","سوپر","مارکت","فروشگاه","مواد غذایی","ارزانسرای"];
+ let best=-1;
+ for(const word of words){
+  const i=s.lastIndexOf(word);
+  if(i>best)best=i;
+ }
+ if(best<0)return "";
+ return s.slice(best).trim();
+}
+
+/* تکمیل اطلاعات سفارش‌ها و فروشگاه */
+function enrichStoreFields(){
+ const productMap=buildProductMap();
+ const statusKeys=["Status","Order Status","وضعیت سفارش","OrderStatus"];
+ const orderNoKeys=["Order Number","Order No","OrderNumber","شماره سفارش"];
+ const dateKeys=["Date","Order Date","تاریخ سفارش"];
+ const invoiceKeys=["Invoicedate","Invoice Date","تاریخ صدور فاکتور"];
+ const deliveryKeys=["Target Delivery Date","TargetDeliveryDate","تاریخ تحویل مورد انتظار"];
+
+ const grouped=new Map();
+ for(const row of salesRows){
+  const status=first(row,statusKeys).toLowerCase();
+  if(status==="closex"||status==="expired")continue;
+  const cust=first(row,["کد مشتری","Customer Code","Account Number","CustomerI"]);
+  if(!cust)continue;
+
+  const orderNo=first(row,orderNoKeys);
+  const code=first(row,["Item Code","کد کالا"]);
+  const item=first(row,["Product Name","Item","نام کالا"])||productMap[norm(code)]||"";
+  const entry={
+   orderNo,status,
+   orderDate:first(row,dateKeys),
+   invoiceDate:first(row,invoiceKeys),
+   deliveryDate:first(row,deliveryKeys),
+   product:item,itemCode:code,
+   quantity:first(row,["Quantity","تعداد"]),
+   customerCode:cust
+  };
+  const key=norm(cust);
+  if(!grouped.has(key))grouped.set(key,[]);
+  grouped.get(key).push(entry);
+ }
+
+ for(const s of stores){
+  s.storeName=storeNameFromAddress(s.address)||"";
+  s.orders=grouped.get(norm(s.code))||[];
+  s.openOrders=s.orders.filter(o=>!o.invoiceDate);
+  s.lastPurchase=s.orders.map(o=>o.invoiceDate||o.orderDate).filter(Boolean).sort().pop()||"";
+  const jp=s.rawJP||{};
+  s.routeName=first(jp,["Route Name"])||s.routeName||"";
+  s.customerClass=first(jp,["Customer Class"])||"";
+  s.visitDays=["Saturday","Sunday","Monday","Tuesday","Wednesday","Thursday"].filter(d=>{
+   const v=clean(jp[d]).toLowerCase();
+   return v!==""&&v!=="0"&&v!=="0.0"&&v!=="no"&&v!=="false";
+  });
+ }
+}
+
+function buildData(){
+ salesRows=salesRows.filter(r=>{
+  const status=first(r,["Status","Order Status","وضعیت سفارش","OrderStatus"]).toLowerCase();
+  return status!=="closex"&&status!=="expired";
+ });
+ buildDataCore();
+ enrichStoreFields();
+ saveOfflineSnapshot();
+}
+  function saveOfflineSnapshot(){
+ try{
+  const snapshot={savedAt:new Date().toISOString(),stores,jpRows,salesRows,productRows};
+  localStorage.setItem("tpa_navigation_snapshot_v1",JSON.stringify(snapshot));
+  $("lastSync").textContent="آخرین همگام‌سازی: "+new Date().toLocaleString();
+ }catch(e){console.warn("ذخیره محلی انجام نشد:",e);}
+}
+
+function restoreOfflineSnapshot(){
+ try{
+  const raw=localStorage.getItem("tpa_navigation_snapshot_v1");
+  if(!raw)return false;
+  const data=JSON.parse(raw);
+  if(!Array.isArray(data.stores)||!data.stores.length)return false;
+  stores=data.stores;
+  jpRows=data.jpRows||[];
+  salesRows=data.salesRows||[];
+  productRows=data.productRows||[];
+  $("lastSync").textContent="آخرین همگام‌سازی: "+
+   (data.savedAt?new Date(data.savedAt).toLocaleString():"نامشخص")+" (ذخیره محلی)";
+  renderAll();
+  return true;
+ }catch(e){return false;}
+}
+
+/* نقشه */
+function initMap(){
+ if(map)return;
+ if(!window.L)return;
+ map=L.map("map").setView([35.8,50.9],8);
+ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+  maxZoom:19,attribution:"© OpenStreetMap"
+ }).addTo(map);
+}
+
+function storeColor(store){
+ if(store.hasJP&&store.hasSales)return "#15966b";
+ if(store.hasJP&&!store.hasSales)return "#e69a27";
+ return "#3478d4";
+}
+
+function renderMap(list){
+ initMap();
+ if(!map)return;
+ markers.forEach(m=>map.removeLayer(m));
+ markers=[];
+
+ const bounds=[];
+ list.forEach(store=>{
+  if(!store.hasCoords)return;
+  const marker=L.circleMarker([store.lat,store.lng],{
+   radius:7,color:"#fff",weight:1.5,fillColor:storeColor(store),fillOpacity:.95
+  }).addTo(map);
+  marker.bindTooltip(escapeHtml(store.storeName||store.name));
+  marker.on("click",()=>showStore(store.id));
+  markers.push(marker);
+  bounds.push([store.lat,store.lng]);
+ });
+
+ if(bounds.length){
+  if(bounds.length===1)map.setView(bounds[0],14);
+  else map.fitBounds(bounds,{padding:[25,25],maxZoom:14});
+ }
+}
+
+function fillFilters(){
+ const areas=[...new Set(stores.map(s=>s.routeName||s.area).filter(Boolean))].sort();
+ const people=[...new Set(stores.map(s=>s.salesperson).filter(Boolean))].sort();
+ const oldArea=$("areaFilter").value;
+ const oldPerson=$("personFilter").value;
+
+ $("areaFilter").innerHTML='<option value="all">همه مناطق</option>'+
+  areas.map(x=>`<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join("");
+ $("personFilter").innerHTML='<option value="all">همه ویزیتورها</option>'+
+  people.map(x=>`<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join("");
+
+ if(areas.includes(oldArea))$("areaFilter").value=oldArea;
+ if(people.includes(oldPerson))$("personFilter").value=oldPerson;
+}
+
+function weekdayEnglish(){
+ const d=new Date().getDay();
+ return ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][d];
+}
+
+function isTodayVisit(store){
+ const day=weekdayEnglish();
+ return (store.visitDays||[]).includes(day);
+}
+
+function filteredStores(){
+ const q=norm($("search").value);
+ const type=$("typeFilter").value;
+ const area=$("areaFilter").value;
+ const person=$("personFilter").value;
+ const day=$("dayFilter").value;
+
+ return stores.filter(s=>{
+  if(q&&!norm([s.code,s.name,s.storeName,s.address].join(" ")).includes(q))return false;
+  if(type==="sales"&&!s.hasSales)return false;
+  if(type==="nosales"&&(!s.hasJP||s.hasSales))return false;
+  if(type==="salesOnly"&&(s.hasJP||!s.hasSales))return false;
+  if(area!=="all"&&(s.routeName||s.area)!==area)return false;
+  if(person!=="all"&&s.salesperson!==person)return false;
+
+  if(day==="today"&&!isTodayVisit(s))return false;
+  if(day!=="all"&&day!=="today"&&!(s.visitDays||[]).includes(day))return false;
+  return true;
+ });
+}
+
+function renderList(list){
+ $("resultCount").textContent=list.length.toLocaleString("fa-IR")+" فروشگاه";
+ if(!list.length){
+  $("storeList").innerHTML='<div class="empty">فروشگاهی با این شرایط پیدا نشد.</div>';
+  return;
+ }
+
+ $("storeList").innerHTML=list.slice(0,300).map(s=>`
+  <div class="store" data-store-id="${escapeHtml(s.id)}">
+   <i class="pin" style="background:${storeColor(s)}"></i>
+   <div class="storeinfo">
+    <b>${escapeHtml(s.storeName||s.name||"بدون نام فروشگاه")}</b>
+    <small>کد: ${escapeHtml(s.code)} · ${escapeHtml(s.routeName||s.area||"بدون منطقه")}<br>
+    ${escapeHtml(s.salesperson||"")} · ${s.hasSales?"دارای سابقه فروش":"بدون سابقه فروش"}</small>
+   </div>
+   <span class="arrow">‹</span>
+  </div>`).join("");
+
+ $("storeList").querySelectorAll("[data-store-id]").forEach(el=>{
+  el.addEventListener("click",()=>showStore(el.dataset.storeId));
+ });
+}
+
+function renderAll(){
+ fillFilters();
+ const list=filteredStores();
+ renderList(list);
+ renderMap(list);
+
+ $("total").textContent=stores.length.toLocaleString("fa-IR");
+ $("withSales").textContent=stores.filter(s=>s.hasSales).length.toLocaleString("fa-IR");
+ $("withoutSales").textContent=stores.filter(s=>s.hasJP&&!s.hasSales).length.toLocaleString("fa-IR");
+
+ renderAnalysis();
+ renderPlan();
+}
+
+function applyFilters(){
+ const list=filteredStores();
+ renderList(list);
+ renderMap(list);
+}
+
+function showStore(id){
+ const s=stores.find(x=>String(x.id)===String(id));
+ if(!s)return;
+
+ $("modalTitle").textContent=s.storeName||s.name||"اطلاعات فروشگاه";
+ const orderHtml=(s.orders||[]).map(o=>`
+  <div class="product">
+   <b>شماره سفارش: ${escapeHtml(o.orderNo||"ثبت نشده")}</b>
+   <small>تاریخ سفارش: ${escapeHtml(jalaliDateText(o.orderDate))}</small>
+   <small>تاریخ تحویل مورد انتظار: ${escapeHtml(jalaliDateText(o.deliveryDate))}</small>
+   <small>تاریخ صدور فاکتور: ${escapeHtml(jalaliDateText(o.invoiceDate))}</small>
+   <small>محصول: ${escapeHtml(o.product||o.itemCode||"")}</small>
+   <small>تعداد: ${escapeHtml(o.quantity||"")}</small>
+   <small>وضعیت: ${o.invoiceDate?"فاکتور صادر شده":"سفارش باز"}</small>
+  </div>`).join("");
+
+ const neshan="https://neshan.org/maps/search/"+encodeURIComponent(s.storeName||s.address||s.name);
+ const google=s.hasCoords?
+  `https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}`:
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address||s.name)}`;
+
+ $("modalContent").innerHTML=`
+  <div class="product">
+   <b>کد مشتری:</b> ${escapeHtml(s.code)}<br>
+   <b>نام مشتری:</b> ${escapeHtml(s.name)}<br>
+   <b>نام فروشگاه:</b> ${escapeHtml(s.storeName||"تشخیص داده نشد")}<br>
+   <b>آدرس اصلی:</b> ${escapeHtml(s.address)}<br>
+   <b>مسیر:</b> ${escapeHtml(s.routeName||"")}<br>
+   <b>ویزیتور:</b> ${escapeHtml(s.salesperson||"")}<br>
+   <b>کلاس مشتری:</b> ${escapeHtml(s.customerClass||"")}<br>
+   <b>آخرین خرید:</b> ${escapeHtml(jalaliDateText(s.lastPurchase))}<br>
+   <b>وضعیت سفارش باز:</b> ${(s.openOrders||[]).length}
+  </div>
+  <div class="actions">
+   <a href="${google}" target="_blank" rel="noopener">Google Maps</a>
+   <a href="${neshan}" target="_blank" rel="noopener">نشان</a>
+  </div>
+  <h3 style="font-size:13px;margin-top:18px">تاریخچه سفارش‌ها</h3>
+  ${orderHtml||'<div class="empty">سفارشی برای این فروشگاه ثبت نشده است.</div>'}
+  <button class="full green" onclick="addStoreToPlan('${escapeHtml(s.id)}')">افزودن به برنامه بازدید من</button>`;
+
+ $("modal").style.display="flex";
+}
+
+function closeModal(){
+ $("modal").style.display="none";
+}
+
+/* دریافت مجوز Google Drive */
+function getDriveToken(){
+ return new Promise((resolve,reject)=>{
+  if(!window.google?.accounts?.oauth2){
+   reject(new Error("کتابخانه ورود Google بارگذاری نشده است. اینترنت را بررسی کن و صفحه را Refresh کن."));
+   return;
+  }
+
+  if(!driveTokenClient){
+   driveTokenClient=google.accounts.oauth2.initTokenClient({
+    client_id:GOOGLE_CLIENT_ID,
+    scope:"https://www.googleapis.com/auth/drive.readonly",
+    callback:response=>{
+     if(response.error){
+      reject(new Error(response.error_description||response.error));
+     }else if(response.access_token){
+      lastAccessToken=response.access_token;
+      resolve(response.access_token);
+     }else{
+      reject(new Error("Google مجوز دسترسی برنگرداند."));
+     }
+    },
+    error_callback:error=>{
+     reject(new Error(error.message||"پنجره ورود Google بسته یا لغو شد."));
+    }
+   });
+  }
+
+  driveTokenClient.requestAccessToken({
+   prompt:lastAccessToken?"":"consent"
+  });
+ });
+}
+
+async function driveRequest(url,token){
+ const response=await fetch(url,{
+  headers:{Authorization:"Bearer "+token}
+ });
+
+ if(!response.ok){
+  const detail=await response.text();
+  let readable=detail;
+  try{
+   const parsed=JSON.parse(detail);
+   readable=parsed.error?.message||detail;
+  }catch(e){}
+  throw new Error("Google Drive API ("+response.status+"): "+readable.slice(0,900));
+ }
+ return response;
+}
+
+function dateFromFilename(name){
+ const match=String(name).match(/(14\d{6})/);
+ return match?match[1]:"00000000";
+}
+
+function newestFile(files,prefix){
+ return files.filter(f=>f.name.toLowerCase().startsWith(prefix.toLowerCase()))
+  .sort((a,b)=>{
+   const dateCompare=dateFromFilename(b.name).localeCompare(dateFromFilename(a.name));
+   if(dateCompare!==0)return dateCompare;
+   return String(b.modifiedTime||"").localeCompare(String(a.modifiedTime||""));
+  })[0]||null;
+}
+
+async function listDriveFiles(token){
+ let all=[];
+ let pageToken="";
+
+ do{
+  const params=new URLSearchParams({
+   q:`'${DRIVE_FOLDER_ID}' in parents and trashed=false`,
+   fields:"nextPageToken,files(id,name,mimeType,modifiedTime)",
+   pageSize:"1000",
+   supportsAllDrives:"true",
+   includeItemsFromAllDrives:"true"
+  });
+  if(pageToken)params.set("pageToken",pageToken);
+
+  const response=await driveRequest(
+   "https://www.googleapis.com/drive/v3/files?"+params.toString(),token
+  );
+  const data=await response.json();
+  all=all.concat(data.files||[]);
+  pageToken=data.nextPageToken||"";
+ }while(pageToken);
+
+ return all;
+}
+
+async function downloadDriveExcel(file,token,headerRow){
+ let url;
+ if(file.mimeType==="application/vnd.google-apps.spreadsheet"){
+  url="https://www.googleapis.com/drive/v3/files/"+
+   encodeURIComponent(file.id)+"/export?mimeType="+
+   encodeURIComponent("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+ }else{
+  url="https://www.googleapis.com/drive/v3/files/"+
+   encodeURIComponent(file.id)+"?alt=media";
+ }
+
+ const response=await driveRequest(url,token);
+ const buffer=await response.arrayBuffer();
+ const workbook=XLSX.read(buffer,{type:"array",cellDates:true});
+ const sheet=workbook.Sheets[workbook.SheetNames[0]];
+ return XLSX.utils.sheet_to_json(sheet,{range:headerRow,defval:""});
+}
+
+/* همگام‌سازی Google Drive */
+async function syncFromDrive(){
+ const button=$("driveBtn");
+ button.disabled=true;
+
+ try{
+  setMessage("در حال درخواست مجوز Google Drive...","در حال اتصال");
+  const token=await getDriveToken();
+
+  setMessage("در حال جستجو در پوشه Navigation...");
+  const files=await listDriveFiles(token);
+
+  const jpFile=newestFile(files,"JP_");
+  const salesFile=newestFile(files,"TPA_Alborz");
+  const mappingFile=newestFile(files,"Product Mapping");
+
+  if(!jpFile||!salesFile){
+   throw new Error(
+    "فایل‌های مورد نیاز پیدا نشدند.\nفایل‌های موجود در پوشه:\n"+
+    (files.map(f=>f.name).join("\n")||"هیچ فایلی پیدا نشد.")
+   );
+  }
+
+  setMessage(
+   "فایل‌ها پیدا شدند:\n"+jpFile.name+"\n"+salesFile.name+
+   "\n"+(mappingFile?mappingFile.name:"Product Mapping پیدا نشد")+
+   "\nدر حال دریافت..."
+  );
+
+  const newJP=await downloadDriveExcel(jpFile,token,1);
+  const newSales=await downloadDriveExcel(salesFile,token,3);
+  const newMapping=mappingFile?await downloadDriveExcel(mappingFile,token,0):[];
+
+  if(!newJP.length||!newSales.length){
+   throw new Error("فایل دریافت شد اما اطلاعات قابل استفاده‌ای در آن پیدا نشد. اطلاعات قبلی حفظ شده‌اند.");
+  }
+
+  jpRows=newJP;
+  salesRows=newSales;
+  productRows=newMapping;
+
+  buildData();
+  renderAll();
+
+  const time=new Date();
+  localStorage.setItem("tpa_last_sync",time.toISOString());
+  $("lastSync").textContent="آخرین همگام‌سازی: "+time.toLocaleString();
+
+  setMessage(
+   "همگام‌سازی موفق بود.\nJourney Plan: "+jpFile.name+
+   "\nSales: "+salesFile.name+
+   "\nProduct Mapping: "+(mappingFile?mappingFile.name:"پیدا نشد")+
+   "\nتعداد فروشگاه‌ها: "+stores.length.toLocaleString("fa-IR"),
+   "همگام‌سازی موفق"
+  );
+ }catch(error){
+  console.error(error);
+  setMessage(
+   "اتصال یا دریافت اطلاعات انجام نشد:\n"+error.message+
+   "\n\nاطلاعات قبلی دستگاه پاک نشده‌اند.",
+   "خطا در اتصال"
+  );
+ }finally{
+  button.disabled=false;
+ }
+}
+  /* ===== برنامه هفتگی Auditor ===== */
+const PLAN_STORAGE_KEY="tpa_auditor_visit_plan_v1";
+let auditPlan=[];
+let pendingExternal=[];
+
+function loadSavedPlan(){
+ try{
+  auditPlan=JSON.parse(localStorage.getItem(PLAN_STORAGE_KEY)||"[]");
+  if(!Array.isArray(auditPlan))auditPlan=[];
+ }catch(e){auditPlan=[];}
+ renderPlan();
+}
+
+function savePlan(){
+ try{
+  localStorage.setItem(PLAN_STORAGE_KEY,JSON.stringify(auditPlan));
+ }catch(e){console.warn("ذخیره برنامه ممکن نشد:",e);}
+ renderPlan();
+}
+
+function addStoreToPlan(id){
+ const s=stores.find(x=>String(x.id)===String(id));
+ if(!s)return;
+
+ const date=clean($("planDate").value);
+ const day=clean($("planDay").value)||"Saturday";
+ const exists=auditPlan.some(p=>
+  String(p.customerId)===String(s.code||s.id)&&
+  p.visitDate===date&&p.visitDay===day
+ );
+
+ if(exists){
+  alert("این فروشگاه از قبل در برنامه همین روز وجود دارد.");
+  return;
+ }
+
+ auditPlan.push({
+  visitDate:date,
+  visitDay:day,
+  customerId:s.code||s.id,
+  storeName:s.storeName||s.name,
+  customerName:s.name,
+  address:s.address,
+  routeName:s.routeName||s.area,
+  latitude:s.lat||"",
+  longitude:s.lng||"",
+  priority:"Medium",
+  selectionReason:"",
+  auditorComment:"",
+  selectionSource:"Internal",
+  approved:true
+ });
+
+ savePlan();
+ closeModal();
+}
+
+function renderPlan(){
+ const box=$("planList");
+ if(!box)return;
+
+ if(!auditPlan.length){
+  box.innerHTML='<div class="empty">هنوز فروشگاهی به برنامه اضافه نشده است.</div>';
+  return;
+ }
+
+ box.innerHTML=auditPlan.map((p,i)=>`
+  <div class="planrow">
+   <strong>${escapeHtml(p.storeName||p.customerName||p.customerId)}</strong>
+   <small>
+    ${escapeHtml(p.visitDay||"")} · ${escapeHtml(p.visitDate||"بدون تاریخ")} ·
+    کد: ${escapeHtml(p.customerId)}<br>
+    منبع: <b>${escapeHtml(p.selectionSource||"Internal")}</b> ·
+    اولویت: ${escapeHtml(p.priority||"Medium")}<br>
+    ${escapeHtml(p.selectionReason||"بدون دلیل ثبت‌شده")}
+   </small>
+   <div class="rowactions">
+    <button class="smallbtn secondary" data-edit-plan="${i}">ویرایش</button>
+    <button class="smallbtn" data-remove-plan="${i}">حذف</button>
+   </div>
+  </div>
+ `).join("");
+
+ box.querySelectorAll("[data-edit-plan]").forEach(btn=>{
+  btn.addEventListener("click",()=>editPlanRow(Number(btn.dataset.editPlan)));
+ });
+ box.querySelectorAll("[data-remove-plan]").forEach(btn=>{
+  btn.addEventListener("click",()=>removePlanRow(Number(btn.dataset.removePlan)));
+ });
+}
+
+function editPlanRow(i){
+ const p=auditPlan[i];
+ if(!p)return;
+
+ const reason=prompt("دلیل انتخاب فروشگاه:",p.selectionReason||"");
+ if(reason===null)return;
+ p.selectionReason=reason;
+
+ const priority=prompt("اولویت را وارد کن: High / Medium / Low",p.priority||"Medium");
+ if(priority!==null){
+  const v=priority.trim();
+  if(["High","Medium","Low"].includes(v))p.priority=v;
+  else if(v)alert("اولویت باید High یا Medium یا Low باشد.");
+ }
+ const comment=prompt("توضیحات Auditor:",p.auditorComment||"");
+ if(comment!==null)p.auditorComment=comment;
+
+ savePlan();
+}
+
+function removePlanRow(i){
+ if(!confirm("این فروشگاه از برنامه بازدید حذف شود؟"))return;
+ auditPlan.splice(i,1);
+ savePlan();
+}
+
+/* ساخت فایل خروجی مدیران */
+function planRowsForExcel(){
+ return auditPlan.map(p=>({
+  "Visit Date":p.visitDate||"",
+  "Customer ID":p.customerId||"",
+  "Store Name":p.storeName||"",
+  "Customer Name":p.customerName||"",
+  "Address":p.address||"",
+  "Route Name":p.routeName||"",
+  "Latitude":p.latitude??"",
+  "Longitude":p.longitude??"",
+  "Priority":p.priority||"Medium",
+  "Selection Reason":p.selectionReason||"",
+  "Auditor Comment":p.auditorComment||"",
+  "Selection Source":p.selectionSource==="External"?"External":"Internal"
+ }));
+}
+
+function exportAuditPlan(){
+ if(!window.XLSX){
+  alert("کتابخانه Excel در دسترس نیست.");
+  return;
+ }
+
+ const wb=XLSX.utils.book_new();
+ const headers=[
+  "Visit Date","Customer ID","Store Name","Customer Name","Address",
+  "Route Name","Latitude","Longitude","Priority","Selection Reason",
+  "Auditor Comment","Selection Source"
+ ];
+
+ const ws=XLSX.utils.json_to_sheet(planRowsForExcel(),{header:headers});
+ ws["!cols"]=[16,16,24,26,42,22,14,14,14,30,34,18].map(w=>({wch:w}));
+ XLSX.utils.book_append_sheet(wb,ws,"Audit Visit Plan");
+
+ const instructions=[
+  ["Field","Instructions"],
+  ["Visit Date","Required. Date of planned visit."],
+  ["Customer ID","Required. Existing customer code."],
+  ["Selection Source","System-managed. Internal or External."],
+  ["Priority","High, Medium or Low."],
+  ["Auditor Comment","Optional comment from Auditor or manager."]
+ ];
+
+ XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(instructions),"Instructions");
+ XLSX.writeFile(wb,"Audit_Visit_Plan.xlsx");
+}
+
+/* ورود پیشنهادهای مدیران */
+async function importAuditPlan(){
+ const file=$("importPlanFile").files[0];
+ if(!file){
+  alert("ابتدا فایل اکسل را انتخاب کن.");
+  return;
+ }
+
+ try{
+  const rows=await readExcel(file,0);
+  const valid=[];
+  const invalid=[];
+  const seen=new Set();
+
+  rows.forEach((r,i)=>{
+   const id=first(r,["Customer ID","CustomerID","کد مشتری"]);
+   const date=first(r,["Visit Date","VisitDate","تاریخ بازدید"]);
+
+   if(!id||!date){
+    invalid.push(i+2);
+    return;
+   }
+
+   const key=norm(id)+"|"+date;
+   if(seen.has(key)){
+    invalid.push(i+2);
+    return;
+   }
+   seen.add(key);
+
+   const matched=stores.find(s=>
+    keyVariants(s.id).includes(norm(id))||
+    keyVariants(s.code).includes(norm(id))
+   );
+
+   if(!matched){
+    invalid.push(i+2);
+    return;
+   }
+
+   valid.push({
+    visitDate:date,
+    visitDay:first(r,["Visit Day"])||$("planDay").value,
+    customerId:id,
+    storeName:first(r,["Store Name"])||matched.storeName||matched.name,
+    customerName:first(r,["Customer Name"])||matched.name,
+    address:first(r,["Address"])||matched.address,
+    routeName:first(r,["Route Name"])||matched.routeName||matched.area,
+    latitude:first(r,["Latitude"])||matched.lat||"",
+    longitude:first(r,["Longitude"])||matched.lng||"",
+    priority:first(r,["Priority"])||"Medium",
+    selectionReason:first(r,["Selection Reason"]),
+    auditorComment:first(r,["Auditor Comment"]),
+    selectionSource:"External",
+    approved:false
+   });
+  });
+
+  pendingExternal=valid;
+
+  $("importReport").innerHTML=
+   `ردیف‌های معتبر: <b>${valid.length}</b><br>
+    ردیف‌های نامعتبر، تکراری یا با کد ناشناخته: <b>${invalid.length}</b><br>
+    ${valid.length?"پیشنهادها آماده بررسی و تأیید هستند.":""}
+    ${valid.length?'<button class="smallbtn green" id="acceptExternalBtn">تأیید و افزودن پیشنهادهای مدیر</button>':""}`;
+
+  const accept=$("acceptExternalBtn");
+  if(accept){
+   accept.addEventListener("click",()=>{
+    let added=0;
+
+    for(const p of pendingExternal){
+     const duplicate=auditPlan.some(x=>
+      norm(x.customerId)===norm(p.customerId)&&
+      String(x.visitDate)===String(p.visitDate)
+     );
+
+     if(!duplicate){
+      auditPlan.push(p);
+      added++;
+     }
+    }
+
+    pendingExternal=[];
+    savePlan();
+    $("importReport").textContent=added+" پیشنهاد جدید به برنامه اضافه شد.";
+   });
+  }
+
+ }catch(e){
+  console.error(e);
+  $("importReport").textContent="خطا در خواندن فایل: "+e.message;
+ }
+}
+
+/* تحلیل و گزارش */
+function renderAnalysis(){
+ $("noGpsCount").textContent=stores.filter(s=>!s.hasCoords).length.toLocaleString("fa-IR");
+ $("openOrderCount").textContent=stores.reduce((n,s)=>n+(s.openOrders?.length||0),0).toLocaleString("fa-IR");
+ $("noPurchaseCount").textContent=stores.filter(s=>!s.hasSales).length.toLocaleString("fa-IR");
+}
+
+function showAnalysisList(kind){
+ let list=stores;
+
+ if(kind==="nogps")list=stores.filter(s=>!s.hasCoords);
+ if(kind==="nopurchase")list=stores.filter(s=>!s.hasSales);
+ if(kind==="open")list=stores.filter(s=>(s.openOrders||[]).length);
+
+ $("analysisResults").innerHTML=list.length?
+  list.slice(0,200).map(s=>`
+   <div class="planrow">
+    <strong>${escapeHtml(s.storeName||s.name)}</strong>
+    <small>${escapeHtml(s.code)} · ${escapeHtml(s.address||"")}</small>
+   </div>
+  `).join(""):'<div class="empty">موردی پیدا نشد.</div>';
+}
+
+function findNearby(){
+ if(!navigator.geolocation){
+  alert("موقعیت‌یابی در این مرورگر پشتیبانی نمی‌شود.");
+  return;
+ }
+
+ navigator.geolocation.getCurrentPosition(pos=>{
+  const latitude=pos.coords.latitude;
+  const longitude=pos.coords.longitude;
+
+  const distance=(s)=>{
+   const R=6371;
+   const dLat=(s.lat-latitude)*Math.PI/180;
+   const dLng=(s.lng-longitude)*Math.PI/180;
+   const a=Math.sin(dLat/2)**2+
+    Math.cos(latitude*Math.PI/180)*
+    Math.cos(s.lat*Math.PI/180)*
+    Math.sin(dLng/2)**2;
+   return 2*R*Math.asin(Math.sqrt(a));
+  };
+
+  const near=stores.filter(s=>s.hasCoords)
+   .map(s=>({...s,distance:distance(s)}))
+   .filter(s=>s.distance<=5)
+   .sort((a,b)=>a.distance-b.distance);
+
+  $("analysisResults").innerHTML=near.length?
+   near.map(s=>`
+    <div class="planrow">
+     <strong>${escapeHtml(s.storeName||s.name)}</strong>
+     <small>${s.distance.toFixed(2)} کیلومتر · ${escapeHtml(s.code)}</small>
+    </div>
+   `).join(""):'<div class="empty">در شعاع ۵ کیلومتری فروشگاهی پیدا نشد.</div>';
+
+  showPage("analysisPage");
+ },()=>{
+  alert("دسترسی موقعیت مکانی ممکن نشد. مجوز Location را بررسی کن.");
+ },{enableHighAccuracy:true,timeout:12000});
+}
+
+/* تغییر صفحات */
+function showPage(id){
+ document.querySelectorAll(".page").forEach(p=>{
+  p.classList.toggle("active",p.id===id);
+ });
+ document.querySelectorAll(".appnav button").forEach(b=>{
+  b.classList.toggle("active",b.dataset.page===id);
+ });
+
+ if(id==="mapPage"){
+  document.getElementById("map").scrollIntoView({behavior:"smooth",block:"start"});
+  setTimeout(()=>map?.invalidateSize(),250);
+ }
+ if(id==="planPage")renderPlan();
+ if(id==="analysisPage")renderAnalysis();
+}
+
+/* تنظیمات */
+function applyTheme(){
+ if(localStorage.getItem("tpa_theme")==="dark"){
+  document.body.classList.add("dark");
+ }
+}
+
+function registerOfflineShell(){
+ if("serviceWorker" in navigator&&location.protocol.startsWith("http")){
+  navigator.serviceWorker.register("./sw.js").catch(error=>{
+   console.warn("Service Worker registration failed:",error);
+  });
+ }
+}
+
+/* اتصال رویدادهای صفحه */
+$("loadBtn").addEventListener("click",loadManualFiles);
+$("closeModal").addEventListener("click",closeModal);
+
+$("modal").addEventListener("click",event=>{
+ if(event.target.id==="modal")closeModal();
+});
+
+["search","typeFilter","areaFilter","personFilter","dayFilter"].forEach(id=>{
+ $(id).addEventListener(id==="search"?"input":"change",applyFilters);
+});
+
+document.querySelectorAll(".appnav button").forEach(b=>{
+ b.addEventListener("click",()=>showPage(b.dataset.page));
+});
+
+$("planSearch").addEventListener("input",()=>{
+ const q=norm($("planSearch").value);
+
+ const results=stores.filter(s=>
+  q&&norm([s.code,s.name,s.address,s.storeName].join(" ")).includes(q)
+ ).slice(0,12);
+
+ $("planSearchResults").innerHTML=results.map(s=>`
+  <div class="store">
+   <div class="storeinfo">
+    <b>${escapeHtml(s.storeName||s.name)}</b>
+    <small>${escapeHtml(s.code)} · ${escapeHtml(s.routeName||s.area||"")}</small>
+   </div>
+   <button class="smallbtn green" data-add-store="${escapeHtml(s.id)}">افزودن</button>
+  </div>
+ `).join("");
+
+ $("planSearchResults").querySelectorAll("[data-add-store]").forEach(btn=>{
+  btn.addEventListener("click",()=>addStoreToPlan(btn.dataset.addStore));
+ });
+});
+
+$("exportPlanBtn").addEventListener("click",exportAuditPlan);
+$("importPlanBtn").addEventListener("click",importAuditPlan);
+$("nearbyBtn").addEventListener("click",findNearby);
+$("noGpsBtn").addEventListener("click",()=>showAnalysisList("nogps"));
+$("noPurchaseBtn").addEventListener("click",()=>showAnalysisList("nopurchase"));
+$("openOrdersBtn").addEventListener("click",()=>showAnalysisList("open"));
+
+$("themeBtn").addEventListener("click",()=>{
+ document.body.classList.toggle("dark");
+ localStorage.setItem(
+  "tpa_theme",
+  document.body.classList.contains("dark")?"dark":"light"
+ );
+});
+
+$("langBtn").addEventListener("click",()=>{
+ alert("ترجمه کامل انگلیسی هنوز در این نسخه پیاده‌سازی نشده است.");
+});
+
+$("clearLocalBtn").addEventListener("click",()=>{
+ if(!confirm("داده‌های محلی و برنامه بازدید پاک شوند؟"))return;
+ localStorage.removeItem("tpa_navigation_snapshot_v1");
+ localStorage.removeItem(PLAN_STORAGE_KEY);
+ auditPlan=[];
+ renderPlan();
+ alert("داده‌های محلی پاک شدند.");
+});
+
+/* شروع برنامه */
+loadSavedPlan();
+applyTheme();
+registerOfflineShell();
+
+if(!stores.length){
+ restoreOfflineSnapshot();
+}
+</script>
+</body>
+</html>
