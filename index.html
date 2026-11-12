@@ -28,7 +28,7 @@ main{max-width:1150px;margin:auto;padding:12px}
 .upload{border:1px dashed #9aafc1;border-radius:10px;padding:12px 7px;text-align:center;font-size:12px}
 .upload strong{display:block;margin-bottom:7px;color:var(--navy)}
 input[type=file]{width:100%;font-size:11px}
-button,.btn{border:0;border-radius:9px;padding:11px 14px;background:var(--blue);color:white;font-weight:bold;font-family:inherit;cursor:pointer}
+button{border:0;border-radius:9px;padding:11px 14px;background:var(--blue);color:white;font-weight:bold;font-family:inherit;cursor:pointer}
 button:disabled{opacity:.5}
 .full{width:100%;margin-top:9px}
 .green{background:var(--green)}
@@ -83,7 +83,7 @@ input[type=search],select{min-width:0;width:100%;border:1px solid #d7e0e7;border
   <div class="section-title">۱. دریافت اطلاعات</div>
   <button id="driveBtn" class="full green">اتصال به Google Drive و دریافت آخرین فایل‌ها</button>
   <div style="font-size:11px;color:#718393;margin-top:7px">
-   برای دریافت فایل‌ها باید با حساب Google دارای دسترسی به پوشه وارد شوی.
+   برای دریافت فایل‌ها با حساب Google دارای دسترسی به پوشه وارد شو.
   </div>
   <div style="border-top:1px solid #edf0f3;margin:13px 0"></div>
   <div class="section-title">یا بارگذاری دستی فایل‌ها</div>
@@ -169,14 +169,14 @@ input[type=search],select{min-width:0;width:100%;border:1px solid #d7e0e7;border
 <script>
 "use strict";
 
-/* Google Drive settings */
+/* تنظیمات Google Drive */
 const GOOGLE_CLIENT_ID =
 "1098731892951-2e7jipvf33evn0a69tt0tje94oor54lm.apps.googleusercontent.com";
 
 const DRIVE_FOLDER_ID =
 "1sgTsZu2zzSBi-pz2M9pVBHtjCtQELYhk";
 
-/* App data */
+/* اطلاعات برنامه */
 let jpRows=[];
 let salesRows=[];
 let productRows=[];
@@ -254,7 +254,7 @@ function readExcel(file,headerRow){
  });
 }
 
-/* Manual file loading */
+/* بارگذاری دستی فایل‌ها */
 async function loadManualFiles(){
  const jpFile=$("jpFile").files[0];
  const salesFile=$("salesFile").files[0];
@@ -283,18 +283,18 @@ async function loadManualFiles(){
  }
 }
 
-/* Build product code to standard product name mapping */
+/* ساخت نگاشت کد کالا به نام محصول */
 function buildProductMap(){
  const result={};
  for(const row of productRows){
   const code=norm(first(row,["Item Code"]));
-  const name=first(row,["Product  Name","Product Name","Item"]);
+  const name=first(row,["Product Name","Product  Name","Item"]);
   if(code&&name)result[code]=name;
  }
  return result;
 }
 
-/* Match sales to Journey Plan customers */
+/* تطبیق اطلاعات فروش با مشتریان Journey Plan */
 function buildData(){
  const productMap=buildProductMap();
  const salesByCustomer=new Map();
@@ -371,7 +371,7 @@ function buildData(){
   });
  }
 
- /* Add sales customers not found in JP */
+ /* افزودن مشتریان گزارش فروش که در JP نیستند */
  const salesOnly=new Map();
 
  for(const row of salesRows){
@@ -414,11 +414,12 @@ function buildData(){
   }
 
   const itemCode=first(row,["کد کالا"]);
-  const productName=buildProductMap()[norm(itemCode)]||
+  const itemName=productMap[norm(itemCode)]||
    first(row,["نام کالا"])||itemCode||"محصول نامشخص";
 
   salesOnly.get(id).products.push({
-   code:itemCode,name:productName,
+   code:itemCode,
+   name:itemName,
    date:first(row,["invoicedate","تاریخ"]),
    quantity:first(row,["تعداد"])
   });
@@ -426,7 +427,6 @@ function buildData(){
 
  stores=[...jpMap.values(),...salesOnly.values()];
 
- /* Remove duplicate products */
  for(const store of stores){
   const unique=new Map();
   for(const p of store.products){
@@ -443,7 +443,7 @@ function isTodayVisit(row){
  return value!==""&&value!=="0"&&value!=="0.0";
 }
 
-/* Map */
+/* نقشه */
 function initMap(){
  if(map)return;
  map=L.map("map").setView([35.84,50.94],10);
@@ -465,6 +465,7 @@ function renderMap(list){
  const points=[];
  list.forEach(store=>{
   if(!store.hasCoords)return;
+
   const marker=L.circleMarker([store.lat,store.lng],{
    radius:7,color:"#fff",weight:1.5,
    fillColor:storeColor(store),fillOpacity:1
@@ -482,7 +483,7 @@ function renderMap(list){
  setTimeout(()=>map.invalidateSize(),150);
 }
 
-/* Filters and list */
+/* فیلترها و فهرست */
 function fillFilters(){
  const areas=[...new Set(stores.map(s=>s.area).filter(Boolean))].sort();
  const people=[...new Set(stores.map(s=>s.salesman).filter(Boolean))].sort();
@@ -562,7 +563,7 @@ function applyFilters(){
  renderMap(list);
 }
 
-/* Store details */
+/* جزئیات فروشگاه */
 function showStore(id){
  const store=stores.find(s=>s.id===id);
  if(!store)return;
@@ -587,7 +588,7 @@ function showStore(id){
   <div style="font-size:12px;line-height:2;color:#617487;margin:12px 0">
    کد مشتری: ${escapeHtml(store.code||"—")}<br>
    منطقه: ${escapeHtml(store.area||"—")}<br>
-   شماره مسیر/قلمرو: ${escapeHtml(store.territory||"—")}<br>
+   قلمرو: ${escapeHtml(store.territory||"—")}<br>
    ویزیتور: ${escapeHtml(store.salesman||"—")}<br>
    آدرس: ${escapeHtml(store.address||"—")}<br>
    وضعیت: ${store.inJP?"در Journey Plan":"فقط در گزارش فروش"} ·
@@ -607,11 +608,11 @@ function closeModal(){
  $("modal").style.display="none";
 }
 
-/* Google OAuth */
+/* اتصال Google */
 function getDriveToken(){
  return new Promise((resolve,reject)=>{
   if(!window.google?.accounts?.oauth2){
-   reject(new Error("کتابخانه ورود گوگل هنوز بارگذاری نشده است. چند لحظه صبر و دوباره تلاش کن."));
+   reject(new Error("کتابخانه ورود گوگل بارگذاری نشده است. صفحه را Refresh کن و دوباره امتحان کن."));
    return;
   }
 
@@ -643,6 +644,7 @@ async function driveRequest(url,token){
  const response=await fetch(url,{
   headers:{Authorization:"Bearer "+token}
  });
+
  if(!response.ok){
   const detail=await response.text();
   throw new Error("Google Drive API ("+response.status+"): "+detail.slice(0,500));
@@ -650,21 +652,32 @@ async function driveRequest(url,token){
  return response;
 }
 
+/* تاریخ ۸ رقمی داخل نام فایل */
 function dateFromFilename(name){
  const match=name.match(/(\d{8})/);
  return match?match[1]:"00000000";
 }
 
-function newestFile(files,predicate){
- return files.filter(f=>
-  predicate(f)&&/\.(xlsx|xls)$/i.test(f.name)
- ).sort((a,b)=>{
-  const dateCompare=dateFromFilename(b.name).localeCompare(dateFromFilename(a.name));
-  if(dateCompare!==0)return dateCompare;
-  return String(b.modifiedTime||"").localeCompare(String(a.modifiedTime||""));
- })[0]||null;
+/*
+ فایل‌ها بر اساس پیشوند نام پیدا می‌شوند.
+ پسوند xlsx یا xls اجباری نیست.
+*/
+function newestFile(files,prefix){
+ return files
+  .filter(f=>f.name.toLowerCase().startsWith(prefix.toLowerCase()))
+  .sort((a,b)=>{
+   const dateCompare=
+    dateFromFilename(b.name).localeCompare(dateFromFilename(a.name));
+
+   if(dateCompare!==0)return dateCompare;
+
+   return String(b.modifiedTime||"").localeCompare(
+    String(a.modifiedTime||"")
+   );
+  })[0]||null;
 }
 
+/* خواندن فهرست فایل‌های پوشه */
 async function listDriveFiles(token){
  let all=[];
  let pageToken="";
@@ -675,12 +688,14 @@ async function listDriveFiles(token){
    fields:"nextPageToken,files(id,name,mimeType,modifiedTime)",
    pageSize:"1000"
   });
+
   if(pageToken)params.set("pageToken",pageToken);
 
   const response=await driveRequest(
    "https://www.googleapis.com/drive/v3/files?"+params.toString(),
    token
   );
+
   const data=await response.json();
   all=all.concat(data.files||[]);
   pageToken=data.nextPageToken||"";
@@ -689,43 +704,65 @@ async function listDriveFiles(token){
  return all;
 }
 
+/* دانلود و خواندن فایل اکسل */
 async function downloadDriveExcel(file,token,headerRow){
  const response=await driveRequest(
   "https://www.googleapis.com/drive/v3/files/"+
   encodeURIComponent(file.id)+"?alt=media",
   token
  );
+
  const buffer=await response.arrayBuffer();
+
  const workbook=XLSX.read(buffer,{type:"array"});
  const sheet=workbook.Sheets[workbook.SheetNames[0]];
+
  return XLSX.utils.sheet_to_json(sheet,{
   range:headerRow,
   defval:""
  });
 }
 
+/* همگام‌سازی از Google Drive */
 async function syncFromDrive(){
  const button=$("driveBtn");
  button.disabled=true;
 
  try{
-  setMessage("در حال دریافت مجوز Google Drive...","در حال اتصال");
+  setMessage("در حال درخواست مجوز Google Drive...","در حال اتصال");
+
   const token=await getDriveToken();
 
   setMessage("در حال جستجو در پوشه Navigation...");
+
   const files=await listDriveFiles(token);
 
-  const jpFile=newestFile(files,f=>/^JP_/i.test(f.name));
-  const salesFile=newestFile(files,f=>/^TPA_Alborz/i.test(f.name));
-  const mappingFile=newestFile(files,f=>/^Product Mapping/i.test(f.name));
+  const jpFile=newestFile(files,"JP_");
+  const salesFile=newestFile(files,"TPA_Alborz");
+  const mappingFile=newestFile(files,"Product Mapping");
 
-  if(!jpFile)throw new Error("فایل JP با نامی که با JP_ شروع شود در پوشه پیدا نشد.");
-  if(!salesFile)throw new Error("فایل فروش با نامی که با TPA_Alborz شروع شود در پوشه پیدا نشد.");
+  if(!jpFile){
+   throw new Error(
+    "فایل Journey Plan پیدا نشد.\n"+
+    "فایل‌های دیده‌شده در پوشه: "+
+    (files.map(f=>f.name).join("، ")||"هیچ فایلی دیده نشد")
+   );
+  }
+
+  if(!salesFile){
+   throw new Error(
+    "فایل گزارش فروش پیدا نشد.\n"+
+    "فایل‌های دیده‌شده در پوشه: "+
+    (files.map(f=>f.name).join("، ")||"هیچ فایلی دیده نشد")
+   );
+  }
 
   setMessage(
-   "فایل‌های پیدا شده:\n"+jpFile.name+"\n"+salesFile.name+
-   (mappingFile?"\n"+mappingFile.name:"\nProduct Mapping پیدا نشد.")+
-   "\nدر حال دانلود..."
+   "فایل‌های پیدا شده:\n"+
+   jpFile.name+"\n"+
+   salesFile.name+"\n"+
+   (mappingFile?mappingFile.name:"Product Mapping پیدا نشد")+
+   "\n\nدر حال دانلود فایل‌ها..."
   );
 
   jpRows=await downloadDriveExcel(jpFile,token,1);
@@ -737,27 +774,30 @@ async function syncFromDrive(){
   renderAll();
 
   setMessage(
-   "همگام‌سازی با موفقیت انجام شد.\n"+
+   "همگام‌سازی موفق بود.\n"+
    "Journey Plan: "+jpFile.name+"\n"+
    "Sales: "+salesFile.name+"\n"+
-   "Product Mapping: "+(mappingFile?mappingFile.name:"یافت نشد")+
+   "Product Mapping: "+(mappingFile?mappingFile.name:"پیدا نشد")+
    "\nتعداد فروشگاه‌ها: "+stores.length.toLocaleString("fa-IR"),
    "همگام‌سازی موفق"
   );
 
  }catch(error){
   console.error(error);
+
   setMessage(
-   "دریافت اطلاعات انجام نشد:\n"+error.message+
-   "\n\nاگر خطای 403 یا 401 دیدی، تنظیمات مجوز Google Drive یا حساب انتخاب‌شده را بررسی می‌کنیم.",
+   "دریافت اطلاعات انجام نشد:\n"+
+   error.message+
+   "\n\nاگر خطای 403 یا 401 دیدی، مجوز Google Drive یا حساب انتخاب‌شده را بررسی می‌کنیم.",
    "خطا در اتصال"
   );
+
  }finally{
   button.disabled=false;
  }
 }
 
-/* Event listeners */
+/* رویدادها */
 $("loadBtn").addEventListener("click",loadManualFiles);
 $("driveBtn").addEventListener("click",syncFromDrive);
 $("closeModal").addEventListener("click",closeModal);
@@ -767,7 +807,10 @@ $("modal").addEventListener("click",event=>{
 });
 
 ["search","typeFilter","areaFilter","personFilter","dayFilter"].forEach(id=>{
- $(id).addEventListener(id==="search"?"input":"change",applyFilters);
+ $(id).addEventListener(
+  id==="search"?"input":"change",
+  applyFilters
+ );
 });
 </script>
 </body>
