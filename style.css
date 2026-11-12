@@ -50,19 +50,23 @@ input[type=search],select{min-width:0;width:100%;border:1px solid #d7e0e7;border
  .layout{display:grid;grid-template-columns:1.1fr .9fr;gap:12px;align-items:start}
  #map{height:570px}
 }
+
 :root{--card:#fff;--ink:#182b3b;--muted:#718393;--line:#e5ebf0}
 body.dark{--bg:#101a24;--card:#1b2a38;--ink:#e8f0f6;--muted:#a9bac8;--line:#344656;color:var(--ink)}
 body.dark .panel,body.dark #modalbox{background:var(--card);color:var(--ink)}
 body.dark input,body.dark select,body.dark textarea{background:#142331;color:#e8f0f6;border-color:#405568}
-body.dark .stat{background:#243747} body.dark .store{border-color:#344656}
+body.dark .stat{background:#243747}
+body.dark .store{border-color:#344656}
 body.dark .store:active{background:#263b4d}
 body.dark .empty,body.dark .storeinfo small{color:#a9bac8}
 .appnav{display:flex;gap:7px;overflow:auto;padding:8px 0 12px;position:sticky;top:0;z-index:100;background:var(--bg)}
 .appnav button{white-space:nowrap;padding:10px 12px;font-size:12px;background:#dce7ef;color:#18344a}
 .appnav button.active{background:var(--blue);color:white}
-.page{display:none}.page.active{display:block}
+.page{display:none}
+.page.active{display:block}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.field{margin:7px 0}.field label{display:block;font-size:11px;color:var(--muted);margin:0 0 5px}
+.field{margin:7px 0}
+.field label{display:block;font-size:11px;color:var(--muted);margin:0 0 5px}
 .field input,.field select,.field textarea{width:100%;border:1px solid #d7e0e7;border-radius:9px;padding:10px;font:inherit;background:white;color:#182b3b}
 .field textarea{min-height:65px;resize:vertical}
 .smallbtn{padding:8px 10px;font-size:11px;margin:3px}
@@ -74,4 +78,7 @@ body.dark .empty,body.dark .storeinfo small{color:#a9bac8}
 .rowactions{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
 .notice{background:#fff7e8;border:1px solid #f1d59f;color:#74521b;padding:10px;border-radius:9px;font-size:11px;line-height:1.9}
 body.dark .notice{background:#44351d;color:#ffe0a3;border-color:#765c2a}
-@media(max-width:520px){.grid2{grid-template-columns:1fr}.appnav button{font-size:11px}}
+@media(max-width:520px){
+ .grid2{grid-template-columns:1fr}
+ .appnav button{font-size:11px}
+}
