@@ -6,137 +6,110 @@
 <meta name="theme-color" content="#102b46">
 <meta name="description" content="TPA Navigation - Auditor visit planning and store information">
 <title>TPA Navigation</title>
-
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-
 <style>
-:root{--navy:#102b46;--blue:#1677c8;--bg:#f2f5f8;--green:#15966b;--orange:#e69a27;--purple:#3478d4}
+:root{--navy:#102b46;--blue:#1677c8;--bg:#f2f5f8;--green:#15966b;--orange:#e69a27;--purple:#3478d4;--card:#fff;--ink:#182b3b;--muted:#718393;--line:#e5ebf0}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);font-family:Tahoma,Arial,sans-serif;color:#182b3b}
+body{margin:0;background:var(--bg);font-family:Tahoma,Arial,sans-serif;color:var(--ink)}
 header{background:var(--navy);color:white;padding:16px 15px}
 .head{display:flex;align-items:center;justify-content:space-between;gap:10px}
 h1{font-size:19px;margin:0}
 .sub{font-size:11px;color:#b8ccdd;margin-top:5px}
 .status{font-size:11px;background:#24445f;border-radius:20px;padding:7px 10px}
 main{max-width:1150px;margin:auto;padding:12px}
-.panel{background:white;border-radius:13px;padding:13px;margin-bottom:12px;box-shadow:0 2px 9px #142d4210}
+.panel{background:var(--card);border-radius:13px;padding:13px;margin-bottom:12px;box-shadow:0 2px 9px #142d4210}
 .section-title{font-size:14px;font-weight:bold;margin:0 0 11px}
 .uploads{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .upload{border:1px dashed #9aafc1;border-radius:10px;padding:12px 7px;text-align:center;font-size:12px}
 .upload strong{display:block;margin-bottom:7px;color:var(--navy)}
 input[type=file]{width:100%;font-size:11px}
 button{border:0;border-radius:9px;padding:11px 14px;background:var(--blue);color:white;font-weight:bold;font-family:inherit;cursor:pointer}
-button:disabled{opacity:.5}
+button:disabled{opacity:.5;cursor:wait}
 .full{width:100%;margin-top:9px}
 .green{background:var(--green)}
-#message{font-size:12px;line-height:1.9;color:#526779;margin-top:9px;white-space:pre-wrap;overflow-wrap:anywhere}
+.secondary{background:#e8eef3;color:#1d3b52}
+.smallbtn{padding:8px 10px;font-size:11px;margin:3px}
+#message{font-size:12px;line-height:1.9;color:var(--muted);margin-top:9px;white-space:pre-wrap;overflow-wrap:anywhere}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .stat{background:#f3f7fa;border-radius:10px;padding:10px 5px;text-align:center}
 .stat b{display:block;font-size:20px;color:var(--navy)}
 .stat span{font-size:10px;color:#64798a}
 input[type=search],select{min-width:0;width:100%;border:1px solid #d7e0e7;border-radius:9px;padding:11px;font-family:inherit;background:white}
 .filters{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:#526779;margin-top:10px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:10px}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-left:4px}
 #map{height:390px;border-radius:12px;z-index:1}
 .layout{display:block}
 #storeList{display:flex;flex-direction:column;gap:8px}
-.store{border:1px solid #e5ebf0;border-radius:10px;padding:11px;display:flex;gap:10px;align-items:center;cursor:pointer}
+.store{border:1px solid var(--line);border-radius:10px;padding:11px;display:flex;gap:10px;align-items:center;cursor:pointer}
 .store:active{background:#f1f7fc}
 .pin{width:11px;height:11px;border-radius:50%;flex-shrink:0}
 .storeinfo{flex:1;min-width:0}
 .storeinfo b{font-size:13px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.storeinfo small{font-size:10px;color:#718393;display:block;margin-top:5px;line-height:1.8}
+.storeinfo small{font-size:10px;color:var(--muted);display:block;margin-top:5px;line-height:1.8}
 .arrow{color:#7e91a1;font-size:18px}
 .empty{text-align:center;color:#8797a5;padding:25px 8px;font-size:12px}
 #modal{display:none;position:fixed;inset:0;background:#0008;z-index:9999;align-items:flex-end;justify-content:center}
-#modalbox{background:white;width:100%;max-width:650px;max-height:85vh;overflow:auto;border-radius:18px 18px 0 0;padding:18px}
+#modalbox{background:var(--card);color:var(--ink);width:100%;max-width:650px;max-height:85vh;overflow:auto;border-radius:18px 18px 0 0;padding:18px}
 .modalhead{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .close{background:#edf2f6;color:#25394a;width:35px;height:35px;padding:0;border-radius:50%;font-size:20px}
 .product{padding:10px 0;border-bottom:1px solid #edf0f3;font-size:12px;line-height:1.8}
-.product small{color:#748493;display:block}
+.product small{color:var(--muted);display:block}
 .actions{display:flex;gap:8px;margin-top:12px}
 .actions a{flex:1;text-align:center;text-decoration:none;background:var(--blue);color:white;padding:11px;border-radius:9px;font-size:12px}
-@media(min-width:760px){
- .layout{display:grid;grid-template-columns:1.1fr .9fr;gap:12px;align-items:start}
- #map{height:570px}
-}
-
-:root{--card:#fff;--ink:#182b3b;--muted:#718393;--line:#e5ebf0}
-body.dark{--bg:#101a24;--card:#1b2a38;--ink:#e8f0f6;--muted:#a9bac8;--line:#344656;color:var(--ink)}
-body.dark .panel,body.dark #modalbox{background:var(--card);color:var(--ink)}
-body.dark input,body.dark select,body.dark textarea{background:#142331;color:#e8f0f6;border-color:#405568}
-body.dark .stat{background:#243747}
-body.dark .store{border-color:#344656}
-body.dark .store:active{background:#263b4d}
-body.dark .empty,body.dark .storeinfo small{color:#a9bac8}
 .appnav{display:flex;gap:7px;overflow:auto;padding:8px 0 12px;position:sticky;top:0;z-index:100;background:var(--bg)}
 .appnav button{white-space:nowrap;padding:10px 12px;font-size:12px;background:#dce7ef;color:#18344a}
 .appnav button.active{background:var(--blue);color:white}
-.page{display:none}
-.page.active{display:block}
+.page{display:none}.page.active{display:block}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .field{margin:7px 0}
 .field label{display:block;font-size:11px;color:var(--muted);margin:0 0 5px}
 .field input,.field select,.field textarea{width:100%;border:1px solid #d7e0e7;border-radius:9px;padding:10px;font:inherit;background:white;color:#182b3b}
 .field textarea{min-height:65px;resize:vertical}
-.smallbtn{padding:8px 10px;font-size:11px;margin:3px}
-.secondary{background:#e8eef3;color:#1d3b52}
 .pill{display:inline-block;border-radius:20px;padding:4px 8px;font-size:10px;background:#e8f1f8;color:#31536d;margin:2px}
 .planrow{border:1px solid var(--line);border-radius:10px;padding:10px;margin:7px 0}
 .planrow strong{display:block;font-size:13px}
 .planrow small{display:block;color:var(--muted);line-height:1.8;margin-top:4px}
 .rowactions{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
 .notice{background:#fff7e8;border:1px solid #f1d59f;color:#74521b;padding:10px;border-radius:9px;font-size:11px;line-height:1.9}
+body.dark{--bg:#101a24;--card:#1b2a38;--ink:#e8f0f6;--muted:#a9bac8;--line:#344656;color:var(--ink)}
+body.dark .stat{background:#243747}
+body.dark .store{border-color:#344656}
+body.dark .store:active{background:#263b4d}
+body.dark .empty,body.dark .storeinfo small{color:#a9bac8}
+body.dark input,body.dark select,body.dark textarea{background:#142331;color:#e8f0f6;border-color:#405568}
+body.dark .appnav button{background:#263b4d;color:#e8f0f6}
+body.dark .appnav button.active{background:var(--blue)}
 body.dark .notice{background:#44351d;color:#ffe0a3;border-color:#765c2a}
-@media(max-width:520px){
- .grid2{grid-template-columns:1fr}
- .appnav button{font-size:11px}
-}
+@media(min-width:760px){.layout{display:grid;grid-template-columns:1.1fr .9fr;gap:12px;align-items:start}#map{height:570px}}
+@media(max-width:520px){.grid2{grid-template-columns:1fr}.appnav button{font-size:11px}}
 </style>
 </head>
-
 <body>
 <header>
  <div class="head">
-  <div>
-   <h1>TPA Navigation</h1>
-   <div class="sub">مسیریاب و اطلاعات فروشگاه‌ها</div>
-  </div>
+  <div><h1>TPA Navigation</h1><div class="sub">مسیریاب و اطلاعات فروشگاه‌ها</div></div>
   <div class="status" id="status">آماده</div>
  </div>
 </header>
-
 <main>
  <section class="panel">
   <div class="section-title">۱. دریافت اطلاعات</div>
   <button id="driveBtn" class="full green">اتصال به Google Drive و دریافت آخرین فایل‌ها</button>
-  <div style="font-size:11px;color:#718393;margin-top:7px">
-   برای دریافت فایل‌ها با حساب Google دارای دسترسی به پوشه وارد شو.
-  </div>
+  <div style="font-size:11px;color:#718393;margin-top:7px">برای دریافت فایل‌ها با حساب Google دارای دسترسی به پوشه وارد شو.</div>
   <div style="border-top:1px solid #edf0f3;margin:13px 0"></div>
   <div class="section-title">یا بارگذاری دستی فایل‌ها</div>
   <div class="uploads">
-   <div class="upload">
-    <strong>Journey Plan</strong>
-    <input id="jpFile" type="file" accept=".xlsx,.xls">
-   </div>
-   <div class="upload">
-    <strong>گزارش فروش TPA</strong>
-    <input id="salesFile" type="file" accept=".xlsx,.xls">
-   </div>
-   <div class="upload">
-    <strong>Product Mapping (اختیاری)</strong>
-    <input id="mappingFile" type="file" accept=".xlsx,.xls">
-   </div>
+   <div class="upload"><strong>Journey Plan</strong><input id="jpFile" type="file" accept=".xlsx,.xls"></div>
+   <div class="upload"><strong>گزارش فروش TPA</strong><input id="salesFile" type="file" accept=".xlsx,.xls"></div>
+   <div class="upload"><strong>Product Mapping (اختیاری)</strong><input id="mappingFile" type="file" accept=".xlsx,.xls"></div>
   </div>
   <button id="loadBtn" class="full">پردازش فایل‌های انتخاب‌شده</button>
   <div id="message">برای شروع، از Google Drive دریافت کن یا فایل‌ها را دستی انتخاب کن.</div>
  </section>
-
  <section class="panel">
   <div class="section-title">۲. خلاصه اطلاعات</div>
   <div class="stats">
@@ -145,7 +118,6 @@ body.dark .notice{background:#44351d;color:#ffe0a3;border-color:#765c2a}
    <div class="stat"><b id="withoutSales">۰</b><span>بدون سابقه فروش</span></div>
   </div>
  </section>
-
  <div class="layout">
   <div>
    <section class="panel">
@@ -158,33 +130,22 @@ body.dark .notice{background:#44351d;color:#ffe0a3;border-color:#765c2a}
     </div>
    </section>
   </div>
-
   <div>
    <section class="panel">
     <div class="section-title">۴. جستجو و فیلتر</div>
     <input id="search" type="search" placeholder="نام، کد یا آدرس فروشگاه...">
     <div class="filters" style="margin-top:8px">
      <select id="typeFilter">
-      <option value="all">همه فروشگاه‌ها</option>
-      <option value="sales">دارای سابقه فروش</option>
-      <option value="nosales">بدون سابقه فروش</option>
-      <option value="salesOnly">فقط در گزارش فروش</option>
+      <option value="all">همه فروشگاه‌ها</option><option value="sales">دارای سابقه فروش</option><option value="nosales">بدون سابقه فروش</option><option value="salesOnly">فقط در گزارش فروش</option>
      </select>
      <select id="areaFilter"><option value="all">همه مناطق</option></select>
      <select id="personFilter"><option value="all">همه ویزیتورها</option></select>
      <select id="dayFilter">
-      <option value="all">همه روزها</option>
-      <option value="today">ویزیت امروز</option>
-      <option value="Saturday">شنبه</option>
-      <option value="Sunday">یکشنبه</option>
-      <option value="Monday">دوشنبه</option>
-      <option value="Tuesday">سه‌شنبه</option>
-      <option value="Wednesday">چهارشنبه</option>
-      <option value="Thursday">پنجشنبه</option>
+      <option value="all">همه روزها</option><option value="today">ویزیت امروز</option>
+      <option value="Saturday">شنبه</option><option value="Sunday">یکشنبه</option><option value="Monday">دوشنبه</option><option value="Tuesday">سه‌شنبه</option><option value="Wednesday">چهارشنبه</option><option value="Thursday">پنجشنبه</option>
      </select>
     </div>
    </section>
-
    <section class="panel">
     <div class="section-title">۵. فهرست فروشگاه‌ها</div>
     <div id="resultCount" style="font-size:11px;color:#8292a0;margin-bottom:9px">هنوز اطلاعاتی بارگذاری نشده است</div>
@@ -192,32 +153,30 @@ body.dark .notice{background:#44351d;color:#ffe0a3;border-color:#765c2a}
    </section>
   </div>
  </div>
-
  <nav class="appnav" aria-label="بخش‌های برنامه">
   <button class="active" data-page="mapPage">نقشه و فروشگاه‌ها</button>
   <button data-page="planPage">برنامه بازدید من</button>
   <button data-page="analysisPage">تحلیل و خروجی</button>
   <button data-page="settingsPage">تنظیمات و همگام‌سازی</button>
  </nav>
-
+ <section id="mapPage" class="page active"></section>
  <section id="planPage" class="page">
   <section class="panel">
    <div class="section-title">برنامه هفتگی Auditor</div>
-   <div class="notice">فروشگاه‌هایی که از داخل برنامه انتخاب می‌کنی با منبع Internal ثبت می‌شوند. ردیف‌هایی که از فایل اکسل وارد می‌شوند External خواهند بود و قبل از افزودن به برنامه نهایی قابل بررسی هستند.</div>
+   <div class="notice">برنامه بازدید Auditor مستقل از Journey Plan ویزیتورهاست. فروشگاه‌های انتخاب‌شده از داخل برنامه منبع Internal دارند و موارد واردشده از فایل مدیران External ثبت می‌شوند.</div>
    <div class="grid2">
     <div class="field"><label>روز بازدید</label><select id="planDay"><option>Saturday</option><option>Sunday</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option></select></div>
-    <div class="field"><label>تاریخ بازدید (شمسی یا میلادی)</label><input id="planDate" placeholder="1405/08/20"></div>
+    <div class="field"><label>تاریخ بازدید</label><input id="planDate" placeholder="1405/08/20"></div>
    </div>
    <div class="field"><label>جستجوی فروشگاه برای افزودن به برنامه</label><input id="planSearch" type="search" placeholder="کد یا نام فروشگاه"></div>
    <div id="planSearchResults"></div>
    <div class="field"><label>فروشگاه‌های برنامه انتخاب‌شده</label><div id="planList"><div class="empty">ابتدا اطلاعات را بارگذاری کن.</div></div></div>
    <button id="exportPlanBtn" class="full green">خروجی اکسل Audit_Visit_Plan.xlsx</button>
-   <div class="field"><label>بارگذاری فایل مدیران (همان قالب خروجی)</label><input id="importPlanFile" type="file" accept=".xlsx,.xls"></div>
+   <div class="field"><label>بارگذاری فایل مدیران</label><input id="importPlanFile" type="file" accept=".xlsx,.xls"></div>
    <button id="importPlanBtn" class="full">بررسی و وارد کردن پیشنهادهای فایل</button>
    <div id="importReport" style="font-size:11px;line-height:1.9;margin-top:8px"></div>
   </section>
  </section>
-
  <section id="analysisPage" class="page">
   <section class="panel">
    <div class="section-title">تحلیل فروشگاه‌ها و سفارش‌ها</div>
@@ -235,25 +194,20 @@ body.dark .notice{background:#44351d;color:#ffe0a3;border-color:#765c2a}
    <div id="analysisResults"></div>
   </section>
  </section>
-
  <section id="settingsPage" class="page">
   <section class="panel">
    <div class="section-title">تنظیمات، اتصال و ذخیره‌سازی</div>
    <button id="themeBtn" class="full secondary">تغییر حالت روشن / تاریک</button>
    <button id="langBtn" class="full secondary">English / فارسی</button>
-   <div class="notice" style="margin-top:10px">اطلاعات پردازش‌شده و برنامه بازدید در حافظه همین دستگاه ذخیره می‌شوند. نقشه پایه و مسیریابی برای بارگذاری به اینترنت نیاز دارند. برای همگام‌سازی فایل‌های اصلی، اتصال Google Drive لازم است.</div>
+   <div class="notice" style="margin-top:10px">اطلاعات پردازش‌شده و برنامه بازدید در حافظه همین دستگاه ذخیره می‌شوند. نقشه پایه و مسیریابی برای بارگذاری به اینترنت نیاز دارند.</div>
    <div id="lastSync" style="font-size:11px;color:var(--muted);margin-top:9px">آخرین همگام‌سازی: ثبت نشده</div>
    <button id="clearLocalBtn" class="full secondary">پاک کردن داده‌های ذخیره‌شده این دستگاه</button>
   </section>
  </section>
 </main>
-
 <div id="modal">
  <div id="modalbox">
-  <div class="modalhead">
-   <b id="modalTitle">اطلاعات فروشگاه</b>
-   <button class="close" id="closeModal">×</button>
-  </div>
+  <div class="modalhead"><b id="modalTitle">اطلاعات فروشگاه</b><button class="close" id="closeModal">×</button></div>
   <div id="modalContent"></div>
  </div>
 </div>
