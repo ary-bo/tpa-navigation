@@ -80,7 +80,7 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
 input,select,textarea{font-size:16px!important}
 @media(min-width:900px){.wrap{max-width:900px;margin:0 auto}}
 /* Jalali sales date picker */
-.sales-date-wrap{position:relative;flex:1;min-width:145px}.sales-date-wrap input{width:100%;cursor:pointer;background:var(--card)}.jalali-picker{position:absolute;z-index:1200;top:calc(100% + 6px);right:0;width:min(320px,calc(100vw - 48px));padding:12px;background:var(--card);border:1px solid var(--bd);border-radius:14px;box-shadow:var(--sh);direction:rtl}.jalali-picker[hidden]{display:none}.jp-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:10px}.jp-head button,.jp-day,.jp-foot button{border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);min-height:34px;padding:4px 8px;font:inherit}.jp-month{font-weight:700;text-align:center;flex:1}.jp-week,.jp-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;text-align:center}.jp-week{font-size:11px;color:var(--mu);margin-bottom:5px}.jp-day{padding:5px 0;min-width:0}.jp-day:disabled{visibility:hidden}.jp-day.selected{background:var(--pr);color:var(--prt);border-color:var(--pr)}.jp-day.today{outline:1px solid var(--pr)}.jp-foot{display:flex;justify-content:space-between;gap:8px;margin-top:10px}.jp-foot button{flex:1;font-size:13px}
+.sales-date-wrap{position:relative;flex:1;min-width:145px}.sales-date-wrap input{width:100%;cursor:pointer;background:var(--card)}.jalali-picker{position:fixed;z-index:1200;top:auto;right:auto;width:min(320px,calc(100vw - 48px));padding:12px;background:var(--card);border:1px solid var(--bd);border-radius:14px;box-shadow:var(--sh);direction:rtl}.jalali-picker[hidden]{display:none}.jp-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:10px}.jp-head button,.jp-day,.jp-foot button{border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);min-height:34px;padding:4px 8px;font:inherit}.jp-month{font-weight:700;text-align:center;flex:1}.jp-week,.jp-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;text-align:center}.jp-week{font-size:11px;color:var(--mu);margin-bottom:5px}.jp-day{padding:5px 0;min-width:0}.jp-day:disabled{visibility:hidden}.jp-day.selected{background:var(--pr);color:var(--prt);border-color:var(--pr)}.jp-day.today{outline:1px solid var(--pr)}.jp-foot{display:flex;justify-content:space-between;gap:8px;margin-top:10px}.jp-foot button{flex:1;font-size:13px}
 /* audit form */
 #tform{position:fixed;inset:0;z-index:1500;background:var(--bg);color:var(--tx);display:flex;flex-direction:column;overflow:hidden}
 .tf-h{display:flex;gap:10px;align-items:center;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;background:linear-gradient(135deg,var(--pr),var(--pr2));color:#fff}
@@ -1998,6 +1998,10 @@ input,select,textarea{font-size:16px!important}
         const selected = input.value ? toStdDigits(input.value).split("/").map(Number) : todayJ;
         pickerState[id] = { year: selected[0], month: selected[1] };
         renderJalaliPicker(input, panel);
+        const rect = input.getBoundingClientRect();
+        const panelWidth = Math.min(320, window.innerWidth - 48);
+        panel.style.left = Math.max(12, Math.min(rect.left, window.innerWidth - panelWidth - 12)) + "px";
+        panel.style.top = Math.min(rect.bottom + 6, window.innerHeight - 360) + "px";
         panel.hidden = false;
         input.setAttribute("aria-expanded", "true");
       };
