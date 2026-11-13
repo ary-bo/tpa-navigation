@@ -1462,6 +1462,17 @@ input,select,textarea{font-size:16px!important}
           cells.push('<button type="button" class="jp-day' + (selected ? ' selected' : '') + (today ? ' today' : '') + '" data-day="' + day + '">' + label + '</button>');
         }
         panel.innerHTML = '<div class="jp-head"><button type="button" data-nav="-1" aria-label="' + (getLang() === "fa" ? "ماه قبل" : "Previous month") + '">‹</button><div class="jp-month">' + months[state.month - 1] + ' ' + state.year + '</div><button type="button" data-nav="1" aria-label="' + (getLang() === "fa" ? "ماه بعد" : "Next month") + '">›</button></div><div class="jp-week">' + week.map((d) => '<span>' + d + '</span>').join("") + '</div><div class="jp-days">' + cells.join("") + '</div><div class="jp-foot"><button type="button" data-action="today">' + (getLang() === "fa" ? "امروز" : "Today") + '</button><button type="button" data-action="clear">' + (getLang() === "fa" ? "پاک کردن" : "Clear") + '</button></div>';
+        panel.querySelectorAll("button[data-nav]").forEach((button) => {
+          button.onclick = (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const delta = Number(button.dataset.nav);
+            state.month += delta;
+            if (state.month < 1) { state.month = 12; state.year--; }
+            if (state.month > 12) { state.month = 1; state.year++; }
+            renderPicker(input, panel);
+          };
+        });
       };
       ["mapFrom", "mapTo"].forEach((id) => {
         const input = el.querySelector("#" + id), panel = el.querySelector("#" + id + "Picker"), key = input.dataset.range;
@@ -1480,20 +1491,17 @@ input,select,textarea{font-size:16px!important}
         };
         input.addEventListener("click", () => panel.hidden ? openPicker() : closePicker());
         panel.addEventListener("click", (event) => {
-          const nav = event.target.closest("[data-nav]"), day = event.target.closest("[data-day]"), action = event.target.closest("[data-action]");
-          if (nav) {
-            const state = pickerState[id];
-            state.month += Number(nav.dataset.nav);
-            if (state.month < 1) { state.month = 12; state.year--; }
-            if (state.month > 12) { state.month = 1; state.year++; }
-            renderPicker(input, panel);
-          } else if (day) {
+          const day = event.target.closest("[data-day]"), action = event.target.closest("[data-action]");
+          if (day) {
+            event.preventDefault();
             S.filters[key] = pickerState[id].year + "/" + padJ(pickerState[id].month) + "/" + padJ(Number(day.dataset.day));
             openFilters();
           } else if (action && action.dataset.action === "today") {
+            event.preventDefault();
             S.filters[key] = todayJ[0] + "/" + padJ(todayJ[1]) + "/" + padJ(todayJ[2]);
             openFilters();
           } else if (action && action.dataset.action === "clear") {
+            event.preventDefault();
             S.filters[key] = "";
             openFilters();
           }
