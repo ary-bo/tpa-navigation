@@ -2217,7 +2217,6 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
     const s = S.settings;
     v.innerHTML = `<div class="pad wrap"><div class="card"><label class="f">${t("language")}</label><select id="lg"><option value="fa" ${s.lang === "fa" ? "selected" : ""}>\u0641\u0627\u0631\u0633\u06CC</option><option value="en" ${s.lang === "en" ? "selected" : ""}>English</option></select>
   <label class="f">${t("theme")}</label><select id="th">${["auto", "light", "dark"].map((x) => `<option value="${x}" ${s.theme === x ? "selected" : ""}>${t(x)}</option>`).join("")}</select>
-  <label class="f">${t("clientId")}</label><input type="text" id="ci" value="${esc(s.clientId)}" dir="ltr"><label class="f">${t("folderId")}</label><input type="text" id="fi" value="${esc(s.folderId)}" dir="ltr"><label class="f">${t("tileUrl")}</label><input type="text" id="tl" value="${esc(s.tile)}" dir="ltr">
   <div class="row" style="margin-top:12px"><button class="btn pri" id="sv">${t("save")}</button></div></div>
   <div class="card"><h2>${t("pinTitle")}</h2><div class="mu">${t("pinNote")}</div><div class="row" style="margin-top:6px"><input type="password" inputmode="numeric" id="pn" maxlength="12" dir="ltr" placeholder="${esc(t("pinFormat"))}" style="flex:1"><button class="btn sm pri" id="pset">${t("save")}</button>${lsGet("pin", null) ? `<button class="btn sm dng" id="prm">${t("pinRemove")}</button>` : ""}</div></div>
   <div class="card"><button class="btn dng" id="c1">${t("clearCache")}</button><br><br><button class="btn dng" id="c2">${t("clearAll")}</button></div><div class="mu" style="text-align:center">${t("version")} ${VERSION}</div></div>`;
@@ -2233,7 +2232,7 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
       }
     };
     v.querySelector("#sv").onclick = () => {
-      Object.assign(S.settings, { lang: $("#lg").value, theme: $("#th").value, clientId: $("#ci").value.trim(), folderId: $("#fi").value.trim(), tile: $("#tl").value.trim() || "https://tile.openstreetmap.org/{z}/{x}/{y}.png" });
+      Object.assign(S.settings, { lang: $("#lg").value, theme: $("#th").value });
       saveSettings();
       setLang(S.settings.lang);
       applyTheme();
