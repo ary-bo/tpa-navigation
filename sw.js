@@ -1,12 +1,12 @@
 'use strict';
 
 /* TPA Navigation — Service Worker
-   Cache version: v11
+   Cache version: v12
    This version includes the app icon referenced by index.html and manifest. */
 
 const CACHE_PREFIX = 'tpa-navigation-';
-const SHELL_CACHE = `${CACHE_PREFIX}shell-v11`;
-const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-v11`;
+const SHELL_CACHE = `${CACHE_PREFIX}shell-v12`;
+const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-v12`;
 
 const APP_SHELL = [
   './',
