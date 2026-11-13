@@ -1,13 +1,88 @@
-const V = 'tpa-nav-v3';
-const LIBS = ['https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js', 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css', 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'];
-self.addEventListener('install', e => e.waitUntil(caches.open(V).then(c => Promise.allSettled(['./', 'index.html', ...LIBS].map(u => c.add(u)))).then(() => self.skipWaiting())));
-self.addEventListener('activate', e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== V).map(k => caches.delete(k)))).then(() => self.clients.claim())));
-self.addEventListener('fetch', e => {
-  const u = new URL(e.request.url);
-  if (e.request.method !== 'GET') return;
-  if (u.origin === location.origin) {
-    e.respondWith(fetch(e.request).then(r => { if (r.ok) { const c = r.clone(); caches.open(V).then(x => x.put(e.request, c)); } return r; }).catch(() => caches.match(e.request).then(h => h || caches.match('index.html'))));
-  } else if (u.hostname === 'cdnjs.cloudflare.com') {
-    e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request).then(r => { if (r.ok) { const c = r.clone(); caches.open(V).then(x => x.put(e.request, c)); } return r; })));
+/* TPA Navigation - resilient PWA cache */
+const CACHE_NAME = "tpa-navigation-v5";
+const APP_ASSETS = ["./", "./index.html", "./manifest.webmanifest"];
+const LIBRARY_HOSTS = new Set(["unpkg.com", "cdn.jsdelivr.net"]);
+
+self.addEventListener("install", event => {
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    // A missing optional shell URL must not prevent the Service Worker installing.
+    await Promise.allSettled(APP_ASSETS.map(async asset => {
+      try {
+        const response = await fetch(asset, { cache: "reload" });
+        if (response.ok) await cache.put(asset, response);
+      } catch (error) {
+        // The browser may still have an older cached shell to use.
+      }
+    }));
+    await self.skipWaiting();
+  })());
+});
+
+self.addEventListener("activate", event => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys
+      .filter(key => key.startsWith("tpa-navigation-") && key !== CACHE_NAME)
+      .map(key => caches.delete(key)));
+    await self.clients.claim();
+  })());
+});
+
+self.addEventListener("fetch", event => {
+  const request = event.request;
+  if (request.method !== "GET") return;
+
+  const url = new URL(request.url);
+
+  // App files: network first, cached copy when offline.
+  if (url.origin === self.location.origin) {
+    event.respondWith((async () => {
+      try {
+        const response = await fetch(request);
+        if (response && response.ok) {
+          const cache = await caches.open(CACHE_NAME);
+          await cache.put(request, response.clone());
+        }
+        return response;
+      } catch (error) {
+        const cached = await caches.match(request);
+        if (cached) return cached;
+        if (request.mode === "navigate") {
+          return (await caches.match("./index.html")) || Response.error();
+        }
+        return Response.error();
+      }
+    })());
+    return;
   }
+
+  // CDN libraries: cache-first for faster repeat loads, then network.
+  if (LIBRARY_HOSTS.has(url.hostname)) {
+    event.respondWith((async () => {
+      const cached = await caches.match(request);
+      if (cached) {
+        // Refresh the cache in the background when possible.
+        fetch(request).then(async response => {
+          if (response && response.ok) {
+            const cache = await caches.open(CACHE_NAME);
+            await cache.put(request, response);
+          }
+        }).catch(() => {});
+        return cached;
+      }
+      try {
+        const response = await fetch(request);
+        if (response && response.ok) {
+          const cache = await caches.open(CACHE_NAME);
+          await cache.put(request, response.clone());
+        }
+        return response;
+      } catch (error) {
+        return Response.error();
+      }
+    })());
+  }
+
+  // Google OAuth/Drive and map tiles remain online services and are not cached.
 });
