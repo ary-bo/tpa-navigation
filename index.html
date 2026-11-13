@@ -79,6 +79,19 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
 #lock .box{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:22px;width:100%;max-width:320px;display:flex;flex-direction:column;gap:10px;text-align:center;box-shadow:var(--sh)}#lock input{text-align:center;letter-spacing:6px}
 input,select,textarea{font-size:16px!important}
 @media(min-width:900px){.wrap{max-width:900px;margin:0 auto}}
+/* audit form */
+#tform{position:fixed;inset:0;z-index:1500;background:var(--bg);color:var(--tx);display:flex;flex-direction:column;overflow:hidden}
+.tf-h{display:flex;gap:10px;align-items:center;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;background:linear-gradient(135deg,var(--pr),var(--pr2));color:#fff}
+.tf-h .btn{background:rgba(255,255,255,.2);color:#fff;border:0}.tf-t{display:flex;flex-direction:column;min-width:0}.tf-t .mu{color:rgba(255,255,255,.85);font-size:12px}
+.tf-p{height:4px;background:var(--bd)}#tf-bar{height:100%;width:0;background:var(--g);transition:width .2s}.tf-pt{padding:4px 14px;font-size:12px}
+.tf-b{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:6px 14px 20px}.tf-sec{margin:18px 0 6px;color:var(--pr);font-size:15px}
+.tf-q{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin:8px 0}.tf-q.err{border-color:#dc2626}
+.tf-q[hidden],.tf-sec[hidden],.tf-q .er[hidden],.tf-q .warnm[hidden]{display:none}.tf-qt{font-weight:600;line-height:1.7}.tf-n{display:inline-block;min-width:24px;text-align:center;background:var(--prs);color:var(--pr);border-radius:8px;font-size:12px;padding:1px 6px}
+.tf-q .en{display:block;font-weight:400;font-size:12px;color:var(--mu);direction:ltr;text-align:left}.tf-h2{font-size:12px;margin:4px 0}.req{color:#dc2626;font-style:normal}
+.tf-q .opts{display:flex;flex-direction:column;gap:6px;margin-top:8px}.tf-q .opt{display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid var(--bd);border-radius:10px}
+.tf-q .opt input{margin-top:5px;width:18px;height:18px;flex:none}.tf-q input[type=text],.tf-q input[type=number],.tf-q textarea{width:100%;margin-top:8px;font-size:16px;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx)}
+.tf-q .er{color:#dc2626;font-size:13px;margin-top:6px}.tf-ll{margin-top:8px}
+.tf-f{display:flex;gap:8px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--bd);background:var(--card)}.tf-f .pri{flex:1}
 
 </style>
 </head>
@@ -92,6 +105,7 @@ input,select,textarea{font-size:16px!important}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 (() => {
+  // js/i18n.js
   var D = {
     fa: {
       app: "TPA Navigation",
@@ -406,6 +420,7 @@ input,select,textarea{font-size:16px!important}
     return (_b = (_a = D[lang][k]) != null ? _a : D.en[k]) != null ? _b : k;
   };
 
+  // js/util.js
   var FA = "\u06F0\u06F1\u06F2\u06F3\u06F4\u06F5\u06F6\u06F7\u06F8\u06F9";
   var AR = "\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669";
   var toStdDigits = (s) => String(s != null ? s : "").replace(/[۰-۹]/g, (c) => FA.indexOf(c)).replace(/[٠-٩]/g, (c) => AR.indexOf(c));
@@ -540,6 +555,7 @@ input,select,textarea{font-size:16px!important}
     return 12742e3 * Math.asin(Math.sqrt(a));
   }
 
+  // js/db.js
   var DB = "tpa-nav";
   var ST = "kv";
   var open = () => new Promise((res, rej) => {
@@ -590,6 +606,7 @@ input,select,textarea{font-size:16px!important}
     }
   };
 
+  // js/data.js
   var NAME_KEYWORDS = ["\u0633\u0648\u067E\u0631\u0645\u0627\u0631\u06A9\u062A", "\u0633\u0648\u067E\u0631 \u0645\u0627\u0631\u06A9\u062A", "\u0647\u0627\u06CC\u067E\u0631", "\u0633\u0648\u067E\u0631", "\u0645\u0627\u0631\u06A9\u062A", "\u0641\u0631\u0648\u0634\u06AF\u0627\u0647", "\u0645\u0648\u0627\u062F \u063A\u0630\u0627\u06CC\u06CC", "\u0627\u0631\u0632\u0627\u0646\u0633\u0631\u0627\u06CC"];
   var trimH = (h) => String(h != null ? h : "").trim();
   function findHeader(aoa, must, scan = 15) {
@@ -798,6 +815,304 @@ input,select,textarea{font-size:16px!important}
     return { stores: all, builtAt: today, stats: { jp: jp.length, salesOnly: salesOnly.size, orders: orderMap.size, droppedRows: sales.dropped } };
   }
 
+  // js/formq.js
+  var NONE = "None";
+  var OTHER = "\u0633\u0627\u06CC\u0631 \u0645\u0648\u0627\u0631\u062F (\u0647\u0645\u0631\u0627\u0647 \u0628\u0627 \u062A\u0648\u0636\u06CC\u062D)";
+  var EN = { "t": { "q1": "Sales representative (visitor)", "q2": "Customer code", "q3": "Does the store location need to be corrected?", "q3a": "Correct the store location on the map and record coordinates", "q4": "Visit outcome", "q5": "Visit note", "q5a": "Does the store know the person in charge of Ghoncheh orders?", "q6": "Does the store have the visitor's contact information?", "q7": "When was the visitor's last visit?", "q8": "Ghoncheh business status", "q8a": "Reason for not wanting to buy Ghoncheh", "q9": "At the visitor's last visit, did the store place an order?", "q10": "Reasons for not ordering", "q11": "Have you had any problems with Ghoncheh distribution?", "q11a": "Type of distribution problem", "q12": "Product return status", "q13": "Reasons for product returns", "q14": "Customer access to products", "q15": "Shelf arrangement and quality of cooking oil", "q16": "Total number of cooking-oil facings on the shelf", "q17": "Number of Ghoncheh product facings on the shelf", "q18": "Competitor brands observed in the cooking oil group", "q19": "Competitor brands observed in the frying oil group", "q20": "Competitor brands observed in the trans-fat-free oil group", "q21": "Competitor brands observed in the semi-solid oil group", "q22": "Competitor brands observed in the corn oil group", "q23": "Competitor brands observed in the olive oil group" }, "h": { "q2": "Enter the 7-digit code or part of the customer's name. Only customers in the selected visitor's Journey Plan are listed.", "q3a": 'Drag the pin to the exact store location, then press "Get Location". It confirms the position and records Latitude and Longitude. No text address is stored.', "q16": "Total facings of all cooking-oil rows. Whole number from 0 to 500.", "q17": "Ghoncheh facings only; must not exceed question 16. Shelf share is not calculated.", "q18": "Select every brand seen. If none was seen, select None.", "q19": "Select every brand seen. If none was seen, select None.", "q20": "Select every brand seen. If none was seen, select None.", "q21": "Select every brand seen. If none was seen, select None.", "q22": "Select every brand seen. If none was seen, select None.", "q23": "Select every brand seen. If none was seen, select None." }, "s": { "\u0628\u062E\u0634 \u0627\u0648\u0644: \u0627\u0637\u0644\u0627\u0639\u0627\u062A \u0628\u0627\u0632\u062F\u06CC\u062F \u0648 \u0645\u0634\u062A\u0631\u06CC": "Section 1: Visit and customer information", "\u0628\u062E\u0634 \u062F\u0648\u0645: \u0648\u0636\u0639\u06CC\u062A \u0647\u0645\u06A9\u0627\u0631\u06CC \u0628\u0627 \u063A\u0646\u0686\u0647 \u0648 \u0633\u0641\u0627\u0631\u0634\u200C\u06AF\u0630\u0627\u0631\u06CC": "Section 2: Cooperation status and ordering", "\u0628\u062E\u0634 \u0633\u0648\u0645: \u0639\u0645\u0644\u06A9\u0631\u062F \u062A\u0648\u0632\u06CC\u0639 \u0648 \u0645\u0631\u062C\u0648\u0639\u06CC": "Section 3: Distribution performance and returns", "\u0628\u062E\u0634 \u0686\u0647\u0627\u0631\u0645: \u062F\u0633\u062A\u0631\u0633\u06CC \u0645\u0634\u062A\u0631\u06CC \u0648 \u0642\u0641\u0633\u0647": "Section 4: Customer access and shelf", "\u0628\u062E\u0634 \u067E\u0646\u062C\u0645: \u0628\u0631\u0646\u062F\u0647\u0627\u06CC \u0631\u0642\u06CC\u0628 \u0645\u0634\u0627\u0647\u062F\u0647\u200C\u0634\u062F\u0647": "Section 5: Competitor brands observed", "\u0628\u062E\u0634 \u0634\u0634\u0645: \u06CC\u0627\u062F\u062F\u0627\u0634\u062A \u067E\u0627\u06CC\u0627\u0646\u06CC": "Section 6: Final note" }, "o": { "\u0628\u0644\u0647": "Yes", "\u062E\u06CC\u0631": "No", "\u0634\u062E\u0635 \u0645\u0633\u0626\u0648\u0644 \u062D\u0627\u0636\u0631 \u0628\u0648\u062F": "The person in charge was present", "\u0634\u062E\u0635 \u0645\u0633\u0626\u0648\u0644 \u062D\u0627\u0636\u0631 \u0646\u0628\u0648\u062F": "The person in charge was not present", "\u0641\u0631\u0648\u0634\u06AF\u0627\u0647 \u062A\u0639\u0637\u06CC\u0644 \u0628\u0648\u062F": "The store was closed", "\u0645\u0634\u062A\u0631\u06CC \u067E\u06CC\u062F\u0627 \u0646\u0634\u062F": "Customer not found", "\u0627\u06CC\u0646 \u0647\u0641\u062A\u0647": "This week", "\u0637\u06CC \u06F2 \u0647\u0641\u062A\u0647 \u0627\u062E\u06CC\u0631": "Within the last 2 weeks", "\u0637\u06CC \u06CC\u06A9 \u0645\u0627\u0647 \u0627\u062E\u06CC\u0631": "Within the last month", "\u0628\u06CC\u0634\u062A\u0631 \u0627\u0632 \u06CC\u06A9 \u0645\u0627\u0647 \u0642\u0628\u0644": "More than a month ago", "\u0647\u0631\u06AF\u0632": "Never", "\u0645\u0637\u0645\u0626\u0646 \u0646\u06CC\u0633\u062A\u0645": "Not sure", "\u062F\u0631 \u062D\u0627\u0644 \u062D\u0627\u0636\u0631 \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u063A\u0646\u0686\u0647 \u0631\u0627 \u0639\u0631\u0636\u0647 \u0645\u06CC\u200C\u06A9\u0646\u062F": "Currently sells Ghoncheh products", "\u0642\u0628\u0644\u0627\u064B \u0639\u0631\u0636\u0647 \u0645\u06CC\u200C\u06A9\u0631\u062F\u0645\u060C \u0648\u0644\u06CC \u0627\u0644\u0627\u0646 \u0646\u0647": "Used to sell, but not anymore", "\u0647\u06CC\u0686\u200C\u0648\u0642\u062A \u0639\u0631\u0636\u0647 \u0646\u06A9\u0631\u062F\u0647\u200C\u0627\u0645": "Never sold", "\u067E\u0627\u06CC\u06CC\u0646 \u0628\u0648\u062F\u0646 \u062A\u0642\u0627\u0636\u0627": "Low demand", "\u062D\u0627\u0634\u06CC\u0647 \u0633\u0648\u062F \u0646\u0627\u0645\u0646\u0627\u0633\u0628": "Poor profit margin", "\u0634\u0631\u0627\u06CC\u0637 \u067E\u0631\u062F\u0627\u062E\u062A \u0646\u0627\u0645\u0646\u0627\u0633\u0628": "Unfavorable payment terms", "\u0645\u0634\u06A9\u0644\u0627\u062A \u062A\u0648\u0632\u06CC\u0639 \u0648 \u062A\u062D\u0648\u06CC\u0644": "Distribution and delivery problems", "\u06A9\u0645\u0628\u0648\u062F \u06CC\u0627 \u0639\u062F\u0645 \u062A\u0623\u0645\u06CC\u0646 \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u0645\u0648\u0631\u062F\u0646\u06CC\u0627\u0632": "Shortage or non-supply of required products", "\u0633\u0627\u06CC\u0631 \u0645\u0648\u0627\u0631\u062F (\u0647\u0645\u0631\u0627\u0647 \u0628\u0627 \u062A\u0648\u0636\u06CC\u062D)": "Other (please explain)", "\u0645\u0648\u062C\u0648\u062F\u06CC \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u063A\u0646\u0686\u0647 \u062F\u0631 \u0641\u0631\u0648\u0634\u06AF\u0627\u0647 \u06A9\u0627\u0641\u06CC \u0628\u0648\u062F": "The store had enough Ghoncheh stock", "\u0645\u062D\u0635\u0648\u0644 \u0645\u0648\u0631\u062F\u0646\u06CC\u0627\u0632 \u0645\u0648\u062C\u0648\u062F \u0646\u0628\u0648\u062F": "The needed product was unavailable", "\u062D\u0627\u0634\u06CC\u0647 \u0633\u0648\u062F \u067E\u06CC\u0634\u0646\u0647\u0627\u062F\u06CC \u0631\u0642\u0628\u0627 \u0628\u0647\u062A\u0631 \u0628\u0648\u062F": "Competitors offered a better profit margin", "\u0634\u0631\u0627\u06CC\u0637 \u067E\u0631\u062F\u0627\u062E\u062A \u0631\u0642\u0628\u0627 \u0628\u0647\u062A\u0631 \u0628\u0648\u062F": "Competitors offered better payment terms", "\u0627\u0632 \u0628\u0627\u0632\u0627\u0631 \u0622\u0632\u0627\u062F \u0628\u0627 \u0642\u06CC\u0645\u062A \u0645\u0646\u0627\u0633\u0628\u200C\u062A\u0631 \u062E\u0631\u06CC\u062F \u06A9\u0631\u062F\u0645": "Bought from the open market at a better price", "\u062A\u062C\u0631\u0628\u0647 \u0646\u0627\u0645\u0646\u0627\u0633\u0628 \u062E\u0631\u06CC\u062F \u0642\u0628\u0644\u06CC": "Bad previous purchase experience", "\u0645\u0634\u062A\u0631\u06CC \u06CC\u0627 \u062A\u0642\u0627\u0636\u0627\u06CC \u06A9\u0627\u0641\u06CC \u0628\u0631\u0627\u06CC \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u0646\u062F\u0627\u0634\u062A\u0645": "Not enough customers or demand for the products", "\u062E\u06CC\u0631\u060C \u0647\u0645\u0647\u200C\u0686\u06CC\u0632 \u062E\u0648\u0628 \u0628\u0648\u062F\u0647 \u0627\u0633\u062A": "No, everything has been fine", "\u0628\u0644\u0647\u060C \u0645\u0634\u06A9\u0644 \u062F\u0627\u0634\u062A\u0647\u200C\u0627\u0645": "Yes, I have had problems", "\u062A\u0623\u062E\u06CC\u0631 \u062F\u0631 \u062A\u062D\u0648\u06CC\u0644": "Late delivery", "\u0646\u0627\u0642\u0635 \u0628\u0648\u062F\u0646 \u0633\u0641\u0627\u0631\u0634": "Incomplete order", "\u0627\u0634\u062A\u0628\u0627\u0647 \u0628\u0648\u062F\u0646 \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u062A\u062D\u0648\u06CC\u0644\u06CC": "Wrong products delivered", "\u0622\u0633\u06CC\u0628\u200C\u062F\u06CC\u062F\u06AF\u06CC \u0645\u062D\u0635\u0648\u0644\u0627\u062A": "Damaged products", "\u0645\u063A\u0627\u06CC\u0631\u062A \u0642\u06CC\u0645\u062A": "Price discrepancy", "\u062D\u0627\u0634\u06CC\u0647 \u0633\u0648\u062F \u06CC\u0627 \u062A\u0648\u0627\u0641\u0642": "Profit margin or agreement issue", "\u0647\u06CC\u0686\u200C\u06A9\u062F\u0627\u0645 \u0627\u0632 \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u0645\u0631\u062C\u0648\u0639 \u0646\u0634\u062F\u0647 \u0627\u0633\u062A": "None of the products were returned", "\u0628\u062E\u0634\u06CC \u0627\u0632 \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u0645\u0631\u062C\u0648\u0639 \u0634\u062F\u0647 \u0627\u0633\u062A": "Some products were returned", "\u062A\u0645\u0627\u0645 \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u0645\u0631\u062C\u0648\u0639 \u0634\u062F\u0647 \u0627\u0633\u062A": "All products were returned", "\u0645\u062D\u0635\u0648\u0644 \u0627\u0634\u062A\u0628\u0627\u0647 \u062A\u062D\u0648\u06CC\u0644 \u062F\u0627\u062F\u0647 \u0634\u062F\u0647 \u0627\u0633\u062A": "A wrong product was delivered", "\u0633\u0641\u0627\u0631\u0634 \u0646\u0627\u0642\u0635 \u06CC\u0627 \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u0622\u0633\u06CC\u0628\u200C\u062F\u06CC\u062F\u0647 \u062A\u062D\u0648\u06CC\u0644 \u062F\u0627\u062F\u0647 \u0634\u062F\u0647\u200C\u0627\u0646\u062F": "Incomplete order or damaged products delivered", "\u0633\u0641\u0627\u0631\u0634 \u062F\u0631 \u0631\u0648\u0632 \u062A\u0648\u0627\u0641\u0642\u200C\u0634\u062F\u0647 \u062A\u062D\u0648\u06CC\u0644 \u0646\u0634\u062F\u0647 \u0627\u0633\u062A": "Order was not delivered on the agreed day", "\u0642\u06CC\u0645\u062A \u0628\u0627 \u062A\u0648\u0627\u0641\u0642 \u0645\u063A\u0627\u06CC\u0631\u062A \u062F\u0627\u0634\u062A\u0647 \u0627\u0633\u062A": "Price differed from the agreement", "\u0647\u0646\u06AF\u0627\u0645 \u062A\u062D\u0648\u06CC\u0644 \u0648\u062C\u0647 \u0646\u0642\u062F \u06A9\u0627\u0641\u06CC \u0648\u062C\u0648\u062F \u0646\u062F\u0627\u0634\u062A\u0647 \u0627\u0633\u062A": "Not enough cash at delivery", "\u0645\u0648\u062C\u0648\u062F\u06CC \u0646\u0642\u062F\u06CC \u0641\u0631\u0648\u0634\u06AF\u0627\u0647 \u062F\u0631 \u0633\u0627\u0639\u0627\u062A \u067E\u0627\u06CC\u0627\u0646\u06CC \u0631\u0648\u0632 \u062A\u0645\u0627\u0645 \u0634\u062F\u0647 \u0627\u0633\u062A": "The store ran out of cash late in the day", "\u0642\u0627\u0628\u0644 \u062F\u0633\u062A\u0631\u0633 \u0627\u0633\u062A": "Accessible", "\u0642\u0627\u0628\u0644 \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A": "Not accessible", "\u0645\u0646\u0627\u0633\u0628\u061B \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u0645\u0646\u0638\u0645\u060C \u0642\u0627\u0628\u0644 \u0645\u0634\u0627\u0647\u062F\u0647 \u0648 \u062F\u0631 \u062F\u0633\u062A\u0631\u0633 \u0647\u0633\u062A\u0646\u062F": "Good: products are neat, visible and reachable", "\u0646\u0627\u0645\u0646\u0627\u0633\u0628\u061B \u0686\u06CC\u062F\u0645\u0627\u0646 \u0646\u0627\u0645\u0646\u0638\u0645 \u06CC\u0627 \u062F\u0633\u062A\u0631\u0633\u06CC \u0648 \u0645\u0634\u0627\u0647\u062F\u0647 \u062F\u0634\u0648\u0627\u0631 \u0627\u0633\u062A": "Poor: untidy layout or hard to see or reach", "\u062E\u0631\u06CC\u062F \u0627\u0632 \u0628\u0627\u0632\u0627\u0631 \u0622\u0632\u0627\u062F": "Buying from the open market" } };
+  var hideAll = (a) => ["\u0641\u0631\u0648\u0634\u06AF\u0627\u0647 \u062A\u0639\u0637\u06CC\u0644 \u0628\u0648\u062F", "\u0645\u0634\u062A\u0631\u06CC \u067E\u06CC\u062F\u0627 \u0646\u0634\u062F"].includes(a.q4);
+  var absent = (a) => a.q4 === "\u0634\u062E\u0635 \u0645\u0633\u0626\u0648\u0644 \u062D\u0627\u0636\u0631 \u0646\u0628\u0648\u062F";
+  var visitBlock = (a) => !hideAll(a) && !absent(a);
+  var obsBlock = (a) => !hideAll(a);
+  var q9show = (a) => visitBlock(a) && a.q8 === "\u062F\u0631 \u062D\u0627\u0644 \u062D\u0627\u0636\u0631 \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u063A\u0646\u0686\u0647 \u0631\u0627 \u0639\u0631\u0636\u0647 \u0645\u06CC\u200C\u06A9\u0646\u062F" && ["\u0627\u06CC\u0646 \u0647\u0641\u062A\u0647", "\u0637\u06CC \u06F2 \u0647\u0641\u062A\u0647 \u0627\u062E\u06CC\u0631", "\u0637\u06CC \u06CC\u06A9 \u0645\u0627\u0647 \u0627\u062E\u06CC\u0631", "\u0628\u06CC\u0634\u062A\u0631 \u0627\u0632 \u06CC\u06A9 \u0645\u0627\u0647 \u0642\u0628\u0644"].includes(a.q7);
+  var brands = {
+    q18: ["Ladan", "Oila", "Familia", "Kambiz", "Tabiat", "Haily", "Aftab"],
+    q19: ["Bahar", "Oila", "Familia", "Kambiz", "Tabiat", "Haily", "Aftab"],
+    q20: ["Bahar", "Oila", "Familia", "Tabiat", "Haily"],
+    q21: ["Ladan", "Oila", "Familia", "Tabiat", "Haily"],
+    q22: ["Ladan", "Oila", "Familia", "Tabiat", "Haily", "Pik", "Aseel"],
+    q23: ["Ladan", "Oila", "Aseel", "Barzandeh", "Vezhen"]
+  };
+  var Q = [
+    { sec: "\u0628\u062E\u0634 \u0627\u0648\u0644: \u0627\u0637\u0644\u0627\u0639\u0627\u062A \u0628\u0627\u0632\u062F\u06CC\u062F \u0648 \u0645\u0634\u062A\u0631\u06CC" },
+    { id: "q1", n: "\u06F1", t: "\u0646\u0645\u0627\u06CC\u0646\u062F\u0647 \u0641\u0631\u0648\u0634 (\u0648\u06CC\u0632\u06CC\u062A\u0648\u0631)", type: "visitor" },
+    { id: "q2", n: "\u06F2", t: "\u06A9\u062F \u0645\u0634\u062A\u0631\u06CC", type: "customer", hint: "\u06A9\u062F \u06F7 \u0631\u0642\u0645\u06CC \u06CC\u0627 \u0628\u062E\u0634\u06CC \u0627\u0632 \u0646\u0627\u0645 \u0645\u0634\u062A\u0631\u06CC \u0631\u0627 \u0628\u0646\u0648\u06CC\u0633\u06CC\u062F. \u0641\u0642\u0637 \u0645\u0634\u062A\u0631\u06CC\u0627\u0646 Journey Plan \u0647\u0645\u0627\u0646 \u0648\u06CC\u0632\u06CC\u062A\u0648\u0631 \u0646\u0645\u0627\u06CC\u0634 \u062F\u0627\u062F\u0647 \u0645\u06CC\u200C\u0634\u0648\u0646\u062F." },
+    { id: "q3", n: "\u06F3", t: "\u0622\u06CC\u0627 \u0646\u06CC\u0627\u0632 \u0628\u0647 \u0627\u0635\u0644\u0627\u062D \u0645\u0648\u0642\u0639\u06CC\u062A \u0645\u06A9\u0627\u0646\u06CC \u0648\u062C\u0648\u062F \u062F\u0627\u0631\u062F\u061F", type: "single", opts: ["\u0628\u0644\u0647", "\u062E\u06CC\u0631"] },
+    { id: "q3a", n: "\u06F3A / \u06F3B", t: "\u0627\u0635\u0644\u0627\u062D \u0645\u0648\u0642\u0639\u06CC\u062A \u0645\u06A9\u0627\u0646\u06CC \u0631\u0648\u06CC \u0646\u0642\u0634\u0647 \u0648 \u062B\u0628\u062A \u0645\u062E\u062A\u0635\u0627\u062A", type: "map", show: (a) => a.q3 === "\u0628\u0644\u0647", hint: "\u067E\u06CC\u0646 \u0631\u0627 \u0631\u0648\u06CC \u0645\u062D\u0644 \u062F\u0642\u06CC\u0642 \u0641\u0631\u0648\u0634\u06AF\u0627\u0647 \u0628\u06A9\u0634\u06CC\u062F\u060C \u0633\u067E\u0633 \xABGet Location\xBB \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F. \u0627\u06CC\u0646 \u062F\u06A9\u0645\u0647 \u0645\u0648\u0642\u0639\u06CC\u062A \u0631\u0627 \u062A\u0623\u06CC\u06CC\u062F \u0648 Latitude \u0648 Longitude \u0631\u0627 \u062B\u0628\u062A \u0645\u06CC\u200C\u06A9\u0646\u062F. \u0622\u062F\u0631\u0633 \u0645\u062A\u0646\u06CC \u0630\u062E\u06CC\u0631\u0647 \u0646\u0645\u06CC\u200C\u0634\u0648\u062F." },
+    { id: "q4", n: "\u06F4", t: "\u0646\u062A\u06CC\u062C\u0647 \u0645\u0631\u0627\u062C\u0639\u0647", type: "single", opts: ["\u0634\u062E\u0635 \u0645\u0633\u0626\u0648\u0644 \u062D\u0627\u0636\u0631 \u0628\u0648\u062F", "\u0634\u062E\u0635 \u0645\u0633\u0626\u0648\u0644 \u062D\u0627\u0636\u0631 \u0646\u0628\u0648\u062F", "\u0641\u0631\u0648\u0634\u06AF\u0627\u0647 \u062A\u0639\u0637\u06CC\u0644 \u0628\u0648\u062F", "\u0645\u0634\u062A\u0631\u06CC \u067E\u06CC\u062F\u0627 \u0646\u0634\u062F"] },
+    { id: "q5a", n: "\u06F5", t: "\u0622\u06CC\u0627 \u0641\u0631\u0648\u0634\u06AF\u0627\u0647 \u0645\u0633\u0626\u0648\u0644 \u0633\u0641\u0627\u0631\u0634\u0627\u062A \u063A\u0646\u0686\u0647 \u0631\u0627 \u0645\u06CC\u200C\u0634\u0646\u0627\u0633\u062F\u061F", type: "single", opts: ["\u0628\u0644\u0647", "\u062E\u06CC\u0631"], show: visitBlock },
+    { id: "q6", n: "\u06F6", t: "\u0622\u06CC\u0627 \u0641\u0631\u0648\u0634\u06AF\u0627\u0647 \u0627\u0637\u0644\u0627\u0639\u0627\u062A \u062A\u0645\u0627\u0633 \u0648\u06CC\u0632\u06CC\u062A\u0648\u0631 \u0631\u0627 \u062F\u0627\u0631\u062F\u061F", type: "single", opts: ["\u0628\u0644\u0647", "\u062E\u06CC\u0631"], show: visitBlock },
+    { id: "q7", n: "\u06F7", t: "\u0622\u062E\u0631\u06CC\u0646 \u0628\u0627\u0632\u062F\u06CC\u062F \u0648\u06CC\u0632\u06CC\u062A\u0648\u0631 \u0686\u0647 \u0632\u0645\u0627\u0646\u06CC \u0628\u0648\u062F\u0647 \u0627\u0633\u062A\u061F", type: "single", opts: ["\u0627\u06CC\u0646 \u0647\u0641\u062A\u0647", "\u0637\u06CC \u06F2 \u0647\u0641\u062A\u0647 \u0627\u062E\u06CC\u0631", "\u0637\u06CC \u06CC\u06A9 \u0645\u0627\u0647 \u0627\u062E\u06CC\u0631", "\u0628\u06CC\u0634\u062A\u0631 \u0627\u0632 \u06CC\u06A9 \u0645\u0627\u0647 \u0642\u0628\u0644", "\u0647\u0631\u06AF\u0632", "\u0645\u0637\u0645\u0626\u0646 \u0646\u06CC\u0633\u062A\u0645"], show: visitBlock },
+    { sec: "\u0628\u062E\u0634 \u062F\u0648\u0645: \u0648\u0636\u0639\u06CC\u062A \u0647\u0645\u06A9\u0627\u0631\u06CC \u0628\u0627 \u063A\u0646\u0686\u0647 \u0648 \u0633\u0641\u0627\u0631\u0634\u200C\u06AF\u0630\u0627\u0631\u06CC", show: visitBlock },
+    { id: "q8", n: "\u06F8", t: "\u0648\u0636\u0639\u06CC\u062A \u06A9\u0633\u0628\u200C\u0648\u06A9\u0627\u0631 \u063A\u0646\u0686\u0647", type: "single", opts: ["\u062F\u0631 \u062D\u0627\u0644 \u062D\u0627\u0636\u0631 \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u063A\u0646\u0686\u0647 \u0631\u0627 \u0639\u0631\u0636\u0647 \u0645\u06CC\u200C\u06A9\u0646\u062F", "\u0642\u0628\u0644\u0627\u064B \u0639\u0631\u0636\u0647 \u0645\u06CC\u200C\u06A9\u0631\u062F\u0645\u060C \u0648\u0644\u06CC \u0627\u0644\u0627\u0646 \u0646\u0647", "\u0647\u06CC\u0686\u200C\u0648\u0642\u062A \u0639\u0631\u0636\u0647 \u0646\u06A9\u0631\u062F\u0647\u200C\u0627\u0645"], show: visitBlock },
+    { id: "q8a", n: "\u06F8A", t: "\u0639\u0644\u062A \u0639\u062F\u0645 \u062A\u0645\u0627\u06CC\u0644 \u0628\u0647 \u062E\u0631\u06CC\u062F \u063A\u0646\u0686\u0647", type: "multi", opts: ["\u067E\u0627\u06CC\u06CC\u0646 \u0628\u0648\u062F\u0646 \u062A\u0642\u0627\u0636\u0627", "\u062D\u0627\u0634\u06CC\u0647 \u0633\u0648\u062F \u0646\u0627\u0645\u0646\u0627\u0633\u0628", "\u0634\u0631\u0627\u06CC\u0637 \u067E\u0631\u062F\u0627\u062E\u062A \u0646\u0627\u0645\u0646\u0627\u0633\u0628", "\u0645\u0634\u06A9\u0644\u0627\u062A \u062A\u0648\u0632\u06CC\u0639 \u0648 \u062A\u062D\u0648\u06CC\u0644", "\u06A9\u0645\u0628\u0648\u062F \u06CC\u0627 \u0639\u062F\u0645 \u062A\u0623\u0645\u06CC\u0646 \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u0645\u0648\u0631\u062F\u0646\u06CC\u0627\u0632", "\u062E\u0631\u06CC\u062F \u0627\u0632 \u0628\u0627\u0632\u0627\u0631 \u0622\u0632\u0627\u062F", OTHER], show: (a) => visitBlock(a) && (a.q8 === "\u0642\u0628\u0644\u0627\u064B \u0639\u0631\u0636\u0647 \u0645\u06CC\u200C\u06A9\u0631\u062F\u0645\u060C \u0648\u0644\u06CC \u0627\u0644\u0627\u0646 \u0646\u0647" || a.q8 === "\u0647\u06CC\u0686\u200C\u0648\u0642\u062A \u0639\u0631\u0636\u0647 \u0646\u06A9\u0631\u062F\u0647\u200C\u0627\u0645") },
+    { id: "q9", n: "\u06F9", t: "\u0622\u06CC\u0627 \u062F\u0631 \u0622\u062E\u0631\u06CC\u0646 \u0645\u0631\u0627\u062C\u0639\u0647 \u0648\u06CC\u0632\u06CC\u062A\u0648\u0631 \u0641\u0631\u0648\u0634\u06AF\u0627\u0647 \u0633\u0641\u0627\u0631\u0634\u06CC \u062B\u0628\u062A \u06A9\u0631\u062F\u0647\u061F", type: "single", opts: ["\u0628\u0644\u0647", "\u062E\u06CC\u0631"], show: q9show },
+    { id: "q10", n: "\u06F1\u06F0", t: "\u062F\u0644\u0627\u06CC\u0644 \u0639\u062F\u0645 \u0633\u0641\u0627\u0631\u0634", type: "multi", opts: ["\u0645\u0648\u062C\u0648\u062F\u06CC \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u063A\u0646\u0686\u0647 \u062F\u0631 \u0641\u0631\u0648\u0634\u06AF\u0627\u0647 \u06A9\u0627\u0641\u06CC \u0628\u0648\u062F", "\u0645\u062D\u0635\u0648\u0644 \u0645\u0648\u0631\u062F\u0646\u06CC\u0627\u0632 \u0645\u0648\u062C\u0648\u062F \u0646\u0628\u0648\u062F", "\u062D\u0627\u0634\u06CC\u0647 \u0633\u0648\u062F \u067E\u06CC\u0634\u0646\u0647\u0627\u062F\u06CC \u0631\u0642\u0628\u0627 \u0628\u0647\u062A\u0631 \u0628\u0648\u062F", "\u0634\u0631\u0627\u06CC\u0637 \u067E\u0631\u062F\u0627\u062E\u062A \u0631\u0642\u0628\u0627 \u0628\u0647\u062A\u0631 \u0628\u0648\u062F", "\u0627\u0632 \u0628\u0627\u0632\u0627\u0631 \u0622\u0632\u0627\u062F \u0628\u0627 \u0642\u06CC\u0645\u062A \u0645\u0646\u0627\u0633\u0628\u200C\u062A\u0631 \u062E\u0631\u06CC\u062F \u06A9\u0631\u062F\u0645", "\u062A\u062C\u0631\u0628\u0647 \u0646\u0627\u0645\u0646\u0627\u0633\u0628 \u062E\u0631\u06CC\u062F \u0642\u0628\u0644\u06CC", "\u0645\u0634\u062A\u0631\u06CC \u06CC\u0627 \u062A\u0642\u0627\u0636\u0627\u06CC \u06A9\u0627\u0641\u06CC \u0628\u0631\u0627\u06CC \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u0646\u062F\u0627\u0634\u062A\u0645", OTHER], show: (a) => q9show(a) && a.q9 === "\u062E\u06CC\u0631" },
+    { sec: "\u0628\u062E\u0634 \u0633\u0648\u0645: \u0639\u0645\u0644\u06A9\u0631\u062F \u062A\u0648\u0632\u06CC\u0639 \u0648 \u0645\u0631\u062C\u0648\u0639\u06CC", show: visitBlock },
+    { id: "q11", n: "\u06F1\u06F1", t: "\u0622\u06CC\u0627 \u062F\u0631 \u0627\u0631\u062A\u0628\u0627\u0637 \u0628\u0627 \u067E\u062E\u0634 \u063A\u0646\u0686\u0647 \u0645\u0634\u06A9\u0644\u06CC \u062F\u0627\u0634\u062A\u0647\u200C\u0627\u06CC\u062F\u061F", type: "single", opts: ["\u062E\u06CC\u0631\u060C \u0647\u0645\u0647\u200C\u0686\u06CC\u0632 \u062E\u0648\u0628 \u0628\u0648\u062F\u0647 \u0627\u0633\u062A", "\u0628\u0644\u0647\u060C \u0645\u0634\u06A9\u0644 \u062F\u0627\u0634\u062A\u0647\u200C\u0627\u0645"], show: (a) => visitBlock(a) && (a.q8 === void 0 || a.q8 === "\u062F\u0631 \u062D\u0627\u0644 \u062D\u0627\u0636\u0631 \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u063A\u0646\u0686\u0647 \u0631\u0627 \u0639\u0631\u0636\u0647 \u0645\u06CC\u200C\u06A9\u0646\u062F") },
+    { id: "q11a", n: "\u06F1\u06F1A", t: "\u0646\u0648\u0639 \u0645\u0634\u06A9\u0644 \u062F\u0631 \u062A\u0648\u0632\u06CC\u0639", type: "multi", opts: ["\u062A\u0623\u062E\u06CC\u0631 \u062F\u0631 \u062A\u062D\u0648\u06CC\u0644", "\u0646\u0627\u0642\u0635 \u0628\u0648\u062F\u0646 \u0633\u0641\u0627\u0631\u0634", "\u0627\u0634\u062A\u0628\u0627\u0647 \u0628\u0648\u062F\u0646 \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u062A\u062D\u0648\u06CC\u0644\u06CC", "\u0622\u0633\u06CC\u0628\u200C\u062F\u06CC\u062F\u06AF\u06CC \u0645\u062D\u0635\u0648\u0644\u0627\u062A", "\u0645\u063A\u0627\u06CC\u0631\u062A \u0642\u06CC\u0645\u062A", "\u062D\u0627\u0634\u06CC\u0647 \u0633\u0648\u062F \u06CC\u0627 \u062A\u0648\u0627\u0641\u0642", OTHER], show: (a) => visitBlock(a) && a.q11 === "\u0628\u0644\u0647\u060C \u0645\u0634\u06A9\u0644 \u062F\u0627\u0634\u062A\u0647\u200C\u0627\u0645" },
+    { id: "q12", n: "\u06F1\u06F2", t: "\u0648\u0636\u0639\u06CC\u062A \u0645\u0631\u062C\u0648\u0639\u06CC \u0645\u062D\u0635\u0648\u0644\u0627\u062A", type: "single", opts: ["\u0647\u06CC\u0686\u200C\u06A9\u062F\u0627\u0645 \u0627\u0632 \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u0645\u0631\u062C\u0648\u0639 \u0646\u0634\u062F\u0647 \u0627\u0633\u062A", "\u0628\u062E\u0634\u06CC \u0627\u0632 \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u0645\u0631\u062C\u0648\u0639 \u0634\u062F\u0647 \u0627\u0633\u062A", "\u062A\u0645\u0627\u0645 \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u0645\u0631\u062C\u0648\u0639 \u0634\u062F\u0647 \u0627\u0633\u062A"], show: (a) => visitBlock(a) && (a.q8 === void 0 || a.q8 === "\u062F\u0631 \u062D\u0627\u0644 \u062D\u0627\u0636\u0631 \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u063A\u0646\u0686\u0647 \u0631\u0627 \u0639\u0631\u0636\u0647 \u0645\u06CC\u200C\u06A9\u0646\u062F") && a.q11 !== "\u062E\u06CC\u0631\u060C \u0647\u0645\u0647\u200C\u0686\u06CC\u0632 \u062E\u0648\u0628 \u0628\u0648\u062F\u0647 \u0627\u0633\u062A" },
+    { id: "q13", n: "\u06F1\u06F3", t: "\u062F\u0644\u0627\u06CC\u0644 \u0645\u0631\u062C\u0648\u0639\u06CC \u0645\u062D\u0635\u0648\u0644\u0627\u062A", type: "multi", opts: ["\u0645\u062D\u0635\u0648\u0644 \u0627\u0634\u062A\u0628\u0627\u0647 \u062A\u062D\u0648\u06CC\u0644 \u062F\u0627\u062F\u0647 \u0634\u062F\u0647 \u0627\u0633\u062A", "\u0633\u0641\u0627\u0631\u0634 \u0646\u0627\u0642\u0635 \u06CC\u0627 \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u0622\u0633\u06CC\u0628\u200C\u062F\u06CC\u062F\u0647 \u062A\u062D\u0648\u06CC\u0644 \u062F\u0627\u062F\u0647 \u0634\u062F\u0647\u200C\u0627\u0646\u062F", "\u0633\u0641\u0627\u0631\u0634 \u062F\u0631 \u0631\u0648\u0632 \u062A\u0648\u0627\u0641\u0642\u200C\u0634\u062F\u0647 \u062A\u062D\u0648\u06CC\u0644 \u0646\u0634\u062F\u0647 \u0627\u0633\u062A", "\u0642\u06CC\u0645\u062A \u0628\u0627 \u062A\u0648\u0627\u0641\u0642 \u0645\u063A\u0627\u06CC\u0631\u062A \u062F\u0627\u0634\u062A\u0647 \u0627\u0633\u062A", "\u0647\u0646\u06AF\u0627\u0645 \u062A\u062D\u0648\u06CC\u0644 \u0648\u062C\u0647 \u0646\u0642\u062F \u06A9\u0627\u0641\u06CC \u0648\u062C\u0648\u062F \u0646\u062F\u0627\u0634\u062A\u0647 \u0627\u0633\u062A", "\u0645\u0648\u062C\u0648\u062F\u06CC \u0646\u0642\u062F\u06CC \u0641\u0631\u0648\u0634\u06AF\u0627\u0647 \u062F\u0631 \u0633\u0627\u0639\u0627\u062A \u067E\u0627\u06CC\u0627\u0646\u06CC \u0631\u0648\u0632 \u062A\u0645\u0627\u0645 \u0634\u062F\u0647 \u0627\u0633\u062A", OTHER], show: (a) => visitBlock(a) && (a.q12 === "\u0628\u062E\u0634\u06CC \u0627\u0632 \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u0645\u0631\u062C\u0648\u0639 \u0634\u062F\u0647 \u0627\u0633\u062A" || a.q12 === "\u062A\u0645\u0627\u0645 \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u0645\u0631\u062C\u0648\u0639 \u0634\u062F\u0647 \u0627\u0633\u062A") },
+    { sec: "\u0628\u062E\u0634 \u0686\u0647\u0627\u0631\u0645: \u062F\u0633\u062A\u0631\u0633\u06CC \u0645\u0634\u062A\u0631\u06CC \u0648 \u0642\u0641\u0633\u0647", show: obsBlock },
+    { id: "q14", n: "\u06F1\u06F4", t: "\u062F\u0633\u062A\u0631\u0633\u06CC \u0645\u0634\u062A\u0631\u06CC \u0628\u0647 \u0645\u062D\u0635\u0648\u0644\u0627\u062A", type: "single", opts: ["\u0642\u0627\u0628\u0644 \u062F\u0633\u062A\u0631\u0633 \u0627\u0633\u062A", "\u0642\u0627\u0628\u0644 \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A"], show: obsBlock },
+    { id: "q15", n: "\u06F1\u06F5", t: "\u0648\u0636\u0639\u06CC\u062A \u0686\u06CC\u062F\u0645\u0627\u0646 \u0648 \u06A9\u06CC\u0641\u06CC\u062A \u0642\u0641\u0633\u0647 \u0631\u0648\u063A\u0646 \u062E\u0648\u0631\u0627\u06A9\u06CC", type: "single", opts: ["\u0645\u0646\u0627\u0633\u0628\u061B \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u0645\u0646\u0638\u0645\u060C \u0642\u0627\u0628\u0644 \u0645\u0634\u0627\u0647\u062F\u0647 \u0648 \u062F\u0631 \u062F\u0633\u062A\u0631\u0633 \u0647\u0633\u062A\u0646\u062F", "\u0646\u0627\u0645\u0646\u0627\u0633\u0628\u061B \u0686\u06CC\u062F\u0645\u0627\u0646 \u0646\u0627\u0645\u0646\u0638\u0645 \u06CC\u0627 \u062F\u0633\u062A\u0631\u0633\u06CC \u0648 \u0645\u0634\u0627\u0647\u062F\u0647 \u062F\u0634\u0648\u0627\u0631 \u0627\u0633\u062A"], show: obsBlock },
+    { id: "q16", n: "\u06F1\u06F6", t: "\u062A\u0639\u062F\u0627\u062F \u06A9\u0644 Facing \u0631\u0648\u063A\u0646 \u062E\u0648\u0631\u0627\u06A9\u06CC \u062F\u0631 \u0642\u0641\u0633\u0647", type: "num", hint: "\u062A\u0639\u062F\u0627\u062F \u06A9\u0644 Facing \u062A\u0645\u0627\u0645 \u0631\u062F\u06CC\u0641\u200C\u0647\u0627\u06CC \u0631\u0648\u063A\u0646 \u062E\u0648\u0631\u0627\u06A9\u06CC. \u0639\u062F\u062F \u0635\u062D\u06CC\u062D \u0628\u06CC\u0646 \u06F0 \u0648 \u06F5\u06F0\u06F0.", show: obsBlock },
+    { id: "q17", n: "\u06F1\u06F7", t: "\u062A\u0639\u062F\u0627\u062F Facing \u0645\u062D\u0635\u0648\u0644\u0627\u062A \u063A\u0646\u0686\u0647 \u062F\u0631 \u0642\u0641\u0633\u0647", type: "num", hint: "\u0641\u0642\u0637 \u062A\u0639\u062F\u0627\u062F Facing \u063A\u0646\u0686\u0647\u061B \u0646\u0628\u0627\u06CC\u062F \u0627\u0632 \u0633\u0624\u0627\u0644 \u06F1\u06F6 \u0628\u06CC\u0634\u062A\u0631 \u0628\u0627\u0634\u062F. \u062F\u0631\u0635\u062F \u0633\u0647\u0645 \u0642\u0641\u0633\u0647 \u0645\u062D\u0627\u0633\u0628\u0647 \u0646\u0645\u06CC\u200C\u0634\u0648\u062F.", show: obsBlock },
+    { sec: "\u0628\u062E\u0634 \u067E\u0646\u062C\u0645: \u0628\u0631\u0646\u062F\u0647\u0627\u06CC \u0631\u0642\u06CC\u0628 \u0645\u0634\u0627\u0647\u062F\u0647\u200C\u0634\u062F\u0647", show: obsBlock },
+    ...[["q18", "\u06F1\u06F8", "\u0631\u0648\u063A\u0646 \u067E\u062E\u062A\u200C\u0648\u067E\u0632"], ["q19", "\u06F1\u06F9", "\u0631\u0648\u063A\u0646 \u0633\u0631\u062E\u200C\u06A9\u0631\u062F\u0646\u06CC"], ["q20", "\u06F2\u06F0", "\u0631\u0648\u063A\u0646 \u0628\u062F\u0648\u0646 \u062A\u0631\u0627\u0646\u0633"], ["q21", "\u06F2\u06F1", "\u0631\u0648\u063A\u0646 \u0646\u06CC\u0645\u0647\u200C\u062C\u0627\u0645\u062F"], ["q22", "\u06F2\u06F2", "\u0631\u0648\u063A\u0646 \u0630\u0631\u062A"], ["q23", "\u06F2\u06F3", "\u0631\u0648\u063A\u0646 \u0632\u06CC\u062A\u0648\u0646"]].map(([id, n, g]) => ({ id, n, t: "\u0628\u0631\u0646\u062F\u0647\u0627\u06CC \u0645\u0634\u0627\u0647\u062F\u0647\u200C\u0634\u062F\u0647 \u062F\u0631 \u06AF\u0631\u0648\u0647 " + g, type: "multi", none: true, opts: ["Ghoncheh", ...brands[id], NONE], show: obsBlock, hint: "\u0647\u0645\u0647 \u0628\u0631\u0646\u062F\u0647\u0627\u06CC \u0645\u0634\u0627\u0647\u062F\u0647\u200C\u0634\u062F\u0647 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F. \u0627\u06AF\u0631 \u0647\u06CC\u0686\u200C\u06A9\u062F\u0627\u0645 \u062F\u06CC\u062F\u0647 \u0646\u0634\u062F\u060C None \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F." })),
+    { sec: "\u0628\u062E\u0634 \u0634\u0634\u0645: \u06CC\u0627\u062F\u062F\u0627\u0634\u062A \u067E\u0627\u06CC\u0627\u0646\u06CC" },
+    { id: "q5", n: "\u06F2\u06F4", t: "\u06CC\u0627\u062F\u062F\u0627\u0634\u062A \u0628\u0627\u0632\u062F\u06CC\u062F", type: "text", optional: true }
+  ];
+
+  // js/form.js
+  var QS = Q.filter((q) => q.id);
+  var FA2 = (s) => String(s).replace(/\d/g, (d) => "\u06F0\u06F1\u06F2\u06F3\u06F4\u06F5\u06F6\u06F7\u06F8\u06F9"[d]);
+  var SKIP = ["q1", "q2", "q3a"];
+  var uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  var canForm = (s) => !!(s && s.inJP && s.newCode);
+  async function loadForms(db) {
+    return await db.dbGet("forms") || [];
+  }
+  function openForm({ store: s, db, toast: toast2, onSaved }) {
+    if (!canForm(s)) return toast2("\u0641\u0631\u0645 \u0641\u0642\u0637 \u0628\u0631\u0627\u06CC \u0641\u0631\u0648\u0634\u06AF\u0627\u0647\u200C\u0647\u0627\u06CC Journey Plan \u0628\u0627\u0632 \u0645\u06CC\u200C\u0634\u0648\u062F");
+    const a = { q1: s.salesman, q2: s.newCode }, other = {}, els = {};
+    let dirty = false;
+    const isVis = (q) => !q.show || q.show(a);
+    const hasOther = (q) => {
+      const v = a[q.id];
+      return q.opts && (Array.isArray(v) ? v.includes(OTHER) : v === OTHER);
+    };
+    const filled = (q) => {
+      const v = a[q.id];
+      if (q.type === "multi") return Array.isArray(v) && v.length > 0;
+      if (q.type === "map") return !!v;
+      return v !== void 0 && String(v).trim() !== "";
+    };
+    const validate = (q) => {
+      if (!isVis(q) || q.optional) return "";
+      if (!filled(q)) return q.type === "map" ? "\u062F\u06A9\u0645\u0647 \xAB\u062B\u0628\u062A \u0645\u0648\u0642\u0639\u06CC\u062A \u0641\u0639\u0644\u06CC\xBB \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F \u06CC\u0627 \u0645\u062E\u062A\u0635\u0627\u062A \u0631\u0627 \u0648\u0627\u0631\u062F \u06A9\u0646\u06CC\u062F." : "\u067E\u0627\u0633\u062E \u0627\u06CC\u0646 \u0633\u0624\u0627\u0644 \u0627\u0644\u0632\u0627\u0645\u06CC \u0627\u0633\u062A.";
+      if (hasOther(q) && (other[q.id] || "").trim().length < 3) return "\u062A\u0648\u0636\u06CC\u062D \xAB\u0633\u0627\u06CC\u0631 \u0645\u0648\u0627\u0631\u062F\xBB \u0631\u0627 \u0628\u0646\u0648\u06CC\u0633\u06CC\u062F (\u062D\u062F\u0627\u0642\u0644 \u06F3 \u06A9\u0627\u0631\u0627\u06A9\u062A\u0631).";
+      if (q.type === "num") {
+        const n = Number(a[q.id]);
+        if (!Number.isInteger(n) || n < 0) return "\u06CC\u06A9 \u0639\u062F\u062F \u0635\u062D\u06CC\u062D \u06F0 \u06CC\u0627 \u0628\u06CC\u0634\u062A\u0631 \u0648\u0627\u0631\u062F \u06A9\u0646\u06CC\u062F.";
+        if (q.id === "q16" && n > 500) return "\u062D\u062F\u0627\u06A9\u062B\u0631 \u0645\u0642\u062F\u0627\u0631 \u0645\u062C\u0627\u0632 \u06F5\u06F0\u06F0 \u0627\u0633\u062A.";
+        if (q.id === "q17" && a.q16 !== void 0 && a.q16 !== "" && n > Number(a.q16)) return "Facing \u063A\u0646\u0686\u0647 \u0646\u0628\u0627\u06CC\u062F \u0627\u0632 \u062A\u0639\u062F\u0627\u062F \u06A9\u0644 Facing (\u0633\u0624\u0627\u0644 \u06F1\u06F6) \u0628\u06CC\u0634\u062A\u0631 \u0628\u0627\u0634\u062F.";
+      }
+      return "";
+    };
+    const root = document.createElement("div");
+    root.id = "tform";
+    root.setAttribute("dir", "rtl");
+    root.innerHTML = `<div class="tf-h"><button class="btn sm" id="tf-x">\u2715</button><div class="tf-t"><b>${esc(s.storeName || s.name)}</b><span class="mu">${esc(s.name)} \xB7 <span dir="ltr">${esc(s.newCode)}</span> \xB7 ${esc(s.salesman) || "\u2014"}</span></div></div>
+  <div class="tf-p"><div id="tf-bar"></div></div><div class="tf-pt mu" id="tf-pt"></div><div id="tf-b" class="tf-b"></div>
+  <div class="tf-f"><button class="btn pri" id="tf-ok">\u062B\u0628\u062A \u0641\u0631\u0645</button><button class="btn" id="tf-dr">\u0630\u062E\u06CC\u0631\u0647 \u067E\u06CC\u0634\u200C\u0646\u0648\u06CC\u0633</button></div>`;
+    document.body.appendChild(root);
+    const body = root.querySelector("#tf-b"), $2 = (x) => root.querySelector(x);
+    const draftKey = "fd_" + s.newCode;
+    function control(q, c) {
+      c.innerHTML = "";
+      const set = (v) => {
+        a[q.id] = v;
+        dirty = true;
+        update(q.id);
+      };
+      if (q.type === "single" || q.type === "multi") {
+        const g = document.createElement("div");
+        g.className = "opts";
+        q.opts.forEach((o) => {
+          const lab = document.createElement("label");
+          lab.className = "opt";
+          const i = document.createElement("input");
+          i.type = q.type === "single" ? "radio" : "checkbox";
+          i.name = q.id;
+          i.checked = q.type === "single" ? a[q.id] === o : (a[q.id] || []).includes(o);
+          i.onchange = () => {
+            if (q.type === "single") return set(o);
+            let cur = (a[q.id] || []).slice();
+            if (i.checked) cur = q.none ? o === NONE ? [NONE] : cur.filter((x) => x !== NONE).concat(o) : cur.concat(o);
+            else cur = cur.filter((x) => x !== o);
+            a[q.id] = cur;
+            dirty = true;
+            g.querySelectorAll("input").forEach((x, j) => x.checked = cur.includes(q.opts[j]));
+            update(q.id);
+          };
+          lab.append(i);
+          const sp = document.createElement("span");
+          sp.innerHTML = esc(o) + (EN.o[o] ? `<span class="en">${esc(EN.o[o])}</span>` : "");
+          lab.append(sp);
+          g.append(lab);
+        });
+        c.append(g);
+        if (q.opts.includes(OTHER)) {
+          const t2 = document.createElement("input");
+          t2.type = "text";
+          t2.dataset.o = q.id;
+          t2.placeholder = "\u062A\u0648\u0636\u06CC\u062D \u0633\u0627\u06CC\u0631 \u0645\u0648\u0627\u0631\u062F\u2026";
+          t2.value = other[q.id] || "";
+          t2.hidden = !hasOther(q);
+          t2.oninput = () => {
+            other[q.id] = t2.value;
+            dirty = true;
+            update();
+          };
+          c.append(t2);
+        }
+      } else if (q.type === "text") {
+        const t2 = document.createElement("textarea");
+        t2.rows = 3;
+        t2.value = a[q.id] || "";
+        t2.placeholder = "\u06CC\u0627\u062F\u062F\u0627\u0634\u062A \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC\u2026";
+        t2.oninput = () => {
+          a[q.id] = t2.value;
+          dirty = true;
+          update();
+        };
+        c.append(t2);
+      } else if (q.type === "num") {
+        const t2 = document.createElement("input");
+        t2.type = "number";
+        t2.inputMode = "numeric";
+        t2.min = 0;
+        t2.step = 1;
+        t2.className = "ltr";
+        t2.value = a[q.id] === void 0 ? "" : a[q.id];
+        t2.oninput = () => {
+          a[q.id] = t2.value;
+          dirty = true;
+          update(q.id === "q16" ? "q17" : void 0);
+        };
+        c.append(t2);
+      } else if (q.type === "map") {
+        const loc = a.q3a;
+        c.innerHTML = `<div class="row"><button class="btn sm pri" type="button" id="gps">\u062B\u0628\u062A \u0645\u0648\u0642\u0639\u06CC\u062A \u0641\u0639\u0644\u06CC (GPS)</button></div><div class="tf-ll mu">${loc ? `<span dir="ltr">${loc.lat}, ${loc.lng}</span>` : "\u0647\u0646\u0648\u0632 \u062B\u0628\u062A \u0646\u0634\u062F\u0647"}</div>`;
+        c.querySelector("#gps").onclick = () => {
+          if (!navigator.geolocation) return toast2("GPS \u062F\u0631 \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A");
+          navigator.geolocation.getCurrentPosition((p) => {
+            a.q3a = { lat: +p.coords.latitude.toFixed(6), lng: +p.coords.longitude.toFixed(6) };
+            dirty = true;
+            control(q, c);
+            update();
+          }, () => toast2("\u062F\u0631\u06CC\u0627\u0641\u062A \u0645\u0648\u0642\u0639\u06CC\u062A \u0645\u0645\u06A9\u0646 \u0646\u0634\u062F"), { enableHighAccuracy: true, timeout: 15e3 });
+        };
+      }
+    }
+    Q.forEach((q) => {
+      if (q.sec) {
+        const h = document.createElement("h3");
+        h.textContent = q.sec;
+        h.className = "tf-sec";
+        body.append(h);
+        q._el = h;
+        return;
+      }
+      if (SKIP.includes(q.id) && q.id !== "q3a") return;
+      const box = document.createElement("div");
+      box.className = "tf-q";
+      box.dataset.q = q.id;
+      box.innerHTML = `<div class="tf-qt"><span class="tf-n">${q.n}</span> ${esc(q.t)}${q.optional ? "" : ' <i class="req">*</i>'}${EN.t[q.id] ? `<span class="en">${esc(EN.t[q.id])}</span>` : ""}</div>${q.hint ? `<div class="mu tf-h2">${esc(q.hint)}</div>` : ""}<div class="ctl"></div><div class="warnm" hidden></div><div class="er" hidden></div>`;
+      body.append(box);
+      els[q.id] = { box, ctl: box.querySelector(".ctl"), er: box.querySelector(".er") };
+      control(q, els[q.id].ctl);
+    });
+    function showErr(q) {
+      const m = validate(q), e = els[q.id];
+      e.er.hidden = !m;
+      e.er.textContent = m;
+      e.box.classList.toggle("err", !!m);
+      return m;
+    }
+    function update(touch) {
+      QS.forEach((q) => {
+        const e = els[q.id];
+        if (!e) return;
+        const vis = isVis(q);
+        if (!vis && (a[q.id] !== void 0 || other[q.id])) {
+          delete a[q.id];
+          delete other[q.id];
+          control(q, e.ctl);
+        }
+        e.box.hidden = !vis;
+        const o = e.ctl.querySelector("[data-o]");
+        if (o) o.hidden = !hasOther(q);
+        if (e.box.classList.contains("err") || q.id === touch) showErr(q);
+      });
+      Q.forEach((q) => {
+        if (q.sec) q._el.hidden = q.show ? !q.show(a) : false;
+      });
+      const v = QS.filter((q) => !SKIP.includes(q.id) || q.id === "q3a").filter((q) => isVis(q) && !q.optional), d = v.filter(filled).length;
+      $2("#tf-pt").textContent = `${FA2(d)} \u0627\u0632 ${FA2(v.length)} \u0633\u0624\u0627\u0644 \u0627\u0644\u0632\u0627\u0645\u06CC`;
+      $2("#tf-bar").style.width = (v.length ? d / v.length * 100 : 0) + "%";
+      if (dirty) clearTimeout(update.tm), update.tm = setTimeout(saveDraft, 600);
+    }
+    const saveDraft = () => {
+      dirty = false;
+      return db.dbSet(draftKey, { a, other, t: Date.now() }).catch(() => {
+      });
+    };
+    function record() {
+      const r = { id: uid(), timestamp: (/* @__PURE__ */ new Date()).toISOString(), updated: "", storeId: s.id, visitor: s.salesman, q2_code: s.newCode, q2_name: s.name };
+      QS.forEach((q) => {
+        if (SKIP.includes(q.id)) return;
+        let v;
+        if (!isVis(q)) v = q.optional ? "" : "N/A";
+        else {
+          v = a[q.id];
+          if (Array.isArray(v)) v = v.join(" | ");
+          if (hasOther(q)) v = String(v) + " [" + (other[q.id] || "").trim() + "]";
+          if (v === void 0) v = "";
+        }
+        r[q.id] = v;
+      });
+      r.q3_lat = a.q3a ? a.q3a.lat : a.q3 === "\u0628\u0644\u0647" ? "" : "N/A";
+      r.q3_lng = a.q3a ? a.q3a.lng : a.q3 === "\u0628\u0644\u0647" ? "" : "N/A";
+      r._a = JSON.parse(JSON.stringify(a));
+      r._o = JSON.parse(JSON.stringify(other));
+      return r;
+    }
+    const close = async () => {
+      if (dirty) await saveDraft();
+      root.remove();
+    };
+    $2("#tf-x").onclick = close;
+    $2("#tf-dr").onclick = async () => {
+      await saveDraft();
+      toast2("\u067E\u06CC\u0634\u200C\u0646\u0648\u06CC\u0633 \u0630\u062E\u06CC\u0631\u0647 \u0634\u062F");
+    };
+    $2("#tf-ok").onclick = async () => {
+      let first = null;
+      QS.forEach((q) => {
+        if (els[q.id] && showErr(q) && !first) first = q.id;
+      });
+      if (first) {
+        els[first].box.scrollIntoView({ block: "center" });
+        return toast2("\u0628\u0631\u062E\u06CC \u067E\u0627\u0633\u062E\u200C\u0647\u0627 \u06A9\u0627\u0645\u0644 \u0646\u06CC\u0633\u062A");
+      }
+      const r = record();
+      const all = await loadForms(db);
+      all.push(r);
+      try {
+        await db.dbSet("forms", all);
+        await db.dbDel(draftKey);
+      } catch (e) {
+        return toast2("Storage: " + e.message);
+      }
+      dirty = false;
+      root.remove();
+      toast2("\u0641\u0631\u0645 \u062B\u0628\u062A \u0634\u062F \u2714");
+      if (onSaved) onSaved(r, s);
+    };
+    db.dbGet(draftKey).then((d) => {
+      if (d && d.a) {
+        Object.assign(a, d.a, { q1: s.salesman, q2: s.newCode });
+        Object.assign(other, d.other || {});
+        QS.forEach((q) => els[q.id] && control(q, els[q.id].ctl));
+        toast2("\u067E\u06CC\u0634\u200C\u0646\u0648\u06CC\u0633 \u0642\u0628\u0644\u06CC \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0634\u062F");
+      }
+      update();
+    }).catch(() => update());
+    update();
+  }
+
+  // js/plan.js
   var PLAN_FILE = "Audit_Visit_Plan.xlsx";
   var SHEET = "Audit Visit Plan";
   var INSTR = "Instructions";
@@ -921,7 +1236,8 @@ input,select,textarea{font-size:16px!important}
     return validatePlanRows(aoa, byId2, plan, pending);
   }
 
-  var VERSION = "2.1.0";
+  // js/app.js
+  var VERSION = "2.2.0";
   var IC = {
     map: '<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
     stores: '<path d="M3 9l1.5-5h15L21 9"/><path d="M4.5 9v11h15V9"/><path d="M9.5 20v-6h5v6"/><path d="M3 9a3 3 0 006 0 3 3 0 006 0 3 3 0 006 0"/>',
@@ -1292,7 +1608,7 @@ input,select,textarea{font-size:16px!important}
     const orders = s.orders.map((o) => `<tr><td>${esc(o.order)}<br><span class="mu">${esc(o.status)}</span></td><td>${jd(o.orderDate)}</td><td>${jd(o.target)}</td><td>${jd(o.inv)}</td><td>${o.state === "open" ? `<span class="chip o">${t("open")}</span>` : `<span class="chip g">${t("invoiced")}</span>`}${o.overdue === true ? ` <span class="chip r">${t("overdue")}</span>` : ""}${o.state === "open" && o.overdue === null ? `<br><span class="mu">${t("noTarget")}</span>` : ""}</td></tr><tr><td colspan="5" class="mu">${o.items.map((i) => `${esc(i.product)} \xD7 ${i.qty}`).join(" \xB7 ")}</td></tr>`).join("");
     sheet(`<h2>${badge(s)}${esc(s.storeName || s.name || s.id)}</h2>
   <dl class="kv"><dt>${t("custId")}</dt><dd>${esc(s.id)}</dd><dt>${t("custName")}</dt><dd>${esc(s.name)}</dd><dt>${t("storeName")}</dt><dd>${esc(s.storeName) || "\u2014"}</dd><dt>${t("cls")}</dt><dd>${esc(s.cls) || "\u2014"}</dd><dt>${t("address")}</dt><dd>${esc(s.address)}</dd><dt>${t("route")}</dt><dd>${esc(s.route) || "\u2014"} <span class="mu">(${t("rs_" + (s.routeSource || "Area"))})</span></dd><dt>${t("area")} / ${t("territory")}</dt><dd>${esc(s.area) || "\u2014"} / ${esc(s.territory) || "\u2014"}</dd><dt>${t("salesman")}</dt><dd>${esc(s.salesman) || "\u2014"}</dd><dt>${t("coords")}</dt><dd>${s.lat !== null ? s.lat.toFixed(6) + ", " + s.lng.toFixed(6) : t("noGPS")}</dd><dt>${t("inJP")}</dt><dd>${s.inJP ? t("yes") : t("no")}${s.inJP ? " \xB7 " + DAY_KEYS.filter((d) => s.days[d]).map((d) => t("d_" + d)).join("\u060C ") : ""}</dd><dt>${t("purchase")}</dt><dd>${s.hasSales ? t("yes") : t("no")} \xB7 ${t("lastPurchase")}: ${jd(s.lastPurchase)}</dd></dl>
-  <div class="row" style="margin:10px 0">${navLinks(s)}<button class="btn pri" id="addp">${t("addPlan")}</button><button class="btn" id="onm">${ic("map")} ${t("showMap")}</button></div>
+  <div class="row" style="margin:10px 0">${navLinks(s)}<button class="btn pri" id="addp">${t("addPlan")}</button><button class="btn" id="onm">${ic("map")} ${t("showMap")}</button>${canForm(s) ? `<button class="btn pri" id="fm">${ic("plan")} \u0641\u0631\u0645 \u0645\u0645\u06CC\u0632\u06CC</button>` : ""}</div>
   <h3>${t("orders")} (${s.orders.length})</h3>${orders ? `<table class="t"><tr><th>${t("orderNo")}</th><th>${t("orderDate")}</th><th>${t("targetDate")}</th><th>${t("invoiceDate")}</th><th></th></tr>${orders}</table>` : `<div class="mu">${t("noOrders")}</div>`}
   <h3>${t("basket")}</h3>${s.basket.length ? `<table class="t">${s.basket.map((b) => `<tr><td>${esc(b.product)}</td><td>${b.qty}</td></tr>`).join("")}</table>` : `<div class="mu">\u2014</div>`}
   <div class="row" style="margin-top:12px"><button class="btn" id="cl">${t("close")}</button></div>`, (el) => {
@@ -1307,6 +1623,11 @@ input,select,textarea{font-size:16px!important}
         closeSheet();
         S.page = "map";
         render();
+      };
+      const fm = el.querySelector("#fm");
+      if (fm) fm.onclick = () => {
+        closeSheet();
+        openForm({ store: s, db: { dbGet, dbSet, dbDel }, toast, onSaved: () => render() });
       };
     });
   }
