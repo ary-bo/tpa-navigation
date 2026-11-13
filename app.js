@@ -68,7 +68,7 @@ function renderExternal(){const root=$('importReport');root.innerHTML='<h3>بر�
 function bindDrive(){if(!window.google?.accounts?.oauth2)return;tokenClient=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:'https://www.googleapis.com/auth/drive.readonly',callback:r=>{if(r.error){message('ورود Google ناموفق بود: '+r.error);return;}accessToken=r.access_token;syncDrive();}});}
 function connectDrive(){if(!tokenClient)bindDrive();if(!tokenClient){message('کتابخانه ورود Google هنوز بارگذاری نشده است؛ چند لحظه بعد دوباره بزن.');return;}tokenClient.requestAccessToken({prompt:'consent'});}
 async function driveFiles(){
- const q=encodeURIComponent(`'${DRIVE_FOLDER}' in parents and trashed=false`);
+ const q=`'${DRIVE_FOLDER}' in parents and trashed=false`;
  const all=[];let pageToken='';
  do{
   const params=new URLSearchParams({q,fields:'nextPageToken,files(id,name,mimeType,modifiedTime)',pageSize:'100',orderBy:'modifiedTime desc',supportsAllDrives:'true',includeItemsFromAllDrives:'true'});
