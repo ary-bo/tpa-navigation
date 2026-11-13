@@ -1757,7 +1757,10 @@ input,select,textarea{font-size:16px!important}
     render();
   }
   function pagePlan(v) {
-    if (!S.weekStart) S.weekStart = weekStartOf(todayISO());
+    if (!S.weekStart) {
+      S.weekStart = weekStartOf(todayISO());
+      if (dayKeyOfISO(todayISO()) === "Friday") S.weekStart = addDaysISO(S.weekStart, 7);
+    }
     const days = [...Array(6)].map((_, i) => addDaysISO(S.weekStart, i));
     S.selDay = days.includes(S.selDay) ? S.selDay : days.includes(todayISO()) ? todayISO() : days[0];
     const items = sortedForDay(S.plan, S.selDay);
