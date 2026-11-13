@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -6,8 +7,8 @@
 <meta name="theme-color" content="#102b46">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="description" content="TPA Navigation - Auditor visit planning and store information">
 <link rel="manifest" href="./manifest.webmanifest">
+<meta name="description" content="TPA Navigation - Auditor visit planning and store information">
 <title>TPA Navigation</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -219,8 +220,6 @@ body.dark .notice{background:#44351d;color:#ffe0a3;border-color:#765c2a}
      <div class="stat"><b id="noGpsCount">۰</b><span>بدون مختصات</span></div>
      <div class="stat"><b id="openOrderCount">۰</b><span>سفارش باز</span></div>
      <div class="stat"><b id="noPurchaseCount">۰</b><span>بدون خرید</span></div>
-     <div class="stat"><b id="invoicedAmount">۰</b><span>مبلغ فاکتورشده</span></div>
-     <div class="stat"><b id="uninvoicedAmount">۰</b><span>مبلغ فاکتورنشده</span></div>
     </div>
     <div class="rowactions">
      <button class="smallbtn" id="nearbyBtn">فروشگاه‌های نزدیک من</button>
@@ -402,86 +401,144 @@ function buildProductMap(){
 /* تطبیق اطلاعات فروش با مشتریان */
 function buildDataCore(){
  const productMap=buildProductMap();
- const jpMap=new Map();
- const jpAliasMap=new Map();
+ const salesByCustomer=new Map();
 
- // Journey Plan is the identity/source-of-truth list.
+ for(const row of salesRows){
+  const customerCode=first(row,["کد مشتری"]);
+  const accountNumber=first(row,["Account Number"]);
+  const keys=[...new Set([
+   ...keyVariants(customerCode),
+   ...keyVariants(accountNumber)
+  ])];
+
+  const itemCode=first(row,["کد کالا"]);
+  const rawName=first(row,["نام کالا"]);
+  const item={
+   code:itemCode,
+   name:productMap[norm(itemCode)]||rawName||itemCode||"محصول نامشخص",
+   date:first(row,["invoicedate","تاریخ"]),
+   quantity:first(row,["تعداد"])
+  };
+
+  for(const key of keys){
+   if(!salesByCustomer.has(key))salesByCustomer.set(key,[]);
+   if(item.code||rawName)salesByCustomer.get(key).push(item);
+  }
+ }
+
+ const jpMap=new Map();
+
  for(const row of jpRows){
   const customerI=first(row,["CustomerI"]);
   const newCode=first(row,["New Customer Code"]);
   const oracleCode=first(row,["Oracle Code"]);
+  const keys=[...new Set([
+   ...keyVariants(customerI),
+   ...keyVariants(newCode),
+   ...keyVariants(oracleCode)
+  ])];
+
+  const products=[];
+  const seen=new Set();
+
+  for(const key of keys){
+   for(const item of salesByCustomer.get(key)||[]){
+    const itemId=[item.code,item.name,item.date].join("|");
+    if(!seen.has(itemId)){
+     seen.add(itemId);
+     products.push(item);
+    }
+   }
+  }
+
   const id=customerI||newCode||oracleCode;
   if(!id)continue;
 
   const lat=numeric(row["Latitude"]);
   const lng=numeric(row["Longitude"]);
-  const store={
-   id,code:newCode||customerI||oracleCode,
+
+  jpMap.set(id,{
+   id,
+   code:newCode||customerI,
    name:first(row,["Customer Name","DescriptionAR","DescriptionE"])||"فروشگاه بدون نام",
-   address:first(row,["Address"," Address"]),
+   address:first(row,[" Address","Address"]),
    area:first(row,["Area Name"]),
    territory:first(row,["TerritoryNo"]),
    salesman:first(row,["Salesman Name"]),
    salesmanCode:first(row,["Salesman Code"]),
-   lat,lng,hasCoords:validCoord(lat,lng),
-   hasSales:false,inJP:true,today:isTodayVisit(row),products:[],
-   _aliases:[...new Set([customerI,newCode,oracleCode].flatMap(keyVariants))]
-  };
-  jpMap.set(String(id),store);
-  store._aliases.forEach(key=>jpAliasMap.set(key,store));
+   lat,lng,
+   hasCoords:validCoord(lat,lng),
+   hasSales:products.length>0,
+   inJP:true,
+   today:isTodayVisit(row),
+   products
+  });
  }
 
  const salesOnly=new Map();
- const salesByStore=new Map();
+
  for(const row of salesRows){
-  const customerCode=first(row,["کد مشتری","Customer Code","CustomerI"]);
+  const customerCode=first(row,["کد مشتری"]);
   const accountNumber=first(row,["Account Number"]);
-  const keys=[...new Set([...keyVariants(customerCode),...keyVariants(accountNumber)])];
-  const matchedStore=keys.map(key=>jpAliasMap.get(key)).find(Boolean)||null;
+  const keys=[...new Set([
+   ...keyVariants(customerCode),
+   ...keyVariants(accountNumber)
+  ])];
 
-  const itemCode=first(row,["کد کالا","Item Code"]);
-  const rawName=first(row,["نام کالا","Item","Product Name"]);
-  const item={
-   code:itemCode,
-   name:productMap[norm(itemCode)]||rawName||itemCode||"محصول نامشخص",
-   date:first(row,["invoicedate","تاریخ"]),
-   quantity:first(row,["تعداد","Quantity"])
-  };
+  const matched=keys.some(key=>{
+   for(const store of jpMap.values()){
+    const storeKeys=[
+     ...keyVariants(store.id),
+     ...keyVariants(store.code)
+    ];
+    if(storeKeys.includes(key))return true;
+   }
+   return false;
+  });
 
-  if(matchedStore){
-   if(item.code||rawName)matchedStore.products.push(item);
-   continue;
-  }
+  if(matched)continue;
 
   const id=customerCode||accountNumber;
   if(!id)continue;
+
   if(!salesOnly.has(id)){
    salesOnly.set(id,{
-    id,code:customerCode||accountNumber,
-    name:first(row,["نام مشتری","Customer Name"])||"مشتری گزارش فروش",
-    address:first(row,["آدرس","Address"]),
-    area:first(row,["گروه مشتری","Customer Group"]),
+    id,
+    code:customerCode||accountNumber,
+    name:first(row,["نام مشتری"])||"مشتری گزارش فروش",
+    address:first(row,["آدرس"]),
+    area:first(row,["گروه مشتری"]),
     territory:"",
-    salesman:first(row,["نام فروشنده","Salesman Name"]),
-    salesmanCode:first(row,["کد فروشنده","Salesman Code"]),
+    salesman:first(row,["نام فروشنده"]),
+    salesmanCode:first(row,["کد فروشنده"]),
     lat:0,lng:0,hasCoords:false,
     hasSales:true,inJP:false,today:false,products:[]
    });
   }
-  if(item.code||rawName)salesOnly.get(id).products.push(item);
+
+  const itemCode=first(row,["کد کالا"]);
+  const itemName=productMap[norm(itemCode)]||
+   first(row,["نام کالا"])||itemCode||"محصول نامشخص";
+
+  salesOnly.get(id).products.push({
+   code:itemCode,
+   name:itemName,
+   date:first(row,["invoicedate","تاریخ"]),
+   quantity:first(row,["تعداد"])
+  });
  }
 
  stores=[...jpMap.values(),...salesOnly.values()];
+
  for(const store of stores){
   const unique=new Map();
-  for(const product of store.products){
-   unique.set([product.code,product.name,product.date].join("|"),product);
+  for(const p of store.products){
+   unique.set([p.code,p.name,p.date].join("|"),p);
   }
   store.products=[...unique.values()];
-  store.hasSales=store.products.length>0;
-  delete store._aliases;
  }
 }
+
 function isTodayVisit(row){
  const days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
  const today=days[new Date().getDay()];
@@ -640,9 +697,7 @@ function showStore(id){
    ویزیتور: ${escapeHtml(store.salesman||"—")}<br>
    آدرس: ${escapeHtml(store.address||"—")}<br>
    وضعیت: ${store.inJP?"در Journey Plan":"فقط در گزارش فروش"} ·
-   ${store.hasSales?"دارای فروش":"بدون فروش"}<br>
-   مبلغ فاکتورشده: ${Math.round((store.orders||[]).filter(o=>o.invoiceDate).reduce((n,o)=>n+(o.amount||0),0)).toLocaleString("fa-IR")}<br>
-   مبلغ فاکتورنشده: ${Math.round((store.orders||[]).filter(o=>!o.invoiceDate).reduce((n,o)=>n+(o.amount||0),0)).toLocaleString("fa-IR")}
+   ${store.hasSales?"دارای فروش":"بدون فروش"}
   </div>
   <div class="section-title">محصولات ثبت‌شده (${store.products.length})</div>
   ${productHtml}
@@ -902,68 +957,50 @@ function jalaliDateText(value){
  return String(value);
 }
 function enrichStoreFields(){
- const jpByAlias=new Map();
+ const jpById=new Map();
  for(const row of jpRows){
-  const aliases=[first(row,["CustomerI"]),first(row,["New Customer Code"]),first(row,["Oracle Code"])]
-   .flatMap(keyVariants);
-  for(const alias of aliases)jpByAlias.set(alias,row);
+  const id=first(row,["CustomerI","New Customer Code","Oracle Code"]);
+  if(id)jpById.set(id,row);
  }
-
  const statusKeys=["Status","Order Status","وضعیت سفارش","OrderStatus"];
- const orderNoKeys=["شماره سفارش","Order Number","Order No","OrderNumber","شماره فاکتور"];
+ const orderNoKeys=["Order Number","Order No","OrderNumber","شماره سفارش","شماره فاکتور"];
  const dateKeys=["تاریخ","Date","Order Date","تاریخ سفارش"];
- const invoiceKeys=["invoicedate","Invoice Date","تاریخ صدور فاکتور"];
+ const invoiceKeys=["invoicedate","Invoicedate","Invoice Date","تاریخ صدور فاکتور"];
  const deliveryKeys=["Target Deilvery Date","Target Delivery Date","TargetDeliveryDate","تاریخ تحویل مورد انتظار"];
  const grouped=new Map();
-
  for(const row of salesRows){
-  const status=clean(first(row,statusKeys)).replace(/\s+/g," ").toLowerCase();
+  const status=first(row,statusKeys).trim().toLowerCase();
   if(status==="closed/expired")continue;
   const cust=first(row,["کد مشتری","Customer Code","Account Number"]);
   if(!cust)continue;
   const orderNo=first(row,orderNoKeys);
-  const unitPrice=numeric(first(row,["قیمت واحد","Unit Price","UnitPrice"]));
-  const quantity=numeric(first(row,["تعداد","Quantity"]));
-  const entry={
-   orderNo,status,
-   orderDate:first(row,dateKeys),
-   invoiceDate:first(row,invoiceKeys),
-   deliveryDate:first(row,deliveryKeys),
-   product:first(row,["نام کالا","Item","Product Name"]),
-   itemCode:first(row,["کد کالا","Item Code"]),
-   quantity,unitPrice,amount:unitPrice*quantity
-  };
-  for(const alias of keyVariants(cust)){
-   if(!grouped.has(alias))grouped.set(alias,[]);
-   grouped.get(alias).push(entry);
-  }
+  const entry={orderNo,status,orderDate:first(row,dateKeys),invoiceDate:first(row,invoiceKeys),
+   deliveryDate:first(row,deliveryKeys),product:first(row,["نام کالا","Item","Product Name"]),
+   itemCode:first(row,["کد کالا","Item Code"]),quantity:first(row,["تعداد","Quantity"])};
+  if(!grouped.has(cust))grouped.set(cust,[]);
+  grouped.get(cust).push(entry);
  }
-
- for(const store of stores){
-  const raw=[...new Set([store.id,store.code].flatMap(keyVariants))]
-   .map(alias=>jpByAlias.get(alias)).find(Boolean)||null;
-  store.routeName=raw?first(raw,["Route Name"]):"";
-  store.customerClass=raw?first(raw,["Outlet Class","Customer Class","کلاس مشتری"]):"";
-  store.storeName=store.name;
-  store.orders=[];
-  const aliases=[...new Set([store.id,store.code].flatMap(keyVariants))];
-  const seenEntries=new Set();
-  for(const alias of aliases){
-   for(const order of grouped.get(alias)||[]){
-    if(!seenEntries.has(order)){seenEntries.add(order);store.orders.push(order);}
-   }
+ for(const s of stores){
+  const raw=jpById.get(s.id);
+  s.routeName=raw?first(raw,["Route Name"]):s.area;
+  s.customerClass=raw?first(raw,["Customer Class"]):"";
+  s.storeName=storeNameFromAddress(s.address)||s.name;
+  s.orders=[];
+  const keys=[...keyVariants(s.id),...keyVariants(s.code)];
+  for(const [code,orders] of grouped){
+   if(keys.some(k=>keyVariants(code).includes(k)))s.orders.push(...orders);
   }
-  store.openOrders=store.orders.filter(order=>!clean(order.invoiceDate));
-  store.lastPurchase=store.orders.map(order=>order.invoiceDate||order.orderDate).filter(Boolean).sort().pop()||"";
-  store.visitDays=raw?["Saturday","Sunday","Monday","Tuesday","Wednesday","Thursday"].filter(day=>{
-   const value=clean(raw[day]).replace(/,/g,"");
-   return value!==""&&Number(value)!==0;
+  s.orders=s.orders.filter(o=>o.orderNo||o.product||o.itemCode);
+  s.openOrders=s.orders.filter(o=>!o.invoiceDate);
+  s.lastPurchase=s.orders.map(o=>o.invoiceDate||o.orderDate).filter(Boolean).sort().pop()||"";
+  s.visitDays=raw?["Saturday","Sunday","Monday","Tuesday","Wednesday","Thursday"].filter(d=>{
+   const v=clean(raw[d]);return v!==""&&v!=="0"&&v!=="0.0";
   }):[];
  }
 }
 function buildData(){
- const isExpiredStatus=value=>clean(value).replace(/\s+/g," ").toLowerCase()==="closed/expired";
- salesRows=salesRows.filter(r=>!isExpiredStatus(first(r,["Status","Order Status","وضعیت سفارش","OrderStatus"])));
+ const excluded=new Set(["closed/expired"]);
+ salesRows=salesRows.filter(r=>!excluded.has(first(r,["Status","Order Status","وضعیت سفارش","OrderStatus"]).toLowerCase()));
  buildDataCore();
  enrichStoreFields();
  saveOfflineSnapshot();
@@ -994,7 +1031,7 @@ function addStoreToPlan(id){
  const exists=auditPlan.some(p=>String(p.customerId)===String(s.code||s.id)&&p.visitDate===date&&p.visitDay===day);
  if(exists){alert("این فروشگاه از قبل در برنامه همین روز وجود دارد.");return;}
  auditPlan.push({visitDate:date,visitDay:day,customerId:s.code||s.id,storeName:s.storeName||s.name,
-  customerName:s.name,address:s.address,routeName:s.routeName||"",latitude:s.lat||"",longitude:s.lng||"",
+  customerName:s.name,address:s.address,routeName:s.routeName||s.area,latitude:s.lat||"",longitude:s.lng||"",
   priority:"Medium",selectionReason:"",auditorComment:"",selectionSource:"Internal",approved:true});
  savePlan();
  closeModal();
@@ -1064,7 +1101,7 @@ async function importAuditPlan(){
    valid.push({visitDate:date,visitDay:first(r,["Visit Day"])||$("planDay").value,
     customerId:id,storeName:first(r,["Store Name"])||matched.storeName||matched.name,
     customerName:first(r,["Customer Name"])||matched.name,address:first(r,["Address"])||matched.address,
-    routeName:first(r,["Route Name"])||matched.routeName||"",
+    routeName:first(r,["Route Name"])||matched.routeName||matched.area,
     latitude:first(r,["Latitude"])||matched.lat||"",longitude:first(r,["Longitude"])||matched.lng||"",
     priority:first(r,["Priority"])||"Medium",selectionReason:first(r,["Selection Reason"]),
     auditorComment:first(r,["Auditor Comment"]),selectionSource:"External",approved:false});
@@ -1091,11 +1128,6 @@ function renderAnalysis(){
  $("noGpsCount").textContent=stores.filter(s=>!s.hasCoords).length.toLocaleString("fa-IR");
  $("openOrderCount").textContent=stores.reduce((n,s)=>n+(s.openOrders?.length||0),0).toLocaleString("fa-IR");
  $("noPurchaseCount").textContent=stores.filter(s=>!s.hasSales).length.toLocaleString("fa-IR");
- const allOrders=stores.flatMap(s=>s.orders||[]);
- const invoiced=allOrders.filter(o=>o.invoiceDate).reduce((sum,o)=>sum+(o.amount||0),0);
- const uninvoiced=allOrders.filter(o=>!o.invoiceDate).reduce((sum,o)=>sum+(o.amount||0),0);
- $("invoicedAmount").textContent=Math.round(invoiced).toLocaleString("fa-IR");
- $("uninvoicedAmount").textContent=Math.round(uninvoiced).toLocaleString("fa-IR");
 }
 function showAnalysisList(kind){
  let list=stores;
@@ -1117,10 +1149,10 @@ function findNearby(){
 }
 function applyTheme(){if(localStorage.getItem("tpa_theme")==="dark")document.body.classList.add("dark");}
 function registerOfflineShell(){
- if("serviceWorker" in navigator && (location.protocol==="https:" || location.hostname==="localhost")){
-  navigator.serviceWorker.register("./sw.js",{updateViaCache:"none"})
-   .then(reg=>reg.update().catch(()=>{}))
-   .catch(error=>console.warn("Service Worker registration failed:",error));
+ if("serviceWorker" in navigator && location.protocol.startsWith("http")){
+  const sw=`const CACHE='tpa-nav-shell-v1';const ASSETS=[location.pathname];self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));self.addEventListener('fetch',e=>{if(e.request.method==='GET'&&new URL(e.request.url).origin===location.origin)e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(x=>{const copy=x.clone();caches.open(CACHE).then(c=>c.put(e.request,copy));return x}).catch(()=>r)))});`;
+  const blob=new Blob([sw],{type:"text/javascript"});
+  navigator.serviceWorker.register("./sw.js").catch(()=>{});
  }
 }
 
