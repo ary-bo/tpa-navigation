@@ -1367,7 +1367,7 @@ input,select,textarea{font-size:16px!important}
       if (f.type === "hasSales" && !s.hasSales) return false;
       if (f.type === "noSales" && (s.hasSales || !s.inJP)) return false;
       if (f.type === "salesOnly" && s.inJP) return false;
-      if (f.type === "closedUndelivered" && (!s.inJP || !s.orders[0] || !/closed\\s*\\/\\s*undelivered/i.test(str(s.orders[0].status)))) return false;
+      if (f.type === "closedUndelivered" && (!s.inJP || !s.orders[0] || !/closed\s*\/\s*undelivered/i.test(str(s.orders[0].status)))) return false;
     }
     if (skip !== "route" && f.route && (f.route === NO_ROUTE ? !!s.route : s.route !== f.route)) return false;
     if (skip !== "salesman" && f.salesman && s.salesman !== f.salesman) return false;
