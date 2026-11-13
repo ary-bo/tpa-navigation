@@ -548,10 +548,11 @@ function ensureWorkspace(){
  const mark=document.createElement('i');mark.id='workspaceInitialized';mark.hidden=true;document.body.appendChild(mark);
  const content=byId('workspaceContent');
  function close(){
+  if(activePanel){activePanel.classList.remove('workspace-open-panel');activePanel.setAttribute('aria-hidden','true');}
   if(activePanel&&activePlaceholder&&activePlaceholder.parentNode){activePlaceholder.parentNode.insertBefore(activePanel,activePlaceholder);activePlaceholder.remove();}
   activePanel=null;activePlaceholder=null;content.innerHTML='';modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('workspace-open');
  }
- function open(panel,title){if(!panel)return;close();activePanel=panel;activePlaceholder=document.createComment('workspace-panel-origin');panel.parentNode.insertBefore(activePlaceholder,panel);content.appendChild(panel);byId('workspaceTitle').textContent=title||panel.querySelector('h2')?.textContent||'بخش';modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.classList.add('workspace-open');content.scrollTop=0;}
+ function open(panel,title){if(!panel)return;close();activePanel=panel;activePlaceholder=document.createComment('workspace-panel-origin');panel.parentNode.insertBefore(activePlaceholder,panel);content.appendChild(panel);panel.classList.add('workspace-open-panel');panel.setAttribute('aria-hidden','false');byId('workspaceTitle').textContent=title||panel.querySelector('h2')?.textContent||'بخش';modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.classList.add('workspace-open');content.scrollTop=0;}
  byId('closeWorkspace').onclick=close;modal.addEventListener('click',e=>{if(e.target===modal)close();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open'))close();});
  function addLaunchers(pageId,panels,host){const page=byId(pageId);if(!page)return;const area=document.createElement('div');area.className='workspace-launchers';area.setAttribute('aria-label','بخش‌های قابل نمایش');panels.forEach(panel=>{if(!panel)return;const heading=panel.querySelector('h2')?.textContent?.trim()||'نمایش بخش';const b=document.createElement('button');b.type='button';b.className='workspace-launcher';b.textContent=heading;b.onclick=()=>open(panel,heading);area.appendChild(b);panel.classList.add('workspace-source-panel');});(host||page).appendChild(area);}
  const map=byId('mapPage');
