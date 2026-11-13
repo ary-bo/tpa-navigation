@@ -1280,7 +1280,7 @@ input,select,textarea{font-size:16px!important}
   var ic = (k) => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${IC[k]}</svg>`;
   var DEF = { clientId: "1098731892951-2e7jipvf33evn0a69tt0tje94oor54lm.apps.googleusercontent.com", folderId: "1sgTsZu2zzSBi-pz2M9pVBHtjCtQELYhk" };
   var $ = (s) => document.querySelector(s);
-  var S = { ds: null, raw: null, plan: [], pending: [], page: "map", filters: { q: "", type: "all", route: "", salesman: "", day: "" }, weekStart: null, pos: null, radius: 0, importErrors: [], settings: lsGet("settings", { lang: "fa", theme: "auto", clientId: "", folderId: "", tile: "https://tile.openstreetmap.org/{z}/{x}/{y}.png" }) };
+  var S = { ds: null, raw: null, plan: [], pending: [], page: "map", filters: { q: "", type: "all", route: "", salesman: "", day: "", fromDate: "", toDate: "" }, weekStart: null, pos: null, radius: 0, importErrors: [], settings: lsGet("settings", { lang: "fa", theme: "auto", clientId: "", folderId: "", tile: "https://tile.openstreetmap.org/{z}/{x}/{y}.png" }) };
   S.settings.clientId = S.settings.clientId || DEF.clientId;
   S.settings.folderId = S.settings.folderId || DEF.folderId;
   var map;
@@ -1362,12 +1362,37 @@ input,select,textarea{font-size:16px!important}
     const ws = wb.Sheets[wb.SheetNames[0]];
     return XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, cellDates: true, defval: null });
   };
+  function mapFilterDateRange() {
+    const fy = yearFromFileName(S.raw && S.raw.names && S.raw.names.sales);
+    const from = S.filters.fromDate ? parseDate(S.filters.fromDate, fy) : null;
+    const to = S.filters.toDate ? parseDate(S.filters.toDate, fy) : null;
+    return { from, to, active: !!(from || to) };
+  }
+  function inMapDateRange(date, range) {
+    return !!date && (!range.from || date >= range.from) && (!range.to || date <= range.to);
+  }
+  function mapRangeSalesStatus(store, range = mapFilterDateRange()) {
+    const orders = store.orders || [];
+    const hasSales = orders.some((o) => o.inv && inMapDateRange(o.inv, range));
+    const latestOrder = orders.filter((o) => inMapDateRange(o.orderDate || o.inv, range)).slice().sort((a, b) => (b.orderDate || b.inv || "").localeCompare(a.orderDate || a.inv || ""))[0] || null;
+    return { hasSales, latestOrder };
+  }
+  function refreshMapRangeStatuses() {
+    if (!S.ds) return;
+    const range = mapFilterDateRange();
+    for (const store of S.ds.stores) {
+      if (!store.inJP) { store.status = "blue"; continue; }
+      const state = mapRangeSalesStatus(store, range);
+      store.status = state.latestOrder && /closed\s*\/\s*undelivered/i.test(str(state.latestOrder.status)) ? "red" : state.hasSales ? "green" : "orange";
+    }
+  }
   function matches(s, f, skip) {
     if (skip !== "type") {
-      if (f.type === "hasSales" && !s.hasSales) return false;
-      if (f.type === "noSales" && (s.hasSales || !s.inJP)) return false;
-      if (f.type === "salesOnly" && s.inJP) return false;
-      if (f.type === "closedUndelivered" && (!s.inJP || !s.orders[0] || !/closed\s*\/\s*undelivered/i.test(str(s.orders[0].status)))) return false;
+      const rangeState = mapRangeSalesStatus(s);
+      if (f.type === "hasSales" && !rangeState.hasSales) return false;
+      if (f.type === "noSales" && (rangeState.hasSales || !s.inJP)) return false;
+      if (f.type === "salesOnly" && (s.inJP || !rangeState.hasSales)) return false;
+      if (f.type === "closedUndelivered" && (!s.inJP || !rangeState.latestOrder || !/closed\s*\/\s*undelivered/i.test(str(rangeState.latestOrder.status)))) return false;
     }
     if (skip !== "route" && f.route && (f.route === NO_ROUTE ? !!s.route : s.route !== f.route)) return false;
     if (skip !== "salesman" && f.salesman && s.salesman !== f.salesman) return false;
@@ -1381,7 +1406,11 @@ input,select,textarea{font-size:16px!important}
     }
     return true;
   }
-  var filtered = () => S.ds ? S.ds.stores.filter((s) => matches(s, S.filters)) : [];
+  var filtered = () => {
+    if (!S.ds) return [];
+    refreshMapRangeStatuses();
+    return S.ds.stores.filter((s) => matches(s, S.filters));
+  };
   var options = (key) => [...new Set(S.ds.stores.filter((s) => matches(s, S.filters, key)).map((s) => s[key]).filter(Boolean))].sort((a, b) => a.localeCompare(b, "fa"));
   function withNearby(list) {
     if (!S.pos || !S.radius) return list;
@@ -1393,7 +1422,11 @@ input,select,textarea{font-size:16px!important}
       return `<option value="${esc(v)}" ${f[k] === v ? "selected" : ""}>${esc(l)}</option>`;
     }).join("")}</select>`;
     const dayOpts = [["", t("allDays")], ["today", t("today")], ...[...DAY_KEYS, "Friday"].map((d) => [d, t("d_" + d)])];
-    return `<label class="f">${t("type")}</label><select data-f="type">${["all", "hasSales", "noSales", "salesOnly", "closedUndelivered"].map((v) => `<option value="${v}" ${f.type === v ? "selected" : ""}>${t(v)}</option>`).join("")}</select>
+    const dateField = (id, key, label) => `<div class="sales-date-wrap"><label class="f" for="${id}">${label}</label><input id="${id}" data-range="${key}" type="text" readonly value="${esc(f[key] || "")}" placeholder="${getLang() === "fa" ? "انتخاب تاریخ" : "Select date"}" dir="ltr" autocomplete="off" aria-haspopup="dialog" aria-expanded="false"><div class="jalali-picker" id="${id}Picker" hidden></div></div>`;
+    return `<div class="row" style="gap:10px;margin-bottom:12px">
+    ${dateField("mapFrom", "fromDate", t("salesFrom"))}${dateField("mapTo", "toDate", t("salesTo"))}
+  </div><div class="mu" style="margin-bottom:12px">${t("salesDateHint")}</div>
+  <label class="f">${t("type")}</label><select data-f="type">${["all", "hasSales", "noSales", "salesOnly", "closedUndelivered"].map((v) => `<option value="${v}" ${f.type === v ? "selected" : ""}>${t(v)}</option>`).join("")}</select>
   ${sel("route", t("regions"), [...options("route"), ...S.ds.stores.some((x) => !x.route && matches(x, S.filters, "route")) ? [[NO_ROUTE, t("noRoute")]] : []], t("all"))}${sel("salesman", t("salesman"), options("salesman"), t("all"))}
   <label class="f">${t("day")}</label><select data-f="day">${dayOpts.map(([v, l]) => `<option value="${v}" ${f.day === v ? "selected" : ""}>${l}</option>`).join("")}</select>
   <h3>${t("savedF")}</h3><div class="row">${savedFilters().map((x, i) => `<span class="row" style="gap:2px"><button class="btn sm" data-sf="${i}">${esc(x.name)}</button><button class="btn sm dng" data-sx="${i}">\u2715</button></span>`).join("") || `<span class="mu">\u2014</span>`}</div>
@@ -1406,8 +1439,77 @@ input,select,textarea{font-size:16px!important}
         S.filters[s.dataset.f] = s.value;
         openFilters();
       });
+      const todayJ = isoToJalaliStr(todayISO()).split("/").map(Number);
+      const pickerState = {};
+      const padJ = (n) => String(n).padStart(2, "0");
+      const months = getLang() === "fa" ? ["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"] : ["Farvardin","Ordibehesht","Khordad","Tir","Mordad","Shahrivar","Mehr","Aban","Azar","Dey","Bahman","Esfand"];
+      const week = getLang() === "fa" ? ["ش","ی","د","س","چ","پ","ج"] : ["Sa","Su","Mo","Tu","We","Th","Fr"];
+      const daysInMonth = (year, month) => {
+        if (month <= 6) return 31;
+        if (month <= 11) return 30;
+        const first = jToIso(year, 1, 1), next = jToIso(year + 1, 1, 1);
+        return Math.round((Date.parse(next + "T00:00:00Z") - Date.parse(first + "T00:00:00Z")) / 864e5) - 336;
+      };
+      const renderPicker = (input, panel) => {
+        const state = pickerState[input.id], first = jToIso(state.year, state.month, 1).split("-").map(Number);
+        const offset = (new Date(Date.UTC(first[0], first[1] - 1, first[2])).getUTCDay() + 1) % 7;
+        const count = daysInMonth(state.year, state.month), chosen = input.value ? toStdDigits(input.value).split("/").map(Number) : [], cells = [];
+        for (let n = 0; n < offset; n++) cells.push('<button class="jp-day" type="button" disabled tabindex="-1"></button>');
+        for (let day = 1; day <= count; day++) {
+          const selected = chosen.length === 3 && chosen[0] === state.year && chosen[1] === state.month && chosen[2] === day;
+          const today = todayJ[0] === state.year && todayJ[1] === state.month && todayJ[2] === day;
+          const label = getLang() === "fa" ? String(day).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[+d]) : day;
+          cells.push('<button type="button" class="jp-day' + (selected ? ' selected' : '') + (today ? ' today' : '') + '" data-day="' + day + '">' + label + '</button>');
+        }
+        panel.innerHTML = '<div class="jp-head"><button type="button" data-nav="-1" aria-label="' + (getLang() === "fa" ? "ماه قبل" : "Previous month") + '">‹</button><div class="jp-month">' + months[state.month - 1] + ' ' + state.year + '</div><button type="button" data-nav="1" aria-label="' + (getLang() === "fa" ? "ماه بعد" : "Next month") + '">›</button></div><div class="jp-week">' + week.map((d) => '<span>' + d + '</span>').join("") + '</div><div class="jp-days">' + cells.join("") + '</div><div class="jp-foot"><button type="button" data-action="today">' + (getLang() === "fa" ? "امروز" : "Today") + '</button><button type="button" data-action="clear">' + (getLang() === "fa" ? "پاک کردن" : "Clear") + '</button></div>';
+      };
+      ["mapFrom", "mapTo"].forEach((id) => {
+        const input = el.querySelector("#" + id), panel = el.querySelector("#" + id + "Picker"), key = input.dataset.range;
+        const initial = input.value ? toStdDigits(input.value).split("/").map(Number) : todayJ;
+        pickerState[id] = { year: initial[0], month: initial[1] };
+        const closePicker = () => { panel.hidden = true; input.setAttribute("aria-expanded", "false"); };
+        const openPicker = () => {
+          const selected = input.value ? toStdDigits(input.value).split("/").map(Number) : todayJ;
+          pickerState[id] = { year: selected[0], month: selected[1] };
+          renderPicker(input, panel);
+          const rect = input.getBoundingClientRect(), width = Math.min(320, window.innerWidth - 48);
+          panel.style.left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12)) + "px";
+          panel.style.top = Math.max(12, Math.min(rect.bottom + 6, window.innerHeight - 360)) + "px";
+          panel.hidden = false;
+          input.setAttribute("aria-expanded", "true");
+        };
+        input.addEventListener("click", () => panel.hidden ? openPicker() : closePicker());
+        panel.addEventListener("click", (event) => {
+          const nav = event.target.closest("[data-nav]"), day = event.target.closest("[data-day]"), action = event.target.closest("[data-action]");
+          if (nav) {
+            const state = pickerState[id];
+            state.month += Number(nav.dataset.nav);
+            if (state.month < 1) { state.month = 12; state.year--; }
+            if (state.month > 12) { state.month = 1; state.year++; }
+            renderPicker(input, panel);
+          } else if (day) {
+            S.filters[key] = pickerState[id].year + "/" + padJ(pickerState[id].month) + "/" + padJ(Number(day.dataset.day));
+            openFilters();
+          } else if (action && action.dataset.action === "today") {
+            S.filters[key] = todayJ[0] + "/" + padJ(todayJ[1]) + "/" + padJ(todayJ[2]);
+            openFilters();
+          } else if (action && action.dataset.action === "clear") {
+            S.filters[key] = "";
+            openFilters();
+          }
+        });
+      });
+      el.addEventListener("click", (event) => {
+        ["mapFrom", "mapTo"].forEach((id) => {
+          const input = el.querySelector("#" + id), panel = el.querySelector("#" + id + "Picker");
+          if (!panel.hidden && !input.parentElement.contains(event.target)) {
+            panel.hidden = true;
+            input.setAttribute("aria-expanded", "false");
+          }
+        });
+      });
       el.querySelector("#fclr").onclick = () => {
-        S.filters = { q: S.filters.q, type: "all", route: "", salesman: "", day: "" };
+        S.filters = { q: S.filters.q, type: "all", route: "", salesman: "", day: "", fromDate: "", toDate: "" };
         openFilters();
       };
       el.querySelector("#fok").onclick = () => {
@@ -1431,8 +1533,8 @@ input,select,textarea{font-size:16px!important}
         const n = el.querySelector("#sfn").value.trim();
         if (!n) return toast(t("savedName"));
         const a = savedFilters().filter((x) => x.name !== n);
-        const { type, route, salesman, day } = S.filters;
-        a.push({ name: n, f: { type, route, salesman, day } });
+        const { type, route, salesman, day, fromDate, toDate } = S.filters;
+        a.push({ name: n, f: { type, route, salesman, day, fromDate, toDate } });
         lsSet("savedFilters", a.slice(-12));
         openFilters();
       };
