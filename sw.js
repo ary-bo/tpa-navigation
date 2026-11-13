@@ -86,4 +86,3 @@ self.addEventListener("fetch", event => {
 
   // Google OAuth/Drive and map tiles remain online services and are not cached.
 });
-
