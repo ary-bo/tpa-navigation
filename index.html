@@ -141,7 +141,7 @@ input,select,textarea{font-size:16px!important}
       d_Friday: "\u062C\u0645\u0639\u0647",
       legG: "\u062F\u0631 JP \u0628\u0627 \u0633\u0627\u0628\u0642\u0647 \u0641\u0631\u0648\u0634",
       legO: "\u062F\u0631 JP \u0628\u062F\u0648\u0646 \u0633\u0627\u0628\u0642\u0647 \u0641\u0631\u0648\u0634",
-      legB: "\u062E\u0627\u0631\u062C \u0627\u0632 JP \u0628\u0627 \u0633\u0627\u0628\u0642\u0647 \u0641\u0631\u0648\u0634",
+      legR: "\\u0622\\u062E\\u0631\\u06CC\\u0646 \\u0633\\u0641\\u0627\\u0631\\u0634: Closed/Undelivered",
       noGPS: "\u0628\u062F\u0648\u0646 GPS",
       details: "\u062C\u0632\u0626\u06CC\u0627\u062A \u0641\u0631\u0648\u0634\u06AF\u0627\u0647",
       custId: "\u0634\u0646\u0627\u0633\u0647 \u0645\u0634\u062A\u0631\u06CC",
@@ -302,7 +302,7 @@ input,select,textarea{font-size:16px!important}
       d_Friday: "Friday",
       legG: "In JP, with sales",
       legO: "In JP, no sales",
-      legB: "Not in JP, with sales",
+      legR: "\\u0622\\u062E\\u0631\\u06CC\\u0646 \\u0633\\u0641\\u0627\\u0631\\u0634: Closed/Undelivered",
       noGPS: "No GPS",
       details: "Store details",
       custId: "Customer ID",
@@ -836,7 +836,8 @@ input,select,textarea{font-size:16px!important}
         s.routeSource = "";
       }
       s.storeName = extractStoreName(s.address);
-      s.status = s.inJP ? s.hasSales ? "green" : "orange" : "blue";
+      const latestOrderStatus = s.orders[0] ? str(s.orders[0].status) : "";
+      s.status = s.inJP ? /closed\s*\/\s*undelivered/i.test(latestOrderStatus) ? "red" : s.hasSales ? "green" : "orange" : "blue";
     }
     return { stores: all, builtAt: today, stats: { jp: jp.length, salesOnly: salesOnly.size, orders: orderMap.size, droppedRows: sales.dropped } };
   }
@@ -1315,7 +1316,7 @@ input,select,textarea{font-size:16px!important}
     return addDaysISO(iso2, -((w + 1) % 7));
   };
   var NO_ROUTE = "__none__";
-  var COLOR = { green: "#16a34a", orange: "#f59e0b", blue: "#2563eb" };
+  var COLOR = { green: "#16a34a", orange: "#f59e0b", red: "#dc2626" };
   async function rebuild() {
     const r = S.raw;
     if (!r || !r.jp || !r.sales) {
@@ -1492,7 +1493,7 @@ input,select,textarea{font-size:16px!important}
     const fs = S.focus && byId.get(S.focus);
     if (fs && !list.includes(fs)) list = [...list, fs];
     v.innerHTML = `<div class="mapbar"><input type="search" id="q" placeholder="${esc(t("search"))}" value="${esc(S.filters.q)}"><button class="btn" id="fb">${ic("filter")}</button><button class="btn" id="loc" title="${t("locate")}">${ic("locate")}</button></div><div id="map"></div>
-  <div class="legend"><span><i class="dot g"></i>${t("legG")}</span><span><i class="dot o"></i>${t("legO")}</span><span><i class="dot b"></i>${t("legB")}</span><span class="mu">${list.length} ${t("results")} \xB7 ${list.filter((s) => s.lat === null).length} ${t("noGPS")}</span></div>`;
+  <div class="legend"><span><i class="dot g"></i>${t("legG")}</span><span><i class="dot o"></i>${t("legO")}</span><span><i class="dot r"></i>${t("legR")}</span><span class="mu">${list.length} ${t("results")} \xB7 ${list.filter((s) => s.lat === null).length} ${t("noGPS")}</span></div>`;
     $("#q").oninput = (e) => {
       S.filters.q = e.target.value;
       clearTimeout(pageMap.tm);
@@ -1578,7 +1579,7 @@ input,select,textarea{font-size:16px!important}
       } else if (S.page === "stores") render();
     }, () => toast(t("locDenied")), { enableHighAccuracy: true, timeout: 15e3 });
   }
-  var badge = (s) => `<i class="dot ${s.status === "green" ? "g" : s.status === "orange" ? "o" : "b"}"></i>`;
+  var badge = (s) => `<i class="dot ${s.status === "red" ? "r" : s.status === "green" ? "g" : s.status === "orange" ? "o" : "b"}"></i>`;
   function storeCard(s) {
     return `<div class="card st ${s.status}" data-id="${esc(s.id)}"><div class="row"><b>${esc(s.storeName || s.name || s.id)}</b><span class="sp"></span>${s._d !== void 0 ? `<span class="chip">${s._d < 1e3 ? Math.round(s._d) + " m" : (s._d / 1e3).toFixed(1) + " km"} \xB7 ${t("straight")}</span>` : ""}${s.lat === null ? `<span class="chip">${t("noGPS")}</span>` : ""}</div>
   <div class="mu">${esc(s.name)} \xB7 ${esc(s.id)} \xB7 ${esc(s.cls)}</div><div class="mu">${esc(s.address)}</div><div class="mu">${esc(s.route)}${s.lastPurchase ? " \xB7 " + t("lastPurchase") + " " + jd(s.lastPurchase) : ""}${s.openOrders ? ` \xB7 <span class="chip o">${t("open")} ${s.openOrders}</span>` : ""}${s.overdueOrders ? ` <span class="chip r">${t("overdue")} ${s.overdueOrders}</span>` : ""}</div></div>`;
