@@ -144,6 +144,7 @@ input,select,textarea{font-size:16px!important}
       legO: "\u062F\u0631 JP \u0628\u062F\u0648\u0646 \u0633\u0627\u0628\u0642\u0647 \u0641\u0631\u0648\u0634",
       legR: "آخرین سفارش: Closed/Undelivered",
       noGPS: "\u0628\u062F\u0648\u0646 GPS",
+      inVisitPlan: "\u062F\u0631 \u0628\u0631\u0646\u0627\u0645\u0647 \u0648\u06CC\u0632\u06CC\u062A",
       details: "\u062C\u0632\u0626\u06CC\u0627\u062A \u0641\u0631\u0648\u0634\u06AF\u0627\u0647",
       custId: "\u0634\u0646\u0627\u0633\u0647 \u0645\u0634\u062A\u0631\u06CC",
       custName: "\u0646\u0627\u0645 \u0645\u0634\u062A\u0631\u06CC",
@@ -306,6 +307,7 @@ input,select,textarea{font-size:16px!important}
       legO: "In JP, no sales",
       legR: "Latest order: Closed/Undelivered",
       noGPS: "No GPS",
+      inVisitPlan: "In visit plan",
       details: "Store details",
       custId: "Customer ID",
       custName: "Customer name",
@@ -1738,7 +1740,8 @@ input,select,textarea{font-size:16px!important}
   }
   var badge = (s) => `<i class="dot ${s.status === "red" ? "r" : s.status === "green" ? "g" : s.status === "orange" ? "o" : "b"}"></i>`;
   function storeCard(s) {
-    return `<div class="card st ${s.status}" data-id="${esc(s.id)}"><div class="row"><b>${esc(s.storeName || s.name || s.id)}</b><span class="sp"></span>${s._d !== void 0 ? `<span class="chip">${s._d < 1e3 ? Math.round(s._d) + " m" : (s._d / 1e3).toFixed(1) + " km"} \xB7 ${t("straight")}</span>` : ""}${s.lat === null ? `<span class="chip">${t("noGPS")}</span>` : ""}</div>
+    const inVisitPlan = S.plan.some((p) => String(p.customerId) === String(s.id)) || S.pending.some((p) => String(p.customerId) === String(s.id));
+    return `<div class="card st ${s.status}" data-id="${esc(s.id)}"><div class="row"><b>${esc(s.storeName || s.name || s.id)}</b>${inVisitPlan ? `<span class="chip g">✓ ${t("inVisitPlan")}</span>` : ""}<span class="sp"></span>${s._d !== void 0 ? `<span class="chip">${s._d < 1e3 ? Math.round(s._d) + " m" : (s._d / 1e3).toFixed(1) + " km"} \xB7 ${t("straight")}</span>` : ""}${s.lat === null ? `<span class="chip">${t("noGPS")}</span>` : ""}</div>
   <div class="mu">${esc(s.name)} \xB7 ${esc(s.id)} \xB7 ${esc(s.cls)}</div><div class="mu">${esc(s.address)}</div><div class="mu">${esc(s.route)}${s.lastPurchase ? " \xB7 " + t("lastPurchase") + " " + jd(s.lastPurchase) : ""}${s.openOrders ? ` \xB7 <span class="chip o">${t("open")} ${s.openOrders}</span>` : ""}${s.overdueOrders ? ` <span class="chip r">${t("overdue")} ${s.overdueOrders}</span>` : ""}</div></div>`;
   }
   function pageStores(v) {
