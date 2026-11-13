@@ -124,6 +124,7 @@ input,select,textarea{font-size:16px!important}
       hasSales: "\u062F\u0627\u0631\u0627\u06CC \u0633\u0627\u0628\u0642\u0647 \u0641\u0631\u0648\u0634",
       noSales: "\u0628\u062F\u0648\u0646 \u0633\u0627\u0628\u0642\u0647 \u0641\u0631\u0648\u0634",
       salesOnly: "\u0641\u0642\u0637 \u0645\u0648\u062C\u0648\u062F \u062F\u0631 \u06AF\u0632\u0627\u0631\u0634 \u0641\u0631\u0648\u0634",
+      closedUndelivered: "آخرین سفارش: Closed/Undelivered",
       regions: "\u0645\u0646\u0637\u0642\u0647 (Route)",
       noRoute: "\u0628\u062F\u0648\u0646 \u0645\u0633\u06CC\u0631",
       salesman: "\u0648\u06CC\u0632\u06CC\u062A\u0648\u0631",
@@ -285,6 +286,7 @@ input,select,textarea{font-size:16px!important}
       hasSales: "With sales history",
       noSales: "No sales history",
       salesOnly: "Sales report only",
+      closedUndelivered: "Latest order: Closed/Undelivered",
       regions: "Region (Route)",
       noRoute: "No route",
       salesman: "Salesman",
@@ -1365,6 +1367,7 @@ input,select,textarea{font-size:16px!important}
       if (f.type === "hasSales" && !s.hasSales) return false;
       if (f.type === "noSales" && (s.hasSales || !s.inJP)) return false;
       if (f.type === "salesOnly" && s.inJP) return false;
+      if (f.type === "closedUndelivered" && (!s.inJP || !s.orders[0] || !/closed\\s*\\/\\s*undelivered/i.test(str(s.orders[0].status)))) return false;
     }
     if (skip !== "route" && f.route && (f.route === NO_ROUTE ? !!s.route : s.route !== f.route)) return false;
     if (skip !== "salesman" && f.salesman && s.salesman !== f.salesman) return false;
@@ -1389,8 +1392,8 @@ input,select,textarea{font-size:16px!important}
       const [v, l] = Array.isArray(o) ? o : [o, o];
       return `<option value="${esc(v)}" ${f[k] === v ? "selected" : ""}>${esc(l)}</option>`;
     }).join("")}</select>`;
-    const dayOpts = [["", t("allDays")], ["today", t("today")], ...DAY_KEYS.map((d) => [d, t("d_" + d)])];
-    return `<label class="f">${t("type")}</label><select data-f="type">${["all", "hasSales", "noSales", "salesOnly"].map((v) => `<option value="${v}" ${f.type === v ? "selected" : ""}>${t(v)}</option>`).join("")}</select>
+    const dayOpts = [["", t("allDays")], ["today", t("today")], ...[...DAY_KEYS, "Friday"].map((d) => [d, t("d_" + d)])];
+    return `<label class="f">${t("type")}</label><select data-f="type">${["all", "hasSales", "noSales", "salesOnly", "closedUndelivered"].map((v) => `<option value="${v}" ${f.type === v ? "selected" : ""}>${t(v)}</option>`).join("")}</select>
   ${sel("route", t("regions"), [...options("route"), ...S.ds.stores.some((x) => !x.route && matches(x, S.filters, "route")) ? [[NO_ROUTE, t("noRoute")]] : []], t("all"))}${sel("salesman", t("salesman"), options("salesman"), t("all"))}
   <label class="f">${t("day")}</label><select data-f="day">${dayOpts.map(([v, l]) => `<option value="${v}" ${f.day === v ? "selected" : ""}>${l}</option>`).join("")}</select>
   <h3>${t("savedF")}</h3><div class="row">${savedFilters().map((x, i) => `<span class="row" style="gap:2px"><button class="btn sm" data-sf="${i}">${esc(x.name)}</button><button class="btn sm dng" data-sx="${i}">\u2715</button></span>`).join("") || `<span class="mu">\u2014</span>`}</div>
