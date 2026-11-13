@@ -1210,7 +1210,7 @@ input,select,textarea{font-size:16px!important}
       var _a, _b;
       const store = byId.get(String(p.customerId));
       const state = store ? mapRangeSalesStatus(store, range) : { hasSales: false, latestOrder: null };
-      const undelivered = !!(state.latestOrder && /closed\\s*\\/\\s*undelivered/i.test(str(state.latestOrder.status)));
+      const undelivered = !!(state.latestOrder && /closed\s*\/\s*undelivered/i.test(str(state.latestOrder.status)));
       const storeStatus = undelivered ? "Undelivered" : state.hasSales ? "Purchased" : "No Purchase";
       return [isoToJalaliStr(p.visitDate), safe(p.customerId), safe(p.storeName), safe(p.customerName), safe(p.address), safe(p.route), (_a = p.lat) != null ? _a : "", (_b = p.lng) != null ? _b : "", storeStatus, p.source];
     });
