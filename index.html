@@ -1909,14 +1909,7 @@ input,select,textarea{font-size:16px!important}
   function pageData(v) {
     var _a;
     const r = S.raw, st = (_a = S.ds) == null ? void 0 : _a.stats, qa = S.ds ? quality() : null;
-    v.innerHTML = `<div class="pad wrap"><div class="card"><h2>${t("files")}</h2>
-  ${[["jp", "fJP"], ["sales", "fSales"], ["map", "fMap"]].map(([k, l]) => {
-      var _a2;
-      return `<label class="f">${t(l)}${((_a2 = r == null ? void 0 : r.names) == null ? void 0 : _a2[k]) ? ` \u2014 <b>${esc(r.names[k])}</b>` : ""}</label><input type="file" data-k="${k}" accept=".xlsx,.xls,.csv">`;
-    }).join("")}
-  <div class="row" style="margin-top:10px"><button class="btn pri" id="ld">${t("load")}</button></div><div id="msg" class="err" style="margin-top:6px"></div></div>
-  <div class="card"><h2>${t("drive")}</h2><div class="mu">${t("driveNote")}</div><button class="btn pri" id="ds" style="margin-top:8px">${t("driveSync")}</button><div class="row" style="margin-top:6px"><button class="btn sm" id="bk3">${t("backup")}</button><button class="btn sm" id="rs3">${t("restore")}</button></div><div id="dmsg" class="mu"></div></div>
-  ${qa ? `<div class="card"><h2>${t("quality")}</h2><table class="t">${qa.map(([k, n, tot]) => `<tr><td>${t("q_" + k)}</td><td>${n}${tot ? ` <span class="mu">(${Math.round(n * 100 / tot)}%)</span>` : ""}</td></tr>`).join("")}</table></div>` : ""}
+    v.innerHTML = `<div class="pad wrap">  ${qa ? `<div class="card"><h2>${t("quality")}</h2><table class="t">${qa.map(([k, n, tot]) => `<tr><td>${t("q_" + k)}</td><td>${n}${tot ? ` <span class="mu">(${Math.round(n * 100 / tot)}%)</span>` : ""}</td></tr>`).join("")}</table></div>` : ""}
   ${S.ds ? `<div class="card"><h2>${t("stats")}</h2><div class="mu">${t("lastSync")}: ${esc(r.at ? new Date(r.at).toLocaleString(getLang() === "fa" ? "fa-IR-u-ca-persian" : "en-GB") : "")}</div><div>JP: ${st.jp} \xB7 ${t("salesOnly")}: ${st.salesOnly} \xB7 ${t("orders")}: ${st.orders} \xB7 Closed/expired: ${st.droppedRows}</div><div class="mu">${t("noteClosedUndel")}</div></div>
   <div class="card"><h2>${t("reports")}</h2><div class="row">${[["nogps", "rNoGPS"], ["nobuy", "rNoBuy"], ["open", "rOpen"], ["overdue", "rOverdue"]].map(([k, l]) => `<button class="btn sm" data-r="${k}">\u2B07 ${t(l)} (${reportRows(k).length - 1})</button>`).join("")}</div></div>
   <div class="card"><h2>${t("salesSummary")}</h2>
@@ -1932,19 +1925,6 @@ input,select,textarea{font-size:16px!important}
     </div>
     <div id="salesSummaryNote" class="mu" role="status" aria-live="polite" style="margin-top:8px"></div>
   </div>` : ""}</div>`;
-    v.querySelector("#ld").onclick = async () => {
-      const files = {};
-      try {
-        for (const i of v.querySelectorAll("input[type=file]")) if (i.files[0]) files[i.dataset.k] = { aoa: await readAoa(i.files[0]), name: i.files[0].name };
-        await ingest(files);
-        toast(t("ok"));
-      } catch (e) {
-        $("#msg").textContent = t("errParse") + " " + e.message;
-      }
-    };
-    v.querySelector("#ds").onclick = driveSync;
-    v.querySelector("#bk3").onclick = backupPlan;
-    v.querySelector("#rs3").onclick = restorePlan;
     v.querySelectorAll("[data-r]").forEach((b) => b.onclick = () => exportReport(b.dataset.r));
     const refreshSalesSummary = () => {
       const result = invoicedSalesSummary(v.querySelector("#salesFrom").value.trim(), v.querySelector("#salesTo").value.trim());
@@ -2220,8 +2200,28 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
     v.innerHTML = `<div class="pad wrap"><div class="card"><label class="f">${t("language")}</label><select id="lg"><option value="fa" ${s.lang === "fa" ? "selected" : ""}>\u0641\u0627\u0631\u0633\u06CC</option><option value="en" ${s.lang === "en" ? "selected" : ""}>English</option></select>
   <label class="f">${t("theme")}</label><select id="th">${["auto", "light", "dark"].map((x) => `<option value="${x}" ${s.theme === x ? "selected" : ""}>${t(x)}</option>`).join("")}</select>
   <div class="row" style="margin-top:12px"><button class="btn pri" id="sv">${t("save")}</button></div></div>
-  <div class="card"><h2>${t("pinTitle")}</h2><div class="mu">${t("pinNote")}</div><div class="row" style="margin-top:6px"><input type="password" inputmode="numeric" id="pn" maxlength="12" dir="ltr" placeholder="${esc(t("pinFormat"))}" style="flex:1"><button class="btn sm pri" id="pset">${t("save")}</button>${lsGet("pin", null) ? `<button class="btn sm dng" id="prm">${t("pinRemove")}</button>` : ""}</div></div>
+  <div class="card"><h2>${t("files")}</h2>
+  ${[["jp", "fJP"], ["sales", "fSales"], ["map", "fMap"]].map(([k, l]) => {
+      var _a2;
+      return `<label class="f">${t(l)}${((_a2 = r == null ? void 0 : r.names) == null ? void 0 : _a2[k]) ? ` \u2014 <b>${esc(r.names[k])}</b>` : ""}</label><input type="file" data-k="${k}" accept=".xlsx,.xls,.csv">`;
+    }).join("")}
+  <div class="row" style="margin-top:10px"><button class="btn pri" id="ld">${t("load")}</button></div><div id="msg" class="err" style="margin-top:6px"></div></div>
+  <div class="card"><h2>${t("drive")}</h2><div class="mu">${t("driveNote")}</div><button class="btn pri" id="ds" style="margin-top:8px">${t("driveSync")}</button><div class="row" style="margin-top:6px"><button class="btn sm" id="bk3">${t("backup")}</button><button class="btn sm" id="rs3">${t("restore")}</button></div><div id="dmsg" class="mu"></div></div>
+    <div class="card"><h2>${t("pinTitle")}</h2><div class="mu">${t("pinNote")}</div><div class="row" style="margin-top:6px"><input type="password" inputmode="numeric" id="pn" maxlength="12" dir="ltr" placeholder="${esc(t("pinFormat"))}" style="flex:1"><button class="btn sm pri" id="pset">${t("save")}</button>${lsGet("pin", null) ? `<button class="btn sm dng" id="prm">${t("pinRemove")}</button>` : ""}</div></div>
   <div class="card"><button class="btn dng" id="c1">${t("clearCache")}</button><br><br><button class="btn dng" id="c2">${t("clearAll")}</button></div><div class="mu" style="text-align:center">${t("version")} ${VERSION}</div></div>`;
+    v.querySelector("#ld").onclick = async () => {
+      const files = {};
+      try {
+        for (const i of v.querySelectorAll("input[type=file]")) if (i.files[0]) files[i.dataset.k] = { aoa: await readAoa(i.files[0]), name: i.files[0].name };
+        await ingest(files);
+        toast(t("ok"));
+      } catch (e) {
+        $("#msg").textContent = t("errParse") + " " + e.message;
+      }
+    };
+    v.querySelector("#ds").onclick = driveSync;
+    v.querySelector("#bk3").onclick = backupPlan;
+    v.querySelector("#rs3").onclick = restorePlan;
     v.querySelector("#pset").onclick = () => setPin($("#pn").value);
     const pr = v.querySelector("#prm");
     if (pr) pr.onclick = () => {
