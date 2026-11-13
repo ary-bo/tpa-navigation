@@ -1,88 +1,101 @@
-/* TPA Navigation - resilient PWA cache */
-const CACHE_NAME = "tpa-navigation-v5";
-const APP_ASSETS = ["./", "./index.html", "./manifest.webmanifest"];
-const LIBRARY_HOSTS = new Set(["unpkg.com", "cdn.jsdelivr.net"]);
+'use strict';
 
-self.addEventListener("install", event => {
+/* TPA Navigation — Service Worker
+   Cache version: v11
+   This version includes the app icon referenced by index.html and manifest. */
+
+const CACHE_PREFIX = 'tpa-navigation-';
+const SHELL_CACHE = `${CACHE_PREFIX}shell-v11`;
+const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-v11`;
+
+const APP_SHELL = [
+  './',
+  './index.html',
+  './style.css',
+  './app.js',
+  './manifest.webmanifest',
+  './icon.svg'
+];
+
+self.addEventListener('install', event => {
   event.waitUntil((async () => {
-    const cache = await caches.open(CACHE_NAME);
-    // A missing optional shell URL must not prevent the Service Worker installing.
-    await Promise.allSettled(APP_ASSETS.map(async asset => {
-      try {
-        const response = await fetch(asset, { cache: "reload" });
-        if (response.ok) await cache.put(asset, response);
-      } catch (error) {
-        // The browser may still have an older cached shell to use.
-      }
-    }));
+    const cache = await caches.open(SHELL_CACHE);
+    await cache.addAll(APP_SHELL);
     await self.skipWaiting();
   })());
 });
 
-self.addEventListener("activate", event => {
+self.addEventListener('activate', event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys
-      .filter(key => key.startsWith("tpa-navigation-") && key !== CACHE_NAME)
-      .map(key => caches.delete(key)));
+    await Promise.all(
+      keys
+        .filter(key => key.startsWith(CACHE_PREFIX))
+        .filter(key => key !== SHELL_CACHE && key !== RUNTIME_CACHE)
+        .map(key => caches.delete(key))
+    );
     await self.clients.claim();
   })());
 });
 
-self.addEventListener("fetch", event => {
+self.addEventListener('fetch', event => {
   const request = event.request;
-  if (request.method !== "GET") return;
+  if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
 
-  // App files: network first, cached copy when offline.
   if (url.origin === self.location.origin) {
-    event.respondWith((async () => {
-      try {
-        const response = await fetch(request);
-        if (response && response.ok) {
-          const cache = await caches.open(CACHE_NAME);
-          await cache.put(request, response.clone());
-        }
-        return response;
-      } catch (error) {
-        const cached = await caches.match(request);
+    if (request.mode === 'navigate') {
+      event.respondWith(
+        fetch(request)
+          .then(response => {
+            if (response && response.ok) {
+              const copy = response.clone();
+              caches.open(SHELL_CACHE).then(cache => cache.put('./index.html', copy));
+            }
+            return response;
+          })
+          .catch(async () => {
+            const cached = await caches.match('./index.html');
+            return cached || Response.error();
+          })
+      );
+      return;
+    }
+
+    event.respondWith(
+      caches.match(request).then(cached => {
         if (cached) return cached;
-        if (request.mode === "navigate") {
-          return (await caches.match("./index.html")) || Response.error();
-        }
-        return Response.error();
-      }
-    })());
+        return fetch(request).then(response => {
+          if (response && response.ok) {
+            const copy = response.clone();
+            caches.open(SHELL_CACHE).then(cache => cache.put(request, copy));
+          }
+          return response;
+        });
+      })
+    );
     return;
   }
 
-  // CDN libraries: cache-first for faster repeat loads, then network.
-  if (LIBRARY_HOSTS.has(url.hostname)) {
+  if ([
+    'cdn.jsdelivr.net',
+    'unpkg.com',
+    'accounts.google.com'
+  ].includes(url.hostname)) {
     event.respondWith((async () => {
-      const cached = await caches.match(request);
-      if (cached) {
-        // Refresh the cache in the background when possible.
-        fetch(request).then(async response => {
-          if (response && response.ok) {
-            const cache = await caches.open(CACHE_NAME);
-            await cache.put(request, response);
-          }
-        }).catch(() => {});
-        return cached;
-      }
+      const cache = await caches.open(RUNTIME_CACHE);
       try {
         const response = await fetch(request);
         if (response && response.ok) {
-          const cache = await caches.open(CACHE_NAME);
           await cache.put(request, response.clone());
         }
         return response;
       } catch (error) {
-        return Response.error();
+        const cached = await cache.match(request);
+        if (cached) return cached;
+        throw error;
       }
     })());
   }
-
-  // Google OAuth/Drive and map tiles remain online services and are not cached.
 });

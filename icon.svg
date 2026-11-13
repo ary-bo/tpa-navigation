@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">TPA Navigation</title>
+  <desc id="desc">TPA Navigation app icon</desc>
+  <rect width="512" height="512" rx="112" fill="#102b46"/>
+  <path d="M256 64c-86 0-156 70-156 156 0 112 156 244 156 244s156-132 156-244c0-86-70-156-156-156z" fill="#1677c8"/>
+  <circle cx="256" cy="220" r="88" fill="#f1f5f9"/>
+  <path d="M213 220h86M256 177v86" stroke="#15966b" stroke-width="22" stroke-linecap="round"/>
+  <circle cx="256" cy="220" r="18" fill="#102b46"/>
+</svg>
