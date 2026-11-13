@@ -415,32 +415,58 @@ async function loadManualEnhancedX(){const jf=$x('jpFile')?.files?.[0],tf=$x('sa
  finally{if(btn)btn.disabled=false;}}
 function filenameDateX(name){const m=String(name||'').match(/(14\d{6})/);return m?m[1]:'';}
 function latest(files,prefix){return files.filter(f=>f.name.toLowerCase().startsWith(prefix.toLowerCase())&&(f.name.toLowerCase().endsWith('.xlsx')||f.mimeType==='application/vnd.google-apps.spreadsheet')).sort((a,b)=>{const da=filenameDateX(a.name),db=filenameDateX(b.name);if(da!==db)return db.localeCompare(da);return new Date(b.modifiedTime)-new Date(a.modifiedTime);})[0];}
+async function readNativeSheetX(file,tabName,headerIndex){
+ const metaRes=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(file.id)}?fields=sheets.properties`,{headers:{Authorization:'Bearer '+accessToken}});
+ if(!metaRes.ok)throw Error('دریافت مشخصات شیت '+file.name+' ناموفق بود ('+metaRes.status+').');
+ const meta=await metaRes.json(),titles=(meta.sheets||[]).map(s=>s.properties?.title).filter(Boolean);
+ const chosen=tabName?titles.find(t=>t===tabName):titles[0];
+ if(!chosen)throw Error('تب موردنیاز در '+file.name+' پیدا نشد. تب‌های موجود: '+titles.join('، '));
+ const range=`'${chosen.replace(/'/g,"''")}'!A:ZZ`;
+ const res=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(file.id)}/values/${encodeURIComponent(range)}`,{headers:{Authorization:'Bearer '+accessToken}});
+ if(!res.ok)throw Error('خواندن تب '+chosen+' ناموفق بود ('+res.status+').');
+ const values=(await res.json()).values||[];
+ if(values.length<=headerIndex)throw Error('ردیف عنوان در تب '+chosen+' وجود ندارد.');
+ const ws=XLSX.utils.aoa_to_sheet(values);
+ return XLSX.utils.sheet_to_json(ws,{range:headerIndex,defval:'',raw:false});
+}
+async function readSourceFileX(file,tabName,headerIndex){
+ if(file.mimeType==='application/vnd.google-apps.spreadsheet')return readNativeSheetX(file,tabName,headerIndex);
+ const bytes=await downloadDrive(file),wb=XLSX.read(bytes,{type:'array'});
+ const sheet=tabName?(wb.Sheets[tabName]):wb.Sheets[wb.SheetNames[0]];
+ if(!sheet)throw Error('تب '+tabName+' در '+file.name+' پیدا نشد.');
+ return XLSX.utils.sheet_to_json(sheet,{range:headerIndex,defval:'',raw:false});
+}
 async function syncDrive(){
  try{
-  message('در حال بررسی نسخه‌های Google Drive...');const fs=await driveFiles();
-  const candidates={jp:fs.filter(f=>/^JP_.*\.xlsx$/i.test(f.name)).sort((a,b)=>filenameDateX(b.name).localeCompare(filenameDateX(a.name))||new Date(b.modifiedTime)-new Date(a.modifiedTime)),tpa:fs.filter(f=>/^TPA_Alborz.*\.xlsx$/i.test(f.name)).sort((a,b)=>filenameDateX(b.name).localeCompare(filenameDateX(a.name))||new Date(b.modifiedTime)-new Date(a.modifiedTime)),pm:fs.filter(f=>/^Product Mapping.*\.xlsx$/i.test(f.name)).sort((a,b)=>new Date(b.modifiedTime)-new Date(a.modifiedTime))};
-  if(!candidates.jp.length||!candidates.tpa.length)throw Error('فایل JP_ یا TPA_Alborz در پوشه Drive پیدا نشد.');
+  message('در حال بررسی نسخه‌های Google Drive...');
+  const fs=await driveFiles(),sheetMime='application/vnd.google-apps.spreadsheet';
+  const pick=(prefix)=>fs.filter(f=>new RegExp('^'+prefix,'i').test(f.name)&&(f.mimeType===sheetMime||/\\.xlsx$/i.test(f.name))).sort((a,b)=>filenameDateX(b.name).localeCompare(filenameDateX(a.name))||new Date(b.modifiedTime)-new Date(a.modifiedTime));
+  const jpFiles=pick('JP_'),tpaFiles=pick('TPA_Alborz'),pmFiles=pick('Product Mapping');
+  if(!jpFiles.length||!tpaFiles.length)throw Error('Google Sheets با نام JP_ و TPA_Alborz در پوشه Drive پیدا نشدند.');
   let accepted=null,lastError=null;
-  // Try newest-to-oldest pairs; a corrupt newest file must never replace a valid local dataset.
-  for(const jf of candidates.jp.slice(0,5)){
-   for(const tf of candidates.tpa.slice(0,5)){
+  for(const jf of jpFiles.slice(0,5)){
+   for(const tf of tpaFiles.slice(0,5)){
     try{
-     const [jb,tb,mb]=await Promise.all([downloadDrive(jf),downloadDrive(tf),candidates.pm[0]?downloadDrive(candidates.pm[0]):Promise.resolve(null)]);
-     const jw=XLSX.read(jb,{type:'array'}),tw=XLSX.read(tb,{type:'array'});
-     const jp=XLSX.utils.sheet_to_json(jw.Sheets[jw.SheetNames[0]],{range:1,defval:'',raw:false});
-     const tp=XLSX.utils.sheet_to_json(tw.Sheets[tw.SheetNames[0]],{range:3,defval:'',raw:false});
-     let pm=mappingRows;if(mb){try{const mw=XLSX.read(mb,{type:'array'});const parsed=XLSX.utils.sheet_to_json(mw.Sheets[mw.SheetNames[0]],{range:0,defval:'',raw:false});if(!parsed.length||!Object.prototype.hasOwnProperty.call(parsed[0]||{},'Item Code'))throw Error('Product Mapping ساختار معتبر ندارد.');pm=parsed;}catch(mappingError){console.warn('Product Mapping جدید نامعتبر است؛ نسخه قبلی حفظ می‌شود.',mappingError);pm=mappingRows;}}
-     validate(jp,tp,pm);if(jp.length<100||tp.length<100)throw Error('تعداد ردیف‌ها غیرعادی کم است.');
-     accepted={jf,tf,jp,tp,pm};break;
+     const [jp,tp,pm]=await Promise.all([
+      readSourceFileX(jf,'Journey Plan ',1),
+      readSourceFileX(tf,'Invoice2 - Ghoncheh',3),
+      pmFiles[0]?readSourceFileX(pm,null,0):Promise.resolve(mappingRows)
+     ]);
+     validate(jp,tp,pm);
+     if(jp.length<100||tp.length<100)throw Error('تعداد ردیف‌ها غیرعادی کم است.');
+     accepted={jf,tf,jp,tp,pm};
+     break;
     }catch(e){lastError=e;}
    }
    if(accepted)break;
   }
-  if(!accepted)throw Error('هیچ ترکیب معتبر از فایل‌های Drive پیدا نشد. '+(lastError?.message||''));
+  if(!accepted)throw Error('هیچ ترکیب معتبری از فایل‌های Drive پیدا نشد. '+(lastError?.message||''));
   const old=[jpRows,tpaRows,mappingRows,window.sourceYear];
-  try{jpRows=accepted.jp;tpaRows=accepted.tp;mappingRows=accepted.pm;window.sourceYear=Number((accepted.tf.name.match(/(14\d{2})/)||[])[1]||1405);buildData();await saveLocal();}
+  try{jpRows=accepted.jp;tpaRows=accepted.tp;mappingRows=accepted.pm;window.sourceYear=Number((accepted.tf.name.match(/(14\\d{2})/)||[])[1]||1405);buildData();await saveLocal();}
   catch(e){[jpRows,tpaRows,mappingRows,window.sourceYear]=old;buildData();throw e;}
-  renderAll();$x('lastSync').textContent=`آخرین همگام‌سازی: ${new Date().toLocaleString('fa-IR')} · ${accepted.jf.name} · ${accepted.tf.name}`;message(`همگام‌سازی موفق؛ ${stores.length.toLocaleString('fa-IR')} فروشگاه بارگذاری شد.`);status('همگام');
+  renderAll();
+  if($x('lastSync'))$x('lastSync').textContent=`آخرین همگام‌سازی: ${new Date().toLocaleString('fa-IR')} · ${accepted.jf.name} · ${accepted.tf.name}`;
+  message(`همگام‌سازی موفق؛ ${stores.length.toLocaleString('fa-IR')} فروشگاه بارگذاری شد.`);status('همگام');
  }catch(e){console.error(e);message('همگام‌سازی انجام نشد؛ اطلاعات معتبر قبلی حفظ شد. '+e.message);}
 }
 async function saveLocal(){const d=await db();return new Promise((resolve,reject)=>{const tx=d.transaction(STORE,'readwrite'),os=tx.objectStore(STORE),now=Date.now();const get=os.get('source');get.onsuccess=()=>{if(get.result)os.put({...get.result,id:'backup:'+now,backupAt:now});os.put({id:'source',jpRows,tpaRows,mappingRows,year:window.sourceYear||1405,updated:now});const all=os.getAll();all.onsuccess=()=>{const backups=all.result.filter(x=>String(x.id).startsWith('backup:')).sort((a,b)=>b.backupAt-a.backupAt);for(const old of backups.slice(5))os.delete(old.id);};};tx.oncomplete=()=>{d.close();resolve();};tx.onerror=()=>{d.close();reject(tx.error);};});}
@@ -456,7 +482,7 @@ async function savePresentedHistoryX(){const d=await db();return new Promise((re
 function historyKeyX(p){return normX(p.customerId)+'|'+normalizeVisitDateX(p.visitDate);}
 async function markPlanPresentedX(){if(!plan.length){message('برنامه خالی است.');return;}const ok=confirm('فقط در صورتی تأیید کن که فایل Audit_Visit_Plan.xlsx را واقعاً برای مدیر ارسال یا در محل مورد توافق بارگذاری کرده‌ای. آیا ارسال واقعی انجام شده است؟');if(!ok)return;const submittedAt=new Date().toISOString();let added=0;for(const p of plan){const key=historyKeyX(p);if(!presentedHistoryX.some(h=>h.key===key)){presentedHistoryX.push({key,visitDate:normalizeVisitDateX(p.visitDate)||p.visitDate,customerId:p.customerId,storeName:p.storeName,customerName:p.customerName,address:p.address,routeName:p.routeName,latitude:p.latitude,longitude:p.longitude,priority:p.priority,selectionReason:p.selectionReason,auditorComment:p.auditorComment,selectionSource:p.selectionSource,submittedAt});added++;}}try{await savePresentedHistoryX();message(`${added} بازدید در سابقه ارائه‌شده ثبت شد.`);renderList();renderPlan();}catch(e){message('ثبت سابقه ناموفق بود؛ وضعیت ارسال در دستگاه ثبت نشد: '+e.message);}}
 function exportPresentedHistoryX(){const rows=presentedHistoryX.map(h=>({'Visit Date':h.visitDate,'Customer ID':h.customerId,'Store Name':h.storeName,'Customer Name':h.customerName,'Address':h.address,'Route Name':h.routeName,'Latitude':h.latitude,'Longitude':h.longitude,'Priority':h.priority,'Selection Reason':h.selectionReason,'Auditor Comment':h.auditorComment,'Selection Source':h.selectionSource,'Submitted At':h.submittedAt}));const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Audit Visit History');XLSX.writeFile(wb,'Audit_Visit_History.xlsx');}
-function bindDriveEnhancedX(){if(!window.google?.accounts?.oauth2)return;tokenClient=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/drive.file',callback:async r=>{if(r.error){message('ورود Google ناموفق بود: '+r.error);return;}accessToken=r.access_token;await syncDrive();}});}
+function bindDriveEnhancedX(){if(!window.google?.accounts?.oauth2)return;tokenClient=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets.readonly',callback:async r=>{if(r.error){message('ورود Google ناموفق بود: '+r.error);return;}accessToken=r.access_token;await syncDrive();}});}
 function connectDriveEnhancedX(){tokenClient=null;bindDriveEnhancedX();if(!tokenClient){message('کتابخانه Google بارگذاری نشده است.');return;}tokenClient.requestAccessToken({prompt:'consent'});}
 async function uploadDriveFileX(name,bytes,existingId){const boundary='-------TPAFormBoundary'+Math.random().toString(16).slice(2);const metadata={name,mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',...(existingId?{}:{parents:[DRIVE_FOLDER]})};const body=new Blob([`--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\r\n\r\n`,bytes,`\r\n--${boundary}--`]);const url=existingId?`https://www.googleapis.com/upload/drive/v3/files/${existingId}?uploadType=multipart`:'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';const method=existingId?'PATCH':'POST';const res=await fetch(url,{method,headers:{Authorization:'Bearer '+accessToken,'Content-Type':'multipart/related; boundary='+boundary},body});if(!res.ok)throw Error('ذخیره فایل در Drive ناموفق بود: '+res.status+' '+(await res.text()).slice(0,250));return res.json();}
 async function syncHistoryToDriveX(){if(!accessToken){message('ابتدا به Google Drive متصل شو تا مجوز ذخیره تاریخچه دریافت شود.');return;}try{const rows=presentedHistoryX.map(h=>({'Visit Date':h.visitDate,'Customer ID':h.customerId,'Store Name':h.storeName,'Customer Name':h.customerName,'Address':h.address,'Route Name':h.routeName,'Latitude':h.latitude,'Longitude':h.longitude,'Priority':h.priority,'Selection Reason':h.selectionReason,'Auditor Comment':h.auditorComment,'Selection Source':h.selectionSource,'Submitted At':h.submittedAt}));const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Audit Visit History');const bytes=XLSX.write(wb,{bookType:'xlsx',type:'array'});const files=await driveFiles();const old=files.find(f=>f.name==='Audit_Visit_History.xlsx');if(old){const archiveName=`Audit_Visit_History_Archive_${new Date().toISOString().replace(/[:.]/g,'-')}.xlsx`;const oldBytes=await downloadDrive(old);await uploadDriveFileX(archiveName,oldBytes,null);await uploadDriveFileX('Audit_Visit_History.xlsx',bytes,old.id);}else await uploadDriveFileX('Audit_Visit_History.xlsx',bytes,null);message('تاریخچه در Google Drive ذخیره شد و نسخه قبلی، در صورت وجود، آرشیو شد.');}catch(e){message('تاریخچه در Drive ذخیره نشد؛ نسخه محلی حفظ شده است. '+e.message);}}
