@@ -1838,14 +1838,13 @@ input,select,textarea{font-size:16px!important}
     const dd = quick.includes(prefDate) ? prefDate : quick[0];
     sheet(`<h2>${t("addPlan")}</h2><div class="mu">${esc(s.storeName || s.name)} \xB7 ${esc(s.id)}</div>
   <label class="f">${t("visitDate")}</label><select id="pd">${quick.map((d) => `<option value="${d}" ${d === dd ? "selected" : ""}>${t("d_" + dayKeyOfISO(d))} ${jd(d)}</option>`).join("")}</select>
-  <label class="f">${t("priority")}</label><select id="pp">${PRIORITIES.map((p) => `<option value="${p}" ${p === "Medium" ? "selected" : ""}>${t(p)}</option>`).join("")}</select>
-  <label class="f">${t("reason")}</label><input type="text" id="pr"><label class="f">${t("comment")}</label><textarea id="pc" rows="2" style="width:100%"></textarea>
+  <label class="f">${t("comment")}</label><textarea id="pc" rows="2" style="width:100%"></textarea>
   <div class="row" style="margin-top:12px"><button class="btn pri" id="ok">${t("save")}</button><button class="btn" id="no">${t("cancel")}</button></div>`, (el) => {
       el.querySelector("#no").onclick = () => detail(s.id);
       el.querySelector("#ok").onclick = () => {
         const date = el.querySelector("#pd").value;
         if (isDuplicate(S.plan, s.id, date)) return toast(t("alreadyIn"));
-        S.plan.push(makeRecord(s, date, { priority: el.querySelector("#pp").value, reason: el.querySelector("#pr").value, comment: el.querySelector("#pc").value, source: "Internal", order: 9999 }));
+        S.plan.push(makeRecord(s, date, { comment: el.querySelector("#pc").value, source: "Internal", order: 9999 }));
         renumber(S.plan, date);
         savePlan();
         toast(t("ok"));
