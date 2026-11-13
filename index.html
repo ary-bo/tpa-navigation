@@ -2029,25 +2029,21 @@ input,select,textarea{font-size:16px!important}
   function pageData(v) {
     var _a;
     const r = S.raw, st = (_a = S.ds) == null ? void 0 : _a.stats, qa = S.ds ? quality() : null;
-    v.innerHTML = `<div class="pad wrap">  ${qa ? `<div class="card"><h2>${t("quality")}</h2><table class="t">${qa.map(([k, n, tot]) => `<tr><td>${t("q_" + k)}</td><td>${n}${tot ? ` <span class="mu">(${Math.round(n * 100 / tot)}%)</span>` : ""}</td></tr>`).join("")}</table></div>` : ""}
+    const salesSummaryCard = S.ds ? `<div class="card"><h2>${t("salesSummary")}</h2>
+      <div class="row" style="gap:18px;margin-top:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:130px"><div class="mu">${t("salesTon")}</div><b id="salesTons" style="font-size:22px">—</b></div>
+        <div style="flex:1;min-width:160px"><div class="mu">${t("salesAmount")}</div><b id="salesAmount" style="font-size:22px">—</b></div>
+      </div>
+      <div style="margin-top:18px"><div class="mu">${t("salesInvoiceRows")}</div><b id="salesInvoiceRows" style="font-size:22px">—</b></div>
+      <div id="salesSummaryNote" class="mu" role="status" aria-live="polite" style="margin-top:8px"></div>
+    </div>` : ""; 
+    v.innerHTML = `<div class="pad wrap">${salesSummaryCard}  ${qa ? `<div class="card"><h2>${t("quality")}</h2><table class="t">${qa.map(([k, n, tot]) => `<tr><td>${t("q_" + k)}</td><td>${n}${tot ? ` <span class="mu">(${Math.round(n * 100 / tot)}%)</span>` : ""}</td></tr>`).join("")}</table></div>` : ""}
   ${S.ds ? `<div class="card"><h2>${t("stats")}</h2><div class="mu">${t("lastSync")}: ${esc(r.at ? new Date(r.at).toLocaleString(getLang() === "fa" ? "fa-IR-u-ca-persian" : "en-GB") : "")}</div><div>JP: ${st.jp} \xB7 ${t("salesOnly")}: ${st.salesOnly} \xB7 ${t("orders")}: ${st.orders} \xB7 Closed/expired: ${st.droppedRows}</div><div class="mu">${t("noteClosedUndel")}</div></div>
   <div class="card"><h2>${t("reports")}</h2><div class="row">${[["nogps", "rNoGPS"], ["nobuy", "rNoBuy"], ["open", "rOpen"], ["overdue", "rOverdue"]].map(([k, l]) => `<button class="btn sm" data-r="${k}">\u2B07 ${t(l)} (${reportRows(k).length - 1})</button>`).join("")}</div></div>
-  <div class="card"><h2>${t("salesSummary")}</h2>
-    <div class="row" style="gap:10px;margin-bottom:8px">
-      <div class="sales-date-wrap"><label class="f" for="salesFrom">${t("salesFrom")}</label><input id="salesFrom" type="text" readonly placeholder="${getLang() === "fa" ? "انتخاب تاریخ" : "Select date"}" dir="ltr" autocomplete="off" aria-haspopup="dialog" aria-expanded="false"><div class="jalali-picker" id="salesFromPicker" hidden></div></div>
-      <div class="sales-date-wrap"><label class="f" for="salesTo">${t("salesTo")}</label><input id="salesTo" type="text" readonly placeholder="${getLang() === "fa" ? "انتخاب تاریخ" : "Select date"}" dir="ltr" autocomplete="off" aria-haspopup="dialog" aria-expanded="false"><div class="jalali-picker" id="salesToPicker" hidden></div></div>
-    </div>
-    <div class="mu">${t("salesDateHint")}</div>
-    <div class="row" style="gap:18px;margin-top:12px">
-      <div style="flex:1;min-width:130px"><div class="mu">${t("salesTon")}</div><b id="salesTons" style="font-size:22px">—</b></div>
-      <div style="flex:1;min-width:160px"><div class="mu">${t("salesAmount")}</div><b id="salesAmount" style="font-size:22px">—</b></div>
-      <div style="flex:1;min-width:130px"><div class="mu">${t("salesInvoiceRows")}</div><b id="salesInvoiceRows" style="font-size:22px">—</b></div>
-    </div>
-    <div id="salesSummaryNote" class="mu" role="status" aria-live="polite" style="margin-top:8px"></div>
   </div>` : ""}</div>`;
     v.querySelectorAll("[data-r]").forEach((b) => b.onclick = () => exportReport(b.dataset.r));
     const refreshSalesSummary = () => {
-      const result = invoicedSalesSummary(v.querySelector("#salesFrom").value.trim(), v.querySelector("#salesTo").value.trim());
+      const result = invoicedSalesSummary("", "");
       const note = v.querySelector("#salesSummaryNote");
       if (result.error) {
         v.querySelector("#salesTons").textContent = "—";
@@ -2064,80 +2060,6 @@ input,select,textarea{font-size:16px!important}
       const incomplete = result.missingWeight + result.missingAmount;
       note.textContent = result.invoiceRows === 0 ? t("salesNoRows") : incomplete ? t("salesIncomplete") + " " + fmt(incomplete) : "";
     };
-    const jalaliMonths = getLang() === "fa" ? ["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"] : ["Farvardin","Ordibehesht","Khordad","Tir","Mordad","Shahrivar","Mehr","Aban","Azar","Dey","Bahman","Esfand"];
-    const jalaliWeek = getLang() === "fa" ? ["ش","ی","د","س","چ","پ","ج"] : ["Sa","Su","Mo","Tu","We","Th","Fr"];
-    const todayJ = isoToJalaliStr(todayISO()).split("/").map(Number);
-    const pickerState = {};
-    const padJ = (n) => String(n).padStart(2, "0");
-    const pickerDaysInMonth = (year, month) => {
-      if (month <= 6) return 31;
-      if (month <= 11) return 30;
-      const start = jToIso(year, 1, 1), next = jToIso(year + 1, 1, 1);
-      return Math.round((Date.parse(next + "T00:00:00Z") - Date.parse(start + "T00:00:00Z")) / 864e5) - 336;
-    };
-    const renderJalaliPicker = (input, panel) => {
-      const state = pickerState[input.id];
-      const firstIso = jToIso(state.year, state.month, 1);
-      const firstParts = firstIso.split("-").map(Number);
-      const offset = (new Date(Date.UTC(firstParts[0], firstParts[1] - 1, firstParts[2])).getUTCDay() + 1) % 7;
-      const days = pickerDaysInMonth(state.year, state.month);
-      const chosen = input.value ? toStdDigits(input.value).split("/").map(Number) : [];
-      const cells = [];
-      for (let i = 0; i < offset; i++) cells.push('<button class="jp-day" type="button" disabled tabindex="-1"></button>');
-      for (let day = 1; day <= days; day++) {
-        const selected = chosen.length === 3 && chosen[0] === state.year && chosen[1] === state.month && chosen[2] === day;
-        const today = todayJ[0] === state.year && todayJ[1] === state.month && todayJ[2] === day;
-        cells.push('<button type="button" class="jp-day' + (selected ? ' selected' : '') + (today ? ' today' : '') + '" data-day="' + day + '">' + (getLang() === "fa" ? String(day).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[+d]) : day) + '</button>');
-      }
-      panel.innerHTML = '<div class="jp-head"><button type="button" data-nav="-1" aria-label="${getLang() === "fa" ? "ماه قبل" : "Previous month"}">‹</button><div class="jp-month">' + jalaliMonths[state.month - 1] + ' ' + state.year + '</div><button type="button" data-nav="1" aria-label="${getLang() === "fa" ? "ماه بعد" : "Next month"}">›</button></div><div class="jp-week">' + jalaliWeek.map((d) => '<span>' + d + '</span>').join("") + '</div><div class="jp-days">' + cells.join("") + '</div><div class="jp-foot"><button type="button" data-action="today">' + (getLang() === "fa" ? "امروز" : "Today") + '</button><button type="button" data-action="clear">' + (getLang() === "fa" ? "پاک کردن" : "Clear") + '</button></div>';
-    };
-    ["salesFrom", "salesTo"].forEach((id) => {
-      const input = v.querySelector("#" + id), panel = v.querySelector("#" + id + "Picker");
-      const initial = input.value ? toStdDigits(input.value).split("/").map(Number) : todayJ;
-      pickerState[id] = { year: initial[0], month: initial[1] };
-      const closePicker = () => { panel.hidden = true; input.setAttribute("aria-expanded", "false"); };
-      const openPicker = () => {
-        const selected = input.value ? toStdDigits(input.value).split("/").map(Number) : todayJ;
-        pickerState[id] = { year: selected[0], month: selected[1] };
-        renderJalaliPicker(input, panel);
-        const rect = input.getBoundingClientRect();
-        const panelWidth = Math.min(320, window.innerWidth - 48);
-        panel.style.left = Math.max(12, Math.min(rect.left, window.innerWidth - panelWidth - 12)) + "px";
-        panel.style.top = Math.max(12, Math.min(rect.bottom + 6, window.innerHeight - 360)) + "px";
-        panel.hidden = false;
-        input.setAttribute("aria-expanded", "true");
-      };
-      input.addEventListener("click", () => panel.hidden ? openPicker() : closePicker());
-      panel.addEventListener("click", (event) => {
-        const nav = event.target.closest("[data-nav]");
-        const day = event.target.closest("[data-day]");
-        const action = event.target.closest("[data-action]");
-        if (nav) {
-          const state = pickerState[id];
-          state.month += Number(nav.dataset.nav);
-          if (state.month < 1) { state.month = 12; state.year--; }
-          if (state.month > 12) { state.month = 1; state.year++; }
-          renderJalaliPicker(input, panel);
-        } else if (day) {
-          input.value = pickerState[id].year + "/" + padJ(pickerState[id].month) + "/" + padJ(Number(day.dataset.day));
-          closePicker();
-          input.dispatchEvent(new Event("input", { bubbles: true }));
-        } else if (action && action.dataset.action === "today") {
-          input.value = todayJ[0] + "/" + padJ(todayJ[1]) + "/" + padJ(todayJ[2]);
-          closePicker();
-          input.dispatchEvent(new Event("input", { bubbles: true }));
-        } else if (action && action.dataset.action === "clear") {
-          input.value = "";
-          closePicker();
-          input.dispatchEvent(new Event("input", { bubbles: true }));
-        }
-      });
-      document.addEventListener("click", (event) => {
-        if (!panel.hidden && !input.parentElement.contains(event.target)) closePicker();
-      });
-    });
-    v.querySelector("#salesFrom").addEventListener("input", refreshSalesSummary);
-    v.querySelector("#salesTo").addEventListener("input", refreshSalesSummary);
     refreshSalesSummary();
   }
   var gToken = null;
