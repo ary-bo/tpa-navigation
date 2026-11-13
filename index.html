@@ -1170,18 +1170,8 @@ input,select,textarea{font-size:16px!important}
   // js/plan.js
   var PLAN_FILE = "Audit_Visit_Plan.xlsx";
   var SHEET = "Audit Visit Plan";
-  var INSTR = "Instructions";
-  var COLS = ["Visit Date", "Customer ID", "Store Name", "Customer Name", "Address", "Route Name", "Latitude", "Longitude", "Priority", "Selection Reason", "Auditor Comment", "Selection Source"];
+  var COLS = ["Visit Date", "Customer ID", "Store Name", "Customer Name", "Address", "Route Name", "Latitude", "Longitude", "Store Status", "Selection Source"];
   var PRIORITIES = ["High", "Medium", "Low"];
-  var INSTRUCTIONS = [
-    ["Audit_Visit_Plan.xlsx \u2014 instructions / \u0631\u0627\u0647\u0646\u0645\u0627"],
-    ["Keep sheet names, column order and column names unchanged. / \u0646\u0627\u0645 \u0634\u06CC\u062A\u200C\u0647\u0627 \u0648 \u0633\u062A\u0648\u0646\u200C\u0647\u0627 \u0648 \u062A\u0631\u062A\u06CC\u0628 \u0622\u0646\u200C\u0647\u0627 \u0631\u0627 \u062A\u063A\u06CC\u06CC\u0631 \u0646\u062F\u0647\u06CC\u062F."],
-    ["Required: Visit Date and Customer ID. Visit Date may be Jalali (1405/08/20) or Gregorian (2026-11-11). / \u062A\u0627\u0631\u06CC\u062E \u0634\u0645\u0633\u06CC \u06CC\u0627 \u0645\u06CC\u0644\u0627\u062F\u06CC \u0642\u0627\u0628\u0644 \u0642\u0628\u0648\u0644 \u0627\u0633\u062A."],
-    ["Customer ID must match the store list, e.g. 5955|4817191. / \u0634\u0646\u0627\u0633\u0647 \u0645\u0634\u062A\u0631\u06CC \u0628\u0627\u06CC\u062F \u0628\u0627 \u0641\u0647\u0631\u0633\u062A \u0641\u0631\u0648\u0634\u06AF\u0627\u0647\u200C\u0647\u0627 \u0645\u0637\u0627\u0628\u0642\u062A \u062F\u0627\u0634\u062A\u0647 \u0628\u0627\u0634\u062F."],
-    ["Priority: High, Medium or Low. All other columns are optional. / \u0633\u0627\u06CC\u0631 \u0633\u062A\u0648\u0646\u200C\u0647\u0627 \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC \u0647\u0633\u062A\u0646\u062F."],
-    ["Selection Source is set by the app (Internal / External); managers do not need to fill it. / \u0627\u06CC\u0646 \u0633\u062A\u0648\u0646 \u0631\u0627 \u0628\u0631\u0646\u0627\u0645\u0647 \u062A\u0639\u06CC\u06CC\u0646 \u0645\u06CC\u200C\u06A9\u0646\u062F."],
-    ["Add new rows below the existing rows; they are imported as External suggestions and need the Auditor's approval. / \u0631\u062F\u06CC\u0641\u200C\u0647\u0627\u06CC \u062C\u062F\u06CC\u062F \u0628\u0647\u200C\u0639\u0646\u0648\u0627\u0646 \u067E\u06CC\u0634\u0646\u0647\u0627\u062F External \u0648\u0627\u0631\u062F \u0648 \u067E\u0633 \u0627\u0632 \u062A\u0623\u06CC\u06CC\u062F Auditor \u0627\u0636\u0627\u0641\u0647 \u0645\u06CC\u200C\u0634\u0648\u0646\u062F."]
-  ];
   var seq = 0;
   var newPid = () => "p" + Date.now().toString(36) + (seq++).toString(36) + Math.random().toString(36).slice(2, 6);
   function makeRecord(s, visitDate, x = {}) {
@@ -1215,13 +1205,24 @@ input,select,textarea{font-size:16px!important}
     return /^[=+\-@]/.test(s) ? "'" + s : s;
   };
   function exportPlan(XLSX2, plan) {
+    const range = mapFilterDateRange();
     const rows = [...plan].sort((a, b) => a.visitDate.localeCompare(b.visitDate) || a.order - b.order).map((p) => {
       var _a, _b;
-      return [isoToJalaliStr(p.visitDate), safe(p.customerId), safe(p.storeName), safe(p.customerName), safe(p.address), safe(p.route), (_a = p.lat) != null ? _a : "", (_b = p.lng) != null ? _b : "", p.priority, safe(p.reason), safe(p.comment), p.source];
+      const store = byId.get(String(p.customerId));
+      const state = store ? mapRangeSalesStatus(store, range) : { hasSales: false, latestOrder: null };
+      const undelivered = !!(state.latestOrder && /closed\\s*\\/\\s*undelivered/i.test(str(state.latestOrder.status)));
+      const storeStatus = undelivered ? "Undelivered" : state.hasSales ? "Purchased" : "No Purchase";
+      return [isoToJalaliStr(p.visitDate), safe(p.customerId), safe(p.storeName), safe(p.customerName), safe(p.address), safe(p.route), (_a = p.lat) != null ? _a : "", (_b = p.lng) != null ? _b : "", storeStatus, p.source];
     });
     const wb = XLSX2.utils.book_new();
-    XLSX2.utils.book_append_sheet(wb, XLSX2.utils.aoa_to_sheet([COLS, ...rows]), SHEET);
-    XLSX2.utils.book_append_sheet(wb, XLSX2.utils.aoa_to_sheet(INSTRUCTIONS), INSTR);
+    const ws = XLSX2.utils.aoa_to_sheet([COLS, ...rows]);
+    rows.forEach((row, i) => {
+      if (row[8] === "Undelivered") {
+        const cell = ws[XLSX2.utils.encode_cell({ r: i + 1, c: 8 })];
+        if (cell) cell.s = { font: { color: { rgb: "FFFF0000" }, bold: true } };
+      }
+    });
+    XLSX2.utils.book_append_sheet(wb, ws, SHEET);
     return wb;
   }
   function validatePlanRows(aoa, byId2, plan, pending = []) {
