@@ -56,6 +56,7 @@ button.sm{min-height:34px;padding:4px 12px;font-size:13px;border-radius:10px}but
 .visit-plan-actions,.store-action-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 .visit-plan-actions .btn,.store-action-row .btn{width:100%;min-width:0;min-height:44px;padding:8px 6px;font-size:clamp(12px,2.4vw,16px);line-height:1.2;white-space:nowrap;letter-spacing:-.02em}
 button.vp-add{background:#16864a;color:#fff;border-color:#16864a}
+button.vp-add:disabled{background:#246b3e;color:#fff;border-color:#246b3e;opacity:.58;cursor:not-allowed}
 button.vp-remove{background:#c83d4d;color:#fff;border-color:#c83d4d}
 button.vp-remove:disabled{background:#8f2935;color:#fff;border-color:#8f2935;opacity:.72;cursor:not-allowed}
 button.store-map-action{background:#2876b9;color:#fff;border-color:#2876b9}
@@ -1814,14 +1815,15 @@ input,select,textarea{font-size:16px!important}
     const orders = s.orders.map((o) => `<tr><td>${esc(o.order)}<br><span class="mu">${esc(o.status)}</span></td><td>${jd(o.orderDate)}</td><td>${jd(o.target)}</td><td>${jd(o.inv)}</td><td>${o.state === "open" ? `<span class="chip o">${t("open")}</span>` : `<span class="chip g">${t("invoiced")}</span>`}${o.overdue === true ? ` <span class="chip r">${t("overdue")}</span>` : ""}${o.state === "open" && o.overdue === null ? `<br><span class="mu">${t("noTarget")}</span>` : ""}</td></tr><tr><td colspan="5" class="mu">${o.items.map((i) => `${esc(i.product)} \xD7 ${i.qty}`).join(" \xB7 ")}</td></tr>`).join("");
     sheet(`<h2>${badge(s)}${esc(s.storeName || s.name || s.id)}</h2>
   <dl class="kv"><dt>${t("custId")}</dt><dd>${esc(s.id)}</dd><dt>${t("custName")}</dt><dd>${esc(s.name)}</dd><dt>${t("storeName")}</dt><dd>${esc(s.storeName) || "\u2014"}</dd><dt>${t("cls")}</dt><dd>${esc(s.cls) || "\u2014"}</dd><dt>${t("address")}</dt><dd>${esc(s.address)}</dd><dt>${t("route")}</dt><dd>${esc(s.route) || "\u2014"} <span class="mu">(${t("rs_" + (s.routeSource || "Area"))})</span></dd><dt>${t("area")} / ${t("territory")}</dt><dd>${esc(s.area) || "\u2014"} / ${esc(s.territory) || "\u2014"}</dd><dt>${t("salesman")}</dt><dd>${esc(s.salesman) || "\u2014"}</dd><dt>${t("coords")}</dt><dd>${s.lat !== null ? s.lat.toFixed(6) + ", " + s.lng.toFixed(6) : t("noGPS")}</dd><dt>${t("inJP")}</dt><dd>${s.inJP ? t("yes") : t("no")}${s.inJP ? " \xB7 " + DAY_KEYS.filter((d) => s.days[d]).map((d) => t("d_" + d)).join("\u060C ") : ""}</dd><dt>${t("purchase")}</dt><dd>${s.hasSales ? t("yes") : t("no")} \xB7 ${t("lastPurchase")}: ${jd(s.lastPurchase)}</dd></dl>
-  <div class="row" style="margin:10px 0">${navLinks(s)}</div><section class="visit-plan-box"><h3>${t("visitPlan")}</h3><div class="visit-plan-actions"><button class="btn vp-add" id="addp">${t("addShort")}</button><button class="btn vp-remove" id="remp" ${inVisitPlan ? "" : "disabled"}>${t("removeShort")}</button></div></section><div class="store-action-row"><button class="btn store-map-action" id="onm">${ic("map")} ${t("showMap")}</button>${canForm(s) ? `<button class="btn store-audit-action" id="fm">${ic("plan")} ${t("auditForm")}</button>` : ""}</div>
+  <div class="row" style="margin:10px 0">${navLinks(s)}</div><section class="visit-plan-box"><h3>${t("visitPlan")}</h3><div class="visit-plan-actions"><button class="btn vp-add" id="addp" ${inVisitPlan ? "disabled" : ""}>${t("addShort")}</button><button class="btn vp-remove" id="remp" ${inVisitPlan ? "" : "disabled"}>${t("removeShort")}</button></div></section><div class="store-action-row"><button class="btn store-map-action" id="onm">${ic("map")} ${t("showMap")}</button>${canForm(s) ? `<button class="btn store-audit-action" id="fm">${ic("plan")} ${t("auditForm")}</button>` : ""}</div>
   <h3>${t("orders")} (${s.orders.length})</h3>${orders ? `<table class="t"><tr><th>${t("orderNo")}</th><th>${t("orderDate")}</th><th>${t("targetDate")}</th><th>${t("invoiceDate")}</th><th></th></tr>${orders}</table>` : `<div class="mu">${t("noOrders")}</div>`}
   <h3>${t("basket")}</h3>${s.basket.length ? `<table class="t">${s.basket.map((b) => `<tr><td>${esc(b.product)}</td><td>${b.qty}</td></tr>`).join("")}</table>` : `<div class="mu">\u2014</div>`}
   <div class="row" style="margin-top:12px"><button class="btn" id="cl">${t("close")}</button></div>`, (el) => {
       el.querySelector("#cl").onclick = () => {
         closeSheet();
       };
-      el.querySelector("#addp").onclick = () => addPlanDialog(s);
+      const addPlanButton = el.querySelector("#addp");
+      if (!inVisitPlan) addPlanButton.onclick = () => addPlanDialog(s);
       const removePlanButton = el.querySelector("#remp");
       if (inVisitPlan) removePlanButton.onclick = () => {
         const dates = [...new Set(visitEntries.map((p) => p.visitDate))];
