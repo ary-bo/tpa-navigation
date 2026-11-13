@@ -440,7 +440,7 @@ async function syncDrive(){
  try{
   message('در حال بررسی نسخه‌های Google Drive...');
   const fs=await driveFiles(),sheetMime='application/vnd.google-apps.spreadsheet';
-  const pick=(prefix)=>fs.filter(f=>new RegExp('^'+prefix,'i').test(f.name)&&(f.mimeType===sheetMime||/\\.xlsx$/i.test(f.name))).sort((a,b)=>filenameDateX(b.name).localeCompare(filenameDateX(a.name))||new Date(b.modifiedTime)-new Date(a.modifiedTime));
+  const pick=(prefix)=>fs.filter(f=>new RegExp('^'+prefix,'i').test(f.name)&&(f.mimeType===sheetMime||/\.xlsx$/i.test(f.name))).sort((a,b)=>filenameDateX(b.name).localeCompare(filenameDateX(a.name))||new Date(b.modifiedTime)-new Date(a.modifiedTime));
   const jpFiles=pick('JP_'),tpaFiles=pick('TPA_Alborz'),pmFiles=pick('Product Mapping');
   if(!jpFiles.length||!tpaFiles.length)throw Error('Google Sheets با نام JP_ و TPA_Alborz در پوشه Drive پیدا نشدند.');
   let accepted=null,lastError=null;
@@ -462,7 +462,7 @@ async function syncDrive(){
   }
   if(!accepted)throw Error('هیچ ترکیب معتبری از فایل‌های Drive پیدا نشد. '+(lastError?.message||''));
   const old=[jpRows,tpaRows,mappingRows,window.sourceYear];
-  try{jpRows=accepted.jp;tpaRows=accepted.tp;mappingRows=accepted.pm;window.sourceYear=Number((accepted.tf.name.match(/(14\\d{2})/)||[])[1]||1405);buildData();await saveLocal();}
+  try{jpRows=accepted.jp;tpaRows=accepted.tp;mappingRows=accepted.pm;window.sourceYear=Number((accepted.tf.name.match(/(14\d{2})/)||[])[1]||1405);buildData();await saveLocal();}
   catch(e){[jpRows,tpaRows,mappingRows,window.sourceYear]=old;buildData();throw e;}
   renderAll();
   if($x('lastSync'))$x('lastSync').textContent=`آخرین همگام‌سازی: ${new Date().toLocaleString('fa-IR')} · ${accepted.jf.name} · ${accepted.tf.name}`;
