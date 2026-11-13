@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -103,143 +102,143 @@ body.dark .notice{background:#44351d;color:#ffe0a3;border-color:#765c2a}
  <div class="head">
   <div>
    <h1>TPA Navigation</h1>
-   <div class="sub">ÙØ³ÛØ±âÛØ§Ø¨ Ù Ø§Ø·ÙØ§Ø¹Ø§Øª ÙØ±ÙØ´Ú¯Ø§ÙâÙØ§</div>
+   <div class="sub">مسیر‌یاب و اطلاعات فروشگاه‌ها</div>
   </div>
-  <div class="status" id="status">Ø¢ÙØ§Ø¯Ù</div>
+  <div class="status" id="status">آماده</div>
  </div>
 </header>
 
 <main>
  <section class="panel">
-  <div class="section-title">Û±. Ø¯Ø±ÛØ§ÙØª Ø§Ø·ÙØ§Ø¹Ø§Øª</div>
-  <button id="driveBtn" class="full green">Ø§ØªØµØ§Ù Ø¨Ù Google Drive Ù Ø¯Ø±ÛØ§ÙØª Ø¢Ø®Ø±ÛÙ ÙØ§ÛÙâÙØ§</button>
+  <div class="section-title">۱. دریافت اطلاعات</div>
+  <button id="driveBtn" class="full green">اتصال به Google Drive و دریافت آخرین فایل‌ها</button>
   <div style="font-size:11px;color:#718393;margin-top:7px">
-   Ø¨Ø§ Ø­Ø³Ø§Ø¨ Google Ø¯Ø§Ø±Ø§Û Ø¯Ø³ØªØ±Ø³Û Ø¨Ù Ù¾ÙØ´Ù Navigation ÙØ§Ø±Ø¯ Ø´Ù. Ù¾Ø³ Ø§Ø² Ú©ÙÛÚ©Ø Ù¾ÙØ¬Ø±Ù ÙØ¬ÙØ² Google Ø¨Ø§ÛØ¯ Ø¨Ø§Ø² Ø´ÙØ¯.
+   با حساب Google دارای دسترسی به پوشه Navigation وارد شو. پس از کلیک، پنجره مجوز Google باید باز شود.
   </div>
   <div style="border-top:1px solid #edf0f3;margin:13px 0"></div>
-  <div class="section-title">ÛØ§ Ø¨Ø§Ø±Ú¯Ø°Ø§Ø±Û Ø¯Ø³ØªÛ ÙØ§ÛÙâÙØ§</div>
+  <div class="section-title">یا بارگذاری دستی فایل‌ها</div>
   <div class="uploads">
    <div class="upload">
     <strong>Journey Plan</strong>
     <input id="jpFile" type="file" accept=".xlsx,.xls">
    </div>
    <div class="upload">
-    <strong>Ú¯Ø²Ø§Ø±Ø´ ÙØ±ÙØ´ TPA</strong>
+    <strong>گزارش فروش TPA</strong>
     <input id="salesFile" type="file" accept=".xlsx,.xls">
    </div>
    <div class="upload">
-    <strong>Product Mapping (Ø§Ø®ØªÛØ§Ø±Û)</strong>
+    <strong>Product Mapping (اختیاری)</strong>
     <input id="mappingFile" type="file" accept=".xlsx,.xls">
    </div>
   </div>
-  <button id="loadBtn" class="full">Ù¾Ø±Ø¯Ø§Ø²Ø´ ÙØ§ÛÙâÙØ§Û Ø§ÙØªØ®Ø§Ø¨âØ´Ø¯Ù</button>
-  <div id="message">Ø¨Ø±Ø§Û Ø´Ø±ÙØ¹Ø Ø§Ø² Google Drive Ø¯Ø±ÛØ§ÙØª Ú©Ù ÛØ§ ÙØ§ÛÙâÙØ§ Ø±Ø§ Ø¯Ø³ØªÛ Ø§ÙØªØ®Ø§Ø¨ Ú©Ù.</div>
+  <button id="loadBtn" class="full">پردازش فایل‌های انتخاب‌شده</button>
+  <div id="message">برای شروع، از Google Drive دریافت کن یا فایل‌ها را دستی انتخاب کن.</div>
  </section>
 
  <section class="panel">
-  <div class="section-title">Û². Ø®ÙØ§ØµÙ Ø§Ø·ÙØ§Ø¹Ø§Øª</div>
+  <div class="section-title">۲. خلاصه اطلاعات</div>
   <div class="stats">
-   <div class="stat"><b id="total">Û°</b><span>Ú©Ù ÙØ±ÙØ´Ú¯Ø§ÙâÙØ§</span></div>
-   <div class="stat"><b id="withSales">Û°</b><span>Ø¯Ø§Ø±Ø§Û Ø³Ø§Ø¨ÙÙ ÙØ±ÙØ´</span></div>
-   <div class="stat"><b id="withoutSales">Û°</b><span>Ø¨Ø¯ÙÙ Ø³Ø§Ø¨ÙÙ ÙØ±ÙØ´</span></div>
+   <div class="stat"><b id="total">۰</b><span>کل فروشگاه‌ها</span></div>
+   <div class="stat"><b id="withSales">۰</b><span>دارای سابقه فروش</span></div>
+   <div class="stat"><b id="withoutSales">۰</b><span>بدون سابقه فروش</span></div>
   </div>
  </section>
 
  <div class="layout">
   <div>
    <section class="panel">
-    <div class="section-title">Û³. ÙÙØ´Ù ÙØ±ÙØ´Ú¯Ø§ÙâÙØ§</div>
+    <div class="section-title">۳. نقشه فروشگاه‌ها</div>
     <div id="map"></div>
     <div class="legend">
-     <span><i class="dot" style="background:#15966b"></i>Ø¯Ø§Ø±Ø§Û ÙØ±ÙØ´</span>
-     <span><i class="dot" style="background:#e69a27"></i>Ø¨Ø¯ÙÙ ÙØ±ÙØ´</span>
-     <span><i class="dot" style="background:#3478d4"></i>ÙÙØ· Ø¯Ø± Ú¯Ø²Ø§Ø±Ø´ ÙØ±ÙØ´</span>
+     <span><i class="dot" style="background:#15966b"></i>دارای فروش</span>
+     <span><i class="dot" style="background:#e69a27"></i>بدون فروش</span>
+     <span><i class="dot" style="background:#3478d4"></i>فقط در گزارش فروش</span>
     </div>
    </section>
   </div>
 
   <div>
    <section class="panel">
-    <div class="section-title">Û´. Ø¬Ø³ØªØ¬Ù Ù ÙÛÙØªØ±</div>
-    <input id="search" type="search" placeholder="ÙØ§ÙØ Ú©Ø¯ ÛØ§ Ø¢Ø¯Ø±Ø³ ÙØ±ÙØ´Ú¯Ø§Ù...">
+    <div class="section-title">۴. جستجو و فیلتر</div>
+    <input id="search" type="search" placeholder="نام، کد یا آدرس فروشگاه...">
     <div class="filters" style="margin-top:8px">
      <select id="typeFilter">
-      <option value="all">ÙÙÙ ÙØ±ÙØ´Ú¯Ø§ÙâÙØ§</option>
-      <option value="sales">Ø¯Ø§Ø±Ø§Û Ø³Ø§Ø¨ÙÙ ÙØ±ÙØ´</option>
-      <option value="nosales">Ø¨Ø¯ÙÙ Ø³Ø§Ø¨ÙÙ ÙØ±ÙØ´</option>
-      <option value="salesOnly">ÙÙØ· Ø¯Ø± Ú¯Ø²Ø§Ø±Ø´ ÙØ±ÙØ´</option>
+      <option value="all">همه فروشگاه‌ها</option>
+      <option value="sales">دارای سابقه فروش</option>
+      <option value="nosales">بدون سابقه فروش</option>
+      <option value="salesOnly">فقط در گزارش فروش</option>
      </select>
-     <select id="areaFilter"><option value="all">ÙÙÙ ÙÙØ§Ø·Ù</option></select>
-     <select id="personFilter"><option value="all">ÙÙÙ ÙÛØ²ÛØªÙØ±ÙØ§</option></select>
+     <select id="areaFilter"><option value="all">همه مناطق</option></select>
+     <select id="personFilter"><option value="all">همه ویزیتورها</option></select>
      <select id="dayFilter">
-      <option value="all">ÙÙÙ Ø±ÙØ²ÙØ§</option>
-      <option value="today">ÙÛØ²ÛØª Ø§ÙØ±ÙØ²</option>
-       <option value="Saturday">Ø´ÙØ¨Ù</option><option value="Sunday">ÛÚ©Ø´ÙØ¨Ù</option>
-       <option value="Monday">Ø¯ÙØ´ÙØ¨Ù</option><option value="Tuesday">Ø³ÙâØ´ÙØ¨Ù</option>
-       <option value="Wednesday">ÚÙØ§Ø±Ø´ÙØ¨Ù</option><option value="Thursday">Ù¾ÙØ¬Ø´ÙØ¨Ù</option>
+      <option value="all">همه روزها</option>
+      <option value="today">ویزیت امروز</option>
+       <option value="Saturday">شنبه</option><option value="Sunday">یکشنبه</option>
+       <option value="Monday">دوشنبه</option><option value="Tuesday">سه‌شنبه</option>
+       <option value="Wednesday">چهارشنبه</option><option value="Thursday">پنجشنبه</option>
      </select>
     </div>
    </section>
 
    <section class="panel">
-    <div class="section-title">Ûµ. ÙÙØ±Ø³Øª ÙØ±ÙØ´Ú¯Ø§ÙâÙØ§</div>
-    <div id="resultCount" style="font-size:11px;color:#8292a0;margin-bottom:9px">ÙÙÙØ² Ø§Ø·ÙØ§Ø¹Ø§ØªÛ Ø¨Ø§Ø±Ú¯Ø°Ø§Ø±Û ÙØ´Ø¯Ù Ø§Ø³Øª</div>
-    <div id="storeList"><div class="empty">Ø§Ø¨ØªØ¯Ø§ ÙØ§ÛÙâÙØ§ Ø±Ø§ Ø¨Ø§Ø±Ú¯Ø°Ø§Ø±Û Ú©Ù.</div></div>
+    <div class="section-title">۵. فهرست فروشگاه‌ها</div>
+    <div id="resultCount" style="font-size:11px;color:#8292a0;margin-bottom:9px">هنوز اطلاعاتی بارگذاری نشده است</div>
+    <div id="storeList"><div class="empty">ابتدا فایل‌ها را بارگذاری کن.</div></div>
    </section>
   </div>
  </div>
 
   </div>
-  <nav class="appnav" aria-label="Ø¨Ø®Ø´âÙØ§Û Ø¨Ø±ÙØ§ÙÙ">
-   <button class="active" data-page="mapPage">ÙÙØ´Ù Ù ÙØ±ÙØ´Ú¯Ø§ÙâÙØ§</button>
-   <button data-page="planPage">Ø¨Ø±ÙØ§ÙÙ Ø¨Ø§Ø²Ø¯ÛØ¯ ÙÙ</button>
-   <button data-page="analysisPage">ØªØ­ÙÛÙ Ù Ø®Ø±ÙØ¬Û</button>
-   <button data-page="settingsPage">ØªÙØ¸ÛÙØ§Øª Ù ÙÙÚ¯Ø§ÙâØ³Ø§Ø²Û</button>
+  <nav class="appnav" aria-label="بخش‌های برنامه">
+   <button class="active" data-page="mapPage">نقشه و فروشگاه‌ها</button>
+   <button data-page="planPage">برنامه بازدید من</button>
+   <button data-page="analysisPage">تحلیل و خروجی</button>
+   <button data-page="settingsPage">تنظیمات و همگام‌سازی</button>
   </nav>
   <section id="planPage" class="page">
    <section class="panel">
-    <div class="section-title">Ø¨Ø±ÙØ§ÙÙ ÙÙØªÚ¯Û Auditor</div>
-    <div class="notice">ÙØ±ÙØ´Ú¯Ø§ÙâÙØ§ÛÛ Ú©Ù Ø§Ø² Ø¯Ø§Ø®Ù Ø¨Ø±ÙØ§ÙÙ Ø§ÙØªØ®Ø§Ø¨ ÙÛâÚ©ÙÛ Ø¨Ø§ ÙÙØ¨Ø¹ Internal Ø«Ø¨Øª ÙÛâØ´ÙÙØ¯. Ø±Ø¯ÛÙâÙØ§ÛÛ Ú©Ù Ø§Ø² ÙØ§ÛÙ Ø§Ú©Ø³Ù ÙØ§Ø±Ø¯ ÙÛâØ´ÙÙØ¯ External Ø®ÙØ§ÙÙØ¯ Ø¨ÙØ¯ Ù ÙØ¨Ù Ø§Ø² Ø§ÙØ²ÙØ¯Ù Ø¨Ù Ø¨Ø±ÙØ§ÙÙ ÙÙØ§ÛÛ ÙØ§Ø¨Ù Ø¨Ø±Ø±Ø³Û ÙØ³ØªÙØ¯.</div>
+    <div class="section-title">برنامه هفتگی Auditor</div>
+    <div class="notice">فروشگاه‌هایی که از داخل برنامه انتخاب می‌کنی با منبع Internal ثبت می‌شوند. ردیف‌هایی که از فایل اکسل وارد می‌شوند External خواهند بود و قبل از افزودن به برنامه نهایی قابل بررسی هستند.</div>
     <div class="grid2">
-     <div class="field"><label>Ø±ÙØ² Ø¨Ø§Ø²Ø¯ÛØ¯</label><select id="planDay"><option>Saturday</option><option>Sunday</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option></select></div>
-     <div class="field"><label>ØªØ§Ø±ÛØ® Ø¨Ø§Ø²Ø¯ÛØ¯ (Ø´ÙØ³Û ÛØ§ ÙÛÙØ§Ø¯Û)</label><input id="planDate" placeholder="1405/08/20"></div>
+     <div class="field"><label>روز بازدید</label><select id="planDay"><option>Saturday</option><option>Sunday</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option></select></div>
+     <div class="field"><label>تاریخ بازدید (شمسی یا میلادی)</label><input id="planDate" placeholder="1405/08/20"></div>
     </div>
-    <div class="field"><label>Ø¬Ø³ØªØ¬ÙÛ ÙØ±ÙØ´Ú¯Ø§Ù Ø¨Ø±Ø§Û Ø§ÙØ²ÙØ¯Ù Ø¨Ù Ø¨Ø±ÙØ§ÙÙ</label><input id="planSearch" type="search" placeholder="Ú©Ø¯ ÛØ§ ÙØ§Ù ÙØ±ÙØ´Ú¯Ø§Ù"></div>
+    <div class="field"><label>جستجوی فروشگاه برای افزودن به برنامه</label><input id="planSearch" type="search" placeholder="کد یا نام فروشگاه"></div>
     <div id="planSearchResults"></div>
-    <div class="field"><label>ÙØ±ÙØ´Ú¯Ø§ÙâÙØ§Û Ø¨Ø±ÙØ§ÙÙ Ø§ÙØªØ®Ø§Ø¨âØ´Ø¯Ù</label><div id="planList"><div class="empty">Ø§Ø¨ØªØ¯Ø§ Ø§Ø·ÙØ§Ø¹Ø§Øª Ø±Ø§ Ø¨Ø§Ø±Ú¯Ø°Ø§Ø±Û Ú©Ù.</div></div></div>
-    <button id="exportPlanBtn" class="full green">Ø®Ø±ÙØ¬Û Ø§Ú©Ø³Ù Audit_Visit_Plan.xlsx</button>
-    <div class="field"><label>Ø¨Ø§Ø±Ú¯Ø°Ø§Ø±Û ÙØ§ÛÙ ÙØ¯ÛØ±Ø§Ù (ÙÙØ§Ù ÙØ§ÙØ¨ Ø®Ø±ÙØ¬Û)</label><input id="importPlanFile" type="file" accept=".xlsx,.xls"></div>
-    <button id="importPlanBtn" class="full">Ø¨Ø±Ø±Ø³Û Ù ÙØ§Ø±Ø¯ Ú©Ø±Ø¯Ù Ù¾ÛØ´ÙÙØ§Ø¯ÙØ§Û ÙØ§ÛÙ</button>
+    <div class="field"><label>فروشگاه‌های برنامه انتخاب‌شده</label><div id="planList"><div class="empty">ابتدا اطلاعات را بارگذاری کن.</div></div></div>
+    <button id="exportPlanBtn" class="full green">خروجی اکسل Audit_Visit_Plan.xlsx</button>
+    <div class="field"><label>بارگذاری فایل مدیران (همان قالب خروجی)</label><input id="importPlanFile" type="file" accept=".xlsx,.xls"></div>
+    <button id="importPlanBtn" class="full">بررسی و وارد کردن پیشنهادهای فایل</button>
     <div id="importReport" style="font-size:11px;line-height:1.9;margin-top:8px"></div>
    </section>
   </section>
   <section id="analysisPage" class="page">
    <section class="panel">
-    <div class="section-title">ØªØ­ÙÛÙ ÙØ±ÙØ´Ú¯Ø§ÙâÙØ§ Ù Ø³ÙØ§Ø±Ø´âÙØ§</div>
+    <div class="section-title">تحلیل فروشگاه‌ها و سفارش‌ها</div>
     <div class="stats">
-     <div class="stat"><b id="noGpsCount">Û°</b><span>Ø¨Ø¯ÙÙ ÙØ®ØªØµØ§Øª</span></div>
-     <div class="stat"><b id="openOrderCount">Û°</b><span>Ø³ÙØ§Ø±Ø´ Ø¨Ø§Ø²</span></div>
-     <div class="stat"><b id="noPurchaseCount">Û°</b><span>Ø¨Ø¯ÙÙ Ø®Ø±ÛØ¯</span></div>
-     <div class="stat"><b id="invoicedAmount">Û°</b><span>ÙØ¨ÙØº ÙØ§Ú©ØªÙØ±Ø´Ø¯Ù</span></div>
-     <div class="stat"><b id="uninvoicedAmount">Û°</b><span>ÙØ¨ÙØº ÙØ§Ú©ØªÙØ±ÙØ´Ø¯Ù</span></div>
+     <div class="stat"><b id="noGpsCount">۰</b><span>بدون مختصات</span></div>
+     <div class="stat"><b id="openOrderCount">۰</b><span>سفارش باز</span></div>
+     <div class="stat"><b id="noPurchaseCount">۰</b><span>بدون خرید</span></div>
+     <div class="stat"><b id="invoicedAmount">۰</b><span>مبلغ فاکتورشده</span></div>
+     <div class="stat"><b id="uninvoicedAmount">۰</b><span>مبلغ فاکتورنشده</span></div>
     </div>
     <div class="rowactions">
-     <button class="smallbtn" id="nearbyBtn">ÙØ±ÙØ´Ú¯Ø§ÙâÙØ§Û ÙØ²Ø¯ÛÚ© ÙÙ</button>
-     <button class="smallbtn secondary" id="noGpsBtn">ÙÙØ±Ø³Øª Ø¨Ø¯ÙÙ GPS</button>
-     <button class="smallbtn secondary" id="noPurchaseBtn">ÙØ±ÙØ´Ú¯Ø§ÙâÙØ§Û Ø¨Ø¯ÙÙ Ø®Ø±ÛØ¯</button>
-     <button class="smallbtn secondary" id="openOrdersBtn">Ø³ÙØ§Ø±Ø´âÙØ§Û Ø¨Ø§Ø²</button>
+     <button class="smallbtn" id="nearbyBtn">فروشگاه‌های نزدیک من</button>
+     <button class="smallbtn secondary" id="noGpsBtn">فهرست بدون GPS</button>
+     <button class="smallbtn secondary" id="noPurchaseBtn">فروشگاه‌های بدون خرید</button>
+     <button class="smallbtn secondary" id="openOrdersBtn">سفارش‌های باز</button>
     </div>
     <div id="analysisResults"></div>
    </section>
   </section>
   <section id="settingsPage" class="page">
    <section class="panel">
-    <div class="section-title">ØªÙØ¸ÛÙØ§ØªØ Ø§ØªØµØ§Ù Ù Ø°Ø®ÛØ±ÙâØ³Ø§Ø²Û</div>
-    <button id="themeBtn" class="full secondary">ØªØºÛÛØ± Ø­Ø§ÙØª Ø±ÙØ´Ù / ØªØ§Ø±ÛÚ©</button>
-    <button id="langBtn" class="full secondary">English / ÙØ§Ø±Ø³Û</button>
-    <div class="notice" style="margin-top:10px">Ø§Ø·ÙØ§Ø¹Ø§Øª Ù¾Ø±Ø¯Ø§Ø²Ø´âØ´Ø¯Ù Ù Ø¨Ø±ÙØ§ÙÙ Ø¨Ø§Ø²Ø¯ÛØ¯ Ø¯Ø± Ø­Ø§ÙØ¸Ù ÙÙÛÙ Ø¯Ø³ØªÚ¯Ø§Ù Ø°Ø®ÛØ±Ù ÙÛâØ´ÙÙØ¯. ÙÙØ´Ù Ù¾Ø§ÛÙ Ù ÙØ³ÛØ±ÛØ§Ø¨Û Ø¨Ø±Ø§Û Ø¨Ø§Ø±Ú¯Ø°Ø§Ø±Û Ø¨Ù Ø§ÛÙØªØ±ÙØª ÙÛØ§Ø² Ø¯Ø§Ø±ÙØ¯. Ø¨Ø±Ø§Û ÙÙÚ¯Ø§ÙâØ³Ø§Ø²Û ÙØ§ÛÙâÙØ§Û Ø§ØµÙÛØ Ø§ØªØµØ§Ù Google Drive ÙØ§Ø²Ù Ø§Ø³Øª.</div>
-    <div id="lastSync" style="font-size:11px;color:var(--muted);margin-top:9px">Ø¢Ø®Ø±ÛÙ ÙÙÚ¯Ø§ÙâØ³Ø§Ø²Û: Ø«Ø¨Øª ÙØ´Ø¯Ù</div>
-    <button id="clearLocalBtn" class="full secondary">Ù¾Ø§Ú© Ú©Ø±Ø¯Ù Ø¯Ø§Ø¯ÙâÙØ§Û Ø°Ø®ÛØ±ÙâØ´Ø¯Ù Ø§ÛÙ Ø¯Ø³ØªÚ¯Ø§Ù</button>
+    <div class="section-title">تنظیمات، اتصال و ذخیره‌سازی</div>
+    <button id="themeBtn" class="full secondary">تغییر حالت روشن / تاریک</button>
+    <button id="langBtn" class="full secondary">English / فارسی</button>
+    <div class="notice" style="margin-top:10px">اطلاعات پردازش‌شده و برنامه بازدید در حافظه همین دستگاه ذخیره می‌شوند. نقشه پایه و مسیریابی برای بارگذاری به اینترنت نیاز دارند. برای همگام‌سازی فایل‌های اصلی، اتصال Google Drive لازم است.</div>
+    <div id="lastSync" style="font-size:11px;color:var(--muted);margin-top:9px">آخرین همگام‌سازی: ثبت نشده</div>
+    <button id="clearLocalBtn" class="full secondary">پاک کردن داده‌های ذخیره‌شده این دستگاه</button>
    </section>
   </section>
 
@@ -248,8 +247,8 @@ body.dark .notice{background:#44351d;color:#ffe0a3;border-color:#765c2a}
 <div id="modal">
  <div id="modalbox">
   <div class="modalhead">
-   <b id="modalTitle">Ø§Ø·ÙØ§Ø¹Ø§Øª ÙØ±ÙØ´Ú¯Ø§Ù</b>
-   <button class="close" id="closeModal">Ã</button>
+   <b id="modalTitle">اطلاعات فروشگاه</b>
+   <button class="close" id="closeModal">×</button>
   </div>
   <div id="modalContent"></div>
  </div>
@@ -275,17 +274,17 @@ let lastAccessToken=null;
 
 const $=id=>document.getElementById(id);
 
-// Ø§ØªØµØ§Ù Ø¯Ú©ÙÙ Drive Ø§Ø² Ø§Ø¨ØªØ¯Ø§Û Ø§Ø¬Ø±Ø§Û Ø¨Ø±ÙØ§ÙÙØ Ø­ØªÛ Ø§Ú¯Ø± Ø¨Ø®Ø´Û Ø§Ø² Ø±Ø§Ø¨Ø· Ø®Ø·Ø§ Ø¯Ø§Ø´ØªÙ Ø¨Ø§Ø´Ø¯.
+// اتصال دکمه Drive از ابتدای اجرای برنامه؛ حتی اگر بخشی از رابط خطا داشته باشد.
 const driveButtonElement=$("driveBtn");
 if(driveButtonElement){
  driveButtonElement.addEventListener("click",()=>{
-  setMessage("Ø¯Ø±Ø®ÙØ§Ø³Øª Ø§ØªØµØ§Ù Ø¨Ù Google Drive Ø«Ø¨Øª Ø´Ø¯...","Ø¯Ø± Ø­Ø§Ù Ø§ØªØµØ§Ù");
+  setMessage("درخواست اتصال به Google Drive ثبت شد...","در حال اتصال");
   syncFromDrive();
  });
 }
 window.addEventListener("error",event=>{
  const box=$("message");
- if(box)box.textContent="Ø®Ø·Ø§Û Ø§Ø¬Ø±Ø§ÛÛ Ø¨Ø±ÙØ§ÙÙ: "+(event.message||"Ø®Ø·Ø§Û ÙØ§ÙØ´Ø®Øµ")+". ÙØ·ÙØ§Ù ØµÙØ­Ù Ø±Ø§ Refresh Ú©Ù Ù Ø¯Ø± ØµÙØ±Øª ØªÚ©Ø±Ø§Ø±Ø ØªØµÙÛØ± Ø®Ø·Ø§ Ø±Ø§ Ø¨ÙØ±Ø³Øª.";
+ if(box)box.textContent="خطای اجرایی برنامه: "+(event.message||"خطای نامشخص")+". لطفاً صفحه را Refresh کن و در صورت تکرار، تصویر خطا را بفرست.";
 });
 
 function clean(v){
@@ -295,8 +294,8 @@ function clean(v){
 function norm(v){
  return clean(v)
   .replace(/\s/g,"")
-  .replace(/[Û°-Û¹]/g,d=>"Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹".indexOf(d))
-  .replace(/[Ù -Ù©]/g,d=>"Ù Ù¡Ù¢Ù£Ù¤Ù¥Ù¦Ù§Ù¨Ù©".indexOf(d));
+  .replace(/[۰-۹]/g,d=>"۰۱۲۳۴۵۶۷۸۹".indexOf(d))
+  .replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d));
 }
 
 function keyVariants(v){
@@ -318,9 +317,9 @@ function first(row,keys){
 
 function numeric(v){
  const normalized=String(v??"")
-  .replace(/[Û°-Û¹]/g,d=>"Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹".indexOf(d))
-  .replace(/[Ù -Ù©]/g,d=>"Ù Ù¡Ù¢Ù£Ù¤Ù¥Ù¦Ù§Ù¨Ù©".indexOf(d))
-  .replace(/[Ù¬Ø]/g,"")
+  .replace(/[۰-۹]/g,d=>"۰۱۲۳۴۵۶۷۸۹".indexOf(d))
+  .replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d))
+  .replace(/[٬،]/g,"")
   .replace(/,/g,"")
   .replace(/[^0-9.-]/g,"");
  const n=Number(normalized);
@@ -355,41 +354,41 @@ function readExcel(file,headerRow){
     }));
    }catch(error){reject(error)}
   };
-  reader.onerror=()=>reject(new Error("Ø®ÙØ§ÙØ¯Ù ÙØ§ÛÙ ÙÙÚ©Ù ÙØ´Ø¯."));
+  reader.onerror=()=>reject(new Error("خواندن فایل ممکن نشد."));
   reader.readAsArrayBuffer(file);
  });
 }
 
-/* Ø¨Ø§Ø±Ú¯Ø°Ø§Ø±Û Ø¯Ø³ØªÛ */
+/* بارگذاری دستی */
 async function loadManualFiles(){
  const jpFile=$("jpFile").files[0];
  const salesFile=$("salesFile").files[0];
  const mappingFile=$("mappingFile").files[0];
 
  if(!jpFile||!salesFile){
-  setMessage("ÙØ·ÙØ§Ù ÙØ± Ø¯Ù ÙØ§ÛÙ Journey Plan Ù Sales Ø±Ø§ Ø§ÙØªØ®Ø§Ø¨ Ú©Ù.");
+  setMessage("لطفاً هر دو فایل Journey Plan و Sales را انتخاب کن.");
   return;
  }
 
  $("loadBtn").disabled=true;
  try{
-  setMessage("Ø¯Ø± Ø­Ø§Ù Ø®ÙØ§ÙØ¯Ù ÙØ§ÛÙâÙØ§...","Ø¯Ø± Ø­Ø§Ù Ù¾Ø±Ø¯Ø§Ø²Ø´");
+  setMessage("در حال خواندن فایل‌ها...","در حال پردازش");
   jpRows=await readExcel(jpFile,1);
   salesRows=await readExcel(salesFile,3);
   productRows=mappingFile?await readExcel(mappingFile,0):[];
   buildData();
   renderAll();
-  setMessage("Ø§Ø·ÙØ§Ø¹Ø§Øª Ø¨Ø§ ÙÙÙÙÛØª Ø¨Ø§Ø±Ú¯Ø°Ø§Ø±Û Ø´Ø¯. ØªØ¹Ø¯Ø§Ø¯ ÙØ±ÙØ´Ú¯Ø§ÙâÙØ§: "+
-   stores.length.toLocaleString("fa-IR"),"Ø¢ÙØ§Ø¯Ù");
+  setMessage("اطلاعات با موفقیت بارگذاری شد. تعداد فروشگاه‌ها: "+
+   stores.length.toLocaleString("fa-IR"),"آماده");
  }catch(error){
   console.error(error);
-  setMessage("Ø®Ø·Ø§ Ø¯Ø± Ø®ÙØ§ÙØ¯Ù ÙØ§ÛÙ: "+error.message,"Ø®Ø·Ø§");
+  setMessage("خطا در خواندن فایل: "+error.message,"خطا");
  }finally{
   $("loadBtn").disabled=false;
  }
 }
 
-/* ÙÚ¯Ø§Ø´Øª Ú©Ø¯ Ú©Ø§ÙØ§ Ø¨Ù ÙØ§Ù ÙØ­ØµÙÙ */
+/* نگاشت کد کالا به نام محصول */
 function buildProductMap(){
  const result={};
  for(const row of productRows){
@@ -400,7 +399,7 @@ function buildProductMap(){
  return result;
 }
 
-/* ØªØ·Ø¨ÛÙ Ø§Ø·ÙØ§Ø¹Ø§Øª ÙØ±ÙØ´ Ø¨Ø§ ÙØ´ØªØ±ÛØ§Ù */
+/* تطبیق اطلاعات فروش با مشتریان */
 function buildDataCore(){
  const productMap=buildProductMap();
  const jpMap=new Map();
@@ -418,7 +417,7 @@ function buildDataCore(){
   const lng=numeric(row["Longitude"]);
   const store={
    id,code:newCode||customerI||oracleCode,
-   name:first(row,["Customer Name","DescriptionAR","DescriptionE"])||"ÙØ±ÙØ´Ú¯Ø§Ù Ø¨Ø¯ÙÙ ÙØ§Ù",
+   name:first(row,["Customer Name","DescriptionAR","DescriptionE"])||"فروشگاه بدون نام",
    address:first(row,["Address"," Address"]),
    area:first(row,["Area Name"]),
    territory:first(row,["TerritoryNo"]),
@@ -435,18 +434,18 @@ function buildDataCore(){
  const salesOnly=new Map();
  const salesByStore=new Map();
  for(const row of salesRows){
-  const customerCode=first(row,["Ú©Ø¯ ÙØ´ØªØ±Û","Customer Code","CustomerI"]);
+  const customerCode=first(row,["کد مشتری","Customer Code","CustomerI"]);
   const accountNumber=first(row,["Account Number"]);
   const keys=[...new Set([...keyVariants(customerCode),...keyVariants(accountNumber)])];
   const matchedStore=keys.map(key=>jpAliasMap.get(key)).find(Boolean)||null;
 
-  const itemCode=first(row,["Ú©Ø¯ Ú©Ø§ÙØ§","Item Code"]);
-  const rawName=first(row,["ÙØ§Ù Ú©Ø§ÙØ§","Item","Product Name"]);
+  const itemCode=first(row,["کد کالا","Item Code"]);
+  const rawName=first(row,["نام کالا","Item","Product Name"]);
   const item={
    code:itemCode,
-   name:productMap[norm(itemCode)]||rawName||itemCode||"ÙØ­ØµÙÙ ÙØ§ÙØ´Ø®Øµ",
-   date:first(row,["invoicedate","ØªØ§Ø±ÛØ®"]),
-   quantity:first(row,["ØªØ¹Ø¯Ø§Ø¯","Quantity"])
+   name:productMap[norm(itemCode)]||rawName||itemCode||"محصول نامشخص",
+   date:first(row,["invoicedate","تاریخ"]),
+   quantity:first(row,["تعداد","Quantity"])
   };
 
   if(matchedStore){
@@ -459,12 +458,12 @@ function buildDataCore(){
   if(!salesOnly.has(id)){
    salesOnly.set(id,{
     id,code:customerCode||accountNumber,
-    name:first(row,["ÙØ§Ù ÙØ´ØªØ±Û","Customer Name"])||"ÙØ´ØªØ±Û Ú¯Ø²Ø§Ø±Ø´ ÙØ±ÙØ´",
-    address:first(row,["Ø¢Ø¯Ø±Ø³","Address"]),
-    area:first(row,["Ú¯Ø±ÙÙ ÙØ´ØªØ±Û","Customer Group"]),
+    name:first(row,["نام مشتری","Customer Name"])||"مشتری گزارش فروش",
+    address:first(row,["آدرس","Address"]),
+    area:first(row,["گروه مشتری","Customer Group"]),
     territory:"",
-    salesman:first(row,["ÙØ§Ù ÙØ±ÙØ´ÙØ¯Ù","Salesman Name"]),
-    salesmanCode:first(row,["Ú©Ø¯ ÙØ±ÙØ´ÙØ¯Ù","Salesman Code"]),
+    salesman:first(row,["نام فروشنده","Salesman Name"]),
+    salesmanCode:first(row,["کد فروشنده","Salesman Code"]),
     lat:0,lng:0,hasCoords:false,
     hasSales:true,inJP:false,today:false,products:[]
    });
@@ -491,12 +490,12 @@ function isTodayVisit(row){
  return value!==""&&value!=="0"&&value!=="0.0";
 }
 
-/* ÙÙØ´Ù */
+/* نقشه */
 function initMap(){
  if(map)return;
  map=L.map("map").setView([35.84,50.94],10);
  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-  attribution:"Â© OpenStreetMap"
+  attribution:"© OpenStreetMap"
  }).addTo(map);
 }
 
@@ -531,17 +530,17 @@ function renderMap(list){
  setTimeout(()=>map.invalidateSize(),150);
 }
 
-/* ÙÛÙØªØ±ÙØ§ */
+/* فیلترها */
 function fillFilters(){
  const areas=[...new Set(stores.map(s=>s.area).filter(Boolean))].sort();
  const people=[...new Set(stores.map(s=>s.salesman).filter(Boolean))].sort();
 
  $("areaFilter").innerHTML=
-  '<option value="all">ÙÙÙ ÙÙØ§Ø·Ù</option>'+
+  '<option value="all">همه مناطق</option>'+
   areas.map(x=>`<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join("");
 
  $("personFilter").innerHTML=
-  '<option value="all">ÙÙÙ ÙÛØ²ÛØªÙØ±ÙØ§</option>'+
+  '<option value="all">همه ویزیتورها</option>'+
   people.map(x=>`<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join("");
 }
 
@@ -567,11 +566,11 @@ function filteredStores(){
 }
 
 function renderList(list){
- $("resultCount").textContent=list.length.toLocaleString("fa-IR")+" ÙØ±ÙØ´Ú¯Ø§Ù";
+ $("resultCount").textContent=list.length.toLocaleString("fa-IR")+" فروشگاه";
  const shown=list.slice(0,300);
 
  if(!shown.length){
-  $("storeList").innerHTML='<div class="empty">ÙØ±ÙØ´Ú¯Ø§ÙÛ Ù¾ÛØ¯Ø§ ÙØ´Ø¯.</div>';
+  $("storeList").innerHTML='<div class="empty">فروشگاهی پیدا نشد.</div>';
   return;
  }
 
@@ -582,11 +581,11 @@ function renderList(list){
     <i class="pin" style="background:${storeColor(s)}"></i>
     <div class="storeinfo">
      <b>${escapeHtml(s.name)}</b>
-     <small>${escapeHtml(s.code)} Â· ${escapeHtml(s.area||"Ø¨Ø¯ÙÙ ÙÙØ·ÙÙ")}<br>
-     ${s.hasSales?"Ø¯Ø§Ø±Ø§Û Ø³Ø§Ø¨ÙÙ ÙØ±ÙØ´":"Ø¨Ø¯ÙÙ Ø³Ø§Ø¨ÙÙ ÙØ±ÙØ´"} Â·
-     ${s.hasCoords?"Ø¯Ø§Ø±Ø§Û ÙØ®ØªØµØ§Øª":"Ø¨Ø¯ÙÙ ÙØ®ØªØµØ§Øª"}</small>
+     <small>${escapeHtml(s.code)} · ${escapeHtml(s.area||"بدون منطقه")}<br>
+     ${s.hasSales?"دارای سابقه فروش":"بدون سابقه فروش"} ·
+     ${s.hasCoords?"دارای مختصات":"بدون مختصات"}</small>
     </div>
-    <span class="arrow">â¹</span>
+    <span class="arrow">‹</span>
    </div>`;
  }).join("");
 
@@ -612,7 +611,7 @@ function applyFilters(){
  renderMap(list);
 }
 
-/* Ø¬Ø²Ø¦ÛØ§Øª ÙØ±ÙØ´Ú¯Ø§Ù */
+/* جزئیات فروشگاه */
 function showStore(id){
  const store=stores.find(s=>s.id===id);
  if(!store)return;
@@ -623,11 +622,11 @@ function showStore(id){
   store.products.map(p=>`
    <div class="product">
     <b>${escapeHtml(p.name)}</b>
-    <small>Ú©Ø¯ Ú©Ø§ÙØ§: ${escapeHtml(p.code||"â")} Â·
-    ØªØ§Ø±ÛØ®: ${escapeHtml(p.date||"â")} Â·
-    ØªØ¹Ø¯Ø§Ø¯: ${escapeHtml(p.quantity||"â")}</small>
+    <small>کد کالا: ${escapeHtml(p.code||"—")} ·
+    تاریخ: ${escapeHtml(p.date||"—")} ·
+    تعداد: ${escapeHtml(p.quantity||"—")}</small>
    </div>`).join("")
-  :'<div class="empty">Ø¨Ø±Ø§Û Ø§ÛÙ ÙØ±ÙØ´Ú¯Ø§Ù ÙØ­ØµÙÙÛ Ø¯Ø± Ú¯Ø²Ø§Ø±Ø´ ÙØ±ÙØ´ Ù¾ÛØ¯Ø§ ÙØ´Ø¯.</div>';
+  :'<div class="empty">برای این فروشگاه محصولی در گزارش فروش پیدا نشد.</div>';
 
  const mapsUrl=store.hasCoords?
   `https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lng}`:
@@ -635,21 +634,21 @@ function showStore(id){
 
  $("modalContent").innerHTML=`
   <div style="font-size:12px;line-height:2;color:#617487;margin:12px 0">
-   Ú©Ø¯ ÙØ´ØªØ±Û: ${escapeHtml(store.code||"â")}<br>
-   ÙÙØ·ÙÙ: ${escapeHtml(store.area||"â")}<br>
-   ÙÙÙØ±Ù: ${escapeHtml(store.territory||"â")}<br>
-   ÙÛØ²ÛØªÙØ±: ${escapeHtml(store.salesman||"â")}<br>
-   Ø¢Ø¯Ø±Ø³: ${escapeHtml(store.address||"â")}<br>
-   ÙØ¶Ø¹ÛØª: ${store.inJP?"Ø¯Ø± Journey Plan":"ÙÙØ· Ø¯Ø± Ú¯Ø²Ø§Ø±Ø´ ÙØ±ÙØ´"} Â·
-   ${store.hasSales?"Ø¯Ø§Ø±Ø§Û ÙØ±ÙØ´":"Ø¨Ø¯ÙÙ ÙØ±ÙØ´"}<br>
-   ÙØ¨ÙØº ÙØ§Ú©ØªÙØ±Ø´Ø¯Ù: ${Math.round((store.orders||[]).filter(o=>o.invoiceDate).reduce((n,o)=>n+(o.amount||0),0)).toLocaleString("fa-IR")}<br>
-   ÙØ¨ÙØº ÙØ§Ú©ØªÙØ±ÙØ´Ø¯Ù: ${Math.round((store.orders||[]).filter(o=>!o.invoiceDate).reduce((n,o)=>n+(o.amount||0),0)).toLocaleString("fa-IR")}
+   کد مشتری: ${escapeHtml(store.code||"—")}<br>
+   منطقه: ${escapeHtml(store.area||"—")}<br>
+   قلمرو: ${escapeHtml(store.territory||"—")}<br>
+   ویزیتور: ${escapeHtml(store.salesman||"—")}<br>
+   آدرس: ${escapeHtml(store.address||"—")}<br>
+   وضعیت: ${store.inJP?"در Journey Plan":"فقط در گزارش فروش"} ·
+   ${store.hasSales?"دارای فروش":"بدون فروش"}<br>
+   مبلغ فاکتورشده: ${Math.round((store.orders||[]).filter(o=>o.invoiceDate).reduce((n,o)=>n+(o.amount||0),0)).toLocaleString("fa-IR")}<br>
+   مبلغ فاکتورنشده: ${Math.round((store.orders||[]).filter(o=>!o.invoiceDate).reduce((n,o)=>n+(o.amount||0),0)).toLocaleString("fa-IR")}
   </div>
-  <div class="section-title">ÙØ­ØµÙÙØ§Øª Ø«Ø¨ØªâØ´Ø¯Ù (${store.products.length})</div>
+  <div class="section-title">محصولات ثبت‌شده (${store.products.length})</div>
   ${productHtml}
   <div class="actions">
-   <a href="${mapsUrl}" target="_blank" rel="noopener">ÙØ³ÛØ±ÛØ§Ø¨Û Ø¨Ø§ Google Maps</a>
-   ${store.hasCoords?`<a href="https://www.google.com/maps?q=${store.lat},${store.lng}" target="_blank" rel="noopener">ÙÙØ§ÛØ´ ÙÙÙØ¹ÛØª</a>`:""}
+   <a href="${mapsUrl}" target="_blank" rel="noopener">مسیریابی با Google Maps</a>
+   ${store.hasCoords?`<a href="https://www.google.com/maps?q=${store.lat},${store.lng}" target="_blank" rel="noopener">نمایش موقعیت</a>`:""}
   </div>`;
 
  $("modal").style.display="flex";
@@ -659,11 +658,11 @@ function closeModal(){
  $("modal").style.display="none";
 }
 
-/* ÙØ±ÙØ¯ Ù ÙØ¬ÙØ² Google */
+/* ورود و مجوز Google */
 function getDriveToken(){
  return new Promise((resolve,reject)=>{
   if(!window.google?.accounts?.oauth2){
-   reject(new Error("Ú©ØªØ§Ø¨Ø®Ø§ÙÙ ÙØ±ÙØ¯ Google ÙÙÙØ² Ø¨Ø§Ø±Ú¯Ø°Ø§Ø±Û ÙØ´Ø¯Ù Ø§Ø³Øª. Ø§ØªØµØ§Ù Ø§ÛÙØªØ±ÙØª Ø±Ø§ Ø¨Ø±Ø±Ø³Û Ú©ÙØ ØµÙØ­Ù Ø±Ø§ ÛÚ©âØ¨Ø§Ø± Refresh Ú©Ù Ù Ø¯ÙØ¨Ø§Ø±Ù Ø¯Ú©ÙÙ Ø³Ø¨Ø² Ø±Ø§ Ø¨Ø²Ù."));
+   reject(new Error("کتابخانه ورود Google هنوز بارگذاری نشده است. اتصال اینترنت را بررسی کن، صفحه را یک‌بار Refresh کن و دوباره دکمه سبز را بزن."));
    return;
   }
 
@@ -678,11 +677,11 @@ function getDriveToken(){
       lastAccessToken=response.access_token;
       resolve(response.access_token);
      }else{
-      reject(new Error("Google ÙØ¬ÙØ² Ø¯Ø³ØªØ±Ø³Û Ø¨Ø±ÙÚ¯Ø±Ø¯Ø§ÙØ¯. Ø¯ÙØ¨Ø§Ø±Ù ØªÙØ§Ø´ Ú©Ù."));
+      reject(new Error("Google مجوز دسترسی برنگرداند. دوباره تلاش کن."));
      }
     },
     error_callback:error=>{
-     reject(new Error(error.message||"ÙØ±ÙØ¯ Ú¯ÙÚ¯Ù ÙØºÙ Ø´Ø¯."));
+     reject(new Error(error.message||"ورود گوگل لغو شد."));
     }
    });
   }
@@ -708,13 +707,13 @@ async function driveRequest(url,token){
  return response;
 }
 
-/* ØªØ§Ø±ÛØ® Ø¯Ø§Ø®Ù ÙØ§Ù ÙØ§ÛÙ */
+/* تاریخ داخل نام فایل */
 function dateFromFilename(name){
  const match=name.match(/(\d{8})/);
  return match?match[1]:"00000000";
 }
 
-/* Ù¾ÛØ¯Ø§ Ú©Ø±Ø¯Ù Ø¬Ø¯ÛØ¯ØªØ±ÛÙ ÙØ§ÛÙØ Ù¾Ø³ÙÙØ¯ Ø§Ø¬Ø¨Ø§Ø±Û ÙÛØ³Øª */
+/* پیدا کردن جدیدترین فایل؛ پسوند اجباری نیست */
 function newestFile(files,prefix){
  return files
   .filter(f=>f.name.toLowerCase().startsWith(prefix.toLowerCase()))
@@ -730,7 +729,7 @@ function newestFile(files,prefix){
   })[0]||null;
 }
 
-/* Ø¯Ø±ÛØ§ÙØª ÙÙØ±Ø³Øª ÙØ§ÛÙâÙØ§Û Ù¾ÙØ´Ù */
+/* دریافت فهرست فایل‌های پوشه */
 async function listDriveFiles(token){
  let all=[];
  let pageToken="";
@@ -760,9 +759,9 @@ async function listDriveFiles(token){
 }
 
 /*
- Ø¯Ø§ÙÙÙØ¯ ÙØ§ÛÙ:
- Google Sheets Ø¨Ø§ Export
- Excel ÙØ¹ÙÙÙÛ Ø¨Ø§ alt=media
+ دانلود فایل:
+ Google Sheets با Export
+ Excel معمولی با alt=media
 */
 async function downloadDriveExcel(file,token,headerRow){
  let url;
@@ -793,17 +792,17 @@ async function downloadDriveExcel(file,token,headerRow){
  });
 }
 
-/* ÙÙÚ¯Ø§ÙâØ³Ø§Ø²Û */
+/* همگام‌سازی */
 async function syncFromDrive(){
  const button=$("driveBtn");
  button.disabled=true;
 
  try{
-  setMessage("Ø¯Ø± Ø­Ø§Ù Ø¯Ø±Ø®ÙØ§Ø³Øª ÙØ¬ÙØ² Google Drive...","Ø¯Ø± Ø­Ø§Ù Ø§ØªØµØ§Ù");
+  setMessage("در حال درخواست مجوز Google Drive...","در حال اتصال");
 
   const token=await getDriveToken();
 
-  setMessage("Ø¯Ø± Ø­Ø§Ù Ø¬Ø³ØªØ¬Ù Ø¯Ø± Ù¾ÙØ´Ù Navigation...");
+  setMessage("در حال جستجو در پوشه Navigation...");
 
   const files=await listDriveFiles(token);
 
@@ -813,26 +812,26 @@ async function syncFromDrive(){
 
   if(!jpFile){
    throw new Error(
-    "ÙØ§ÛÙ Journey Plan Ù¾ÛØ¯Ø§ ÙØ´Ø¯.\n"+
-    "ÙØ§ÛÙâÙØ§Û Ø¯ÛØ¯ÙâØ´Ø¯Ù:\n"+
-    (files.map(f=>f.name+" ("+f.mimeType+")").join("\n")||"ÙÛÚ ÙØ§ÛÙÛ Ø¯ÛØ¯Ù ÙØ´Ø¯")
+    "فایل Journey Plan پیدا نشد.\n"+
+    "فایل‌های دیده‌شده:\n"+
+    (files.map(f=>f.name+" ("+f.mimeType+")").join("\n")||"هیچ فایلی دیده نشد")
    );
   }
 
   if(!salesFile){
    throw new Error(
-    "ÙØ§ÛÙ Ú¯Ø²Ø§Ø±Ø´ ÙØ±ÙØ´ Ù¾ÛØ¯Ø§ ÙØ´Ø¯.\n"+
-    "ÙØ§ÛÙâÙØ§Û Ø¯ÛØ¯ÙâØ´Ø¯Ù:\n"+
-    (files.map(f=>f.name+" ("+f.mimeType+")").join("\n")||"ÙÛÚ ÙØ§ÛÙÛ Ø¯ÛØ¯Ù ÙØ´Ø¯")
+    "فایل گزارش فروش پیدا نشد.\n"+
+    "فایل‌های دیده‌شده:\n"+
+    (files.map(f=>f.name+" ("+f.mimeType+")").join("\n")||"هیچ فایلی دیده نشد")
    );
   }
 
   setMessage(
-   "ÙØ§ÛÙâÙØ§Û Ù¾ÛØ¯Ø§ Ø´Ø¯Ù:\n"+
-   jpFile.name+" â "+jpFile.mimeType+"\n"+
-   salesFile.name+" â "+salesFile.mimeType+"\n"+
-   (mappingFile?mappingFile.name+" â "+mappingFile.mimeType:"Product Mapping Ù¾ÛØ¯Ø§ ÙØ´Ø¯")+
-   "\n\nØ¯Ø± Ø­Ø§Ù Ø¯Ø±ÛØ§ÙØª ÙØ§ÛÙâÙØ§..."
+   "فایل‌های پیدا شده:\n"+
+   jpFile.name+" — "+jpFile.mimeType+"\n"+
+   salesFile.name+" — "+salesFile.mimeType+"\n"+
+   (mappingFile?mappingFile.name+" — "+mappingFile.mimeType:"Product Mapping پیدا نشد")+
+   "\n\nدر حال دریافت فایل‌ها..."
   );
 
   jpRows=await downloadDriveExcel(jpFile,token,1);
@@ -844,21 +843,21 @@ async function syncFromDrive(){
   renderAll();
 
   setMessage(
-   "ÙÙÚ¯Ø§ÙâØ³Ø§Ø²Û ÙÙÙÙ Ø¨ÙØ¯.\n"+
+   "همگام‌سازی موفق بود.\n"+
    "Journey Plan: "+jpFile.name+"\n"+
    "Sales: "+salesFile.name+"\n"+
-   "Product Mapping: "+(mappingFile?mappingFile.name:"Ù¾ÛØ¯Ø§ ÙØ´Ø¯")+
-   "\nØªØ¹Ø¯Ø§Ø¯ ÙØ±ÙØ´Ú¯Ø§ÙâÙØ§: "+stores.length.toLocaleString("fa-IR"),
-   "ÙÙÚ¯Ø§ÙâØ³Ø§Ø²Û ÙÙÙÙ"
+   "Product Mapping: "+(mappingFile?mappingFile.name:"پیدا نشد")+
+   "\nتعداد فروشگاه‌ها: "+stores.length.toLocaleString("fa-IR"),
+   "همگام‌سازی موفق"
   );
 
  }catch(error){
   console.error(error);
   setMessage(
-   "Ø¯Ø±ÛØ§ÙØª Ø§Ø·ÙØ§Ø¹Ø§Øª Ø§ÙØ¬Ø§Ù ÙØ´Ø¯:\n"+
+   "دریافت اطلاعات انجام نشد:\n"+
    error.message+
-   "\n\nØ§Ú¯Ø± Ø®Ø·Ø§Û 401 ÛØ§ 403 ÙØ´Ø§ÙØ¯Ù Ø´Ø¯Ø Ø¬Ø²Ø¦ÛØ§Øª Ø¢Ù Ø±Ø§ Ø¨Ø±Ø§Û Ø¨Ø±Ø±Ø³Û Ø¨ÙØ±Ø³Øª.",
-   "Ø®Ø·Ø§ Ø¯Ø± Ø§ØªØµØ§Ù"
+   "\n\nاگر خطای 401 یا 403 مشاهده شد، جزئیات آن را برای بررسی بفرست.",
+   "خطا در اتصال"
   );
  }finally{
   button.disabled=false;
@@ -885,7 +884,7 @@ function savePlan(){
 }
 function storeNameFromAddress(address){
  const s=clean(address);
- const m=s.match(/(?:Ø³ÙÙ¾Ø±\s*ÙØ§Ø±Ú©Øª|Ø³ÙÙ¾Ø±ÙØ§Ø±Ú©Øª|ÙØ§ÛÙ¾Ø±|Ø³ÙÙ¾Ø±|ÙØ§Ø±Ú©Øª|ÙØ±ÙØ´Ú¯Ø§Ù|ÙÙØ§Ø¯\s*ØºØ°Ø§ÛÛ|Ø§Ø±Ø²Ø§ÙØ³Ø±Ø§Û)\s*[^Ø,Ø;]*/i);
+ const m=s.match(/(?:سوپر\s*مارکت|سوپرمارکت|هایپر|سوپر|مارکت|فروشگاه|مواد\s*غذایی|ارزانسرای)\s*[^،,؛;]*/i);
  return m?m[0].trim():"";
 }
 function jalaliDateText(value){
@@ -910,28 +909,28 @@ function enrichStoreFields(){
   for(const alias of aliases)jpByAlias.set(alias,row);
  }
 
- const statusKeys=["Status","Order Status","ÙØ¶Ø¹ÛØª Ø³ÙØ§Ø±Ø´","OrderStatus"];
- const orderNoKeys=["Ø´ÙØ§Ø±Ù Ø³ÙØ§Ø±Ø´","Order Number","Order No","OrderNumber","Ø´ÙØ§Ø±Ù ÙØ§Ú©ØªÙØ±"];
- const dateKeys=["ØªØ§Ø±ÛØ®","Date","Order Date","ØªØ§Ø±ÛØ® Ø³ÙØ§Ø±Ø´"];
- const invoiceKeys=["invoicedate","Invoice Date","ØªØ§Ø±ÛØ® ØµØ¯ÙØ± ÙØ§Ú©ØªÙØ±"];
- const deliveryKeys=["Target Deilvery Date","Target Delivery Date","TargetDeliveryDate","ØªØ§Ø±ÛØ® ØªØ­ÙÛÙ ÙÙØ±Ø¯ Ø§ÙØªØ¸Ø§Ø±"];
+ const statusKeys=["Status","Order Status","وضعیت سفارش","OrderStatus"];
+ const orderNoKeys=["شماره سفارش","Order Number","Order No","OrderNumber","شماره فاکتور"];
+ const dateKeys=["تاریخ","Date","Order Date","تاریخ سفارش"];
+ const invoiceKeys=["invoicedate","Invoice Date","تاریخ صدور فاکتور"];
+ const deliveryKeys=["Target Deilvery Date","Target Delivery Date","TargetDeliveryDate","تاریخ تحویل مورد انتظار"];
  const grouped=new Map();
 
  for(const row of salesRows){
   const status=clean(first(row,statusKeys)).replace(/\s+/g," ").toLowerCase();
   if(status==="closed/expired")continue;
-  const cust=first(row,["Ú©Ø¯ ÙØ´ØªØ±Û","Customer Code","Account Number"]);
+  const cust=first(row,["کد مشتری","Customer Code","Account Number"]);
   if(!cust)continue;
   const orderNo=first(row,orderNoKeys);
-  const unitPrice=numeric(first(row,["ÙÛÙØª ÙØ§Ø­Ø¯","Unit Price","UnitPrice"]));
-  const quantity=numeric(first(row,["ØªØ¹Ø¯Ø§Ø¯","Quantity"]));
+  const unitPrice=numeric(first(row,["قیمت واحد","Unit Price","UnitPrice"]));
+  const quantity=numeric(first(row,["تعداد","Quantity"]));
   const entry={
    orderNo,status,
    orderDate:first(row,dateKeys),
    invoiceDate:first(row,invoiceKeys),
    deliveryDate:first(row,deliveryKeys),
-   product:first(row,["ÙØ§Ù Ú©Ø§ÙØ§","Item","Product Name"]),
-   itemCode:first(row,["Ú©Ø¯ Ú©Ø§ÙØ§","Item Code"]),
+   product:first(row,["نام کالا","Item","Product Name"]),
+   itemCode:first(row,["کد کالا","Item Code"]),
    quantity,unitPrice,amount:unitPrice*quantity
   };
   for(const alias of keyVariants(cust)){
@@ -944,7 +943,7 @@ function enrichStoreFields(){
   const raw=[...new Set([store.id,store.code].flatMap(keyVariants))]
    .map(alias=>jpByAlias.get(alias)).find(Boolean)||null;
   store.routeName=raw?first(raw,["Route Name"]):"";
-  store.customerClass=raw?first(raw,["Outlet Class","Customer Class","Ú©ÙØ§Ø³ ÙØ´ØªØ±Û"]):"";
+  store.customerClass=raw?first(raw,["Outlet Class","Customer Class","کلاس مشتری"]):"";
   store.storeName=store.name;
   store.orders=[];
   const aliases=[...new Set([store.id,store.code].flatMap(keyVariants))];
@@ -964,7 +963,7 @@ function enrichStoreFields(){
 }
 function buildData(){
  const isExpiredStatus=value=>clean(value).replace(/\s+/g," ").toLowerCase()==="closed/expired";
- salesRows=salesRows.filter(r=>!isExpiredStatus(first(r,["Status","Order Status","ÙØ¶Ø¹ÛØª Ø³ÙØ§Ø±Ø´","OrderStatus"])));
+ salesRows=salesRows.filter(r=>!isExpiredStatus(first(r,["Status","Order Status","وضعیت سفارش","OrderStatus"])));
  buildDataCore();
  enrichStoreFields();
  saveOfflineSnapshot();
@@ -973,7 +972,7 @@ function saveOfflineSnapshot(){
  try{
   const snapshot={savedAt:new Date().toISOString(),stores,jpRows,salesRows,productRows};
   localStorage.setItem("tpa_navigation_snapshot_v1",JSON.stringify(snapshot));
-  $("lastSync").textContent="Ø¢Ø®Ø±ÛÙ ÙÙÚ¯Ø§ÙâØ³Ø§Ø²Û: "+new Date().toLocaleString();
+  $("lastSync").textContent="آخرین همگام‌سازی: "+new Date().toLocaleString();
  }catch(e){console.warn("Offline cache could not be saved",e);}
 }
 function restoreOfflineSnapshot(){
@@ -983,7 +982,7 @@ function restoreOfflineSnapshot(){
   const data=JSON.parse(raw);
   if(!Array.isArray(data.stores)||!data.stores.length)return false;
   stores=data.stores;jpRows=data.jpRows||[];salesRows=data.salesRows||[];productRows=data.productRows||[];
-  $("lastSync").textContent="Ø¢Ø®Ø±ÛÙ ÙÙÚ¯Ø§ÙâØ³Ø§Ø²Û: "+(data.savedAt?new Date(data.savedAt).toLocaleString():"ÙØ§ÙØ´Ø®Øµ")+" (Ø°Ø®ÛØ±Ù ÙØ­ÙÛ)";
+  $("lastSync").textContent="آخرین همگام‌سازی: "+(data.savedAt?new Date(data.savedAt).toLocaleString():"نامشخص")+" (ذخیره محلی)";
   renderAll();return true;
  }catch(e){return false;}
 }
@@ -993,7 +992,7 @@ function addStoreToPlan(id){
  const date=clean($("planDate")?.value)||"";
  const day=clean($("planDay")?.value)||"Saturday";
  const exists=auditPlan.some(p=>String(p.customerId)===String(s.code||s.id)&&p.visitDate===date&&p.visitDay===day);
- if(exists){alert("Ø§ÛÙ ÙØ±ÙØ´Ú¯Ø§Ù Ø§Ø² ÙØ¨Ù Ø¯Ø± Ø¨Ø±ÙØ§ÙÙ ÙÙÛÙ Ø±ÙØ² ÙØ¬ÙØ¯ Ø¯Ø§Ø±Ø¯.");return;}
+ if(exists){alert("این فروشگاه از قبل در برنامه همین روز وجود دارد.");return;}
  auditPlan.push({visitDate:date,visitDay:day,customerId:s.code||s.id,storeName:s.storeName||s.name,
   customerName:s.name,address:s.address,routeName:s.routeName||"",latitude:s.lat||"",longitude:s.lng||"",
   priority:"Medium",selectionReason:"",auditorComment:"",selectionSource:"Internal",approved:true});
@@ -1002,21 +1001,21 @@ function addStoreToPlan(id){
 }
 function renderPlan(){
  const box=$("planList");if(!box)return;
- if(!auditPlan.length){box.innerHTML='<div class="empty">ÙÙÙØ² ÙØ±ÙØ´Ú¯Ø§ÙÛ Ø¨Ù Ø¨Ø±ÙØ§ÙÙ Ø§Ø¶Ø§ÙÙ ÙØ´Ø¯Ù Ø§Ø³Øª.</div>';return;}
+ if(!auditPlan.length){box.innerHTML='<div class="empty">هنوز فروشگاهی به برنامه اضافه نشده است.</div>';return;}
  box.innerHTML=auditPlan.map((p,i)=>`<div class="planrow">
   <strong>${escapeHtml(p.storeName||p.customerName||p.customerId)}</strong>
-  <small>${escapeHtml(p.visitDay||"")} Â· ${escapeHtml(p.visitDate||"Ø¨Ø¯ÙÙ ØªØ§Ø±ÛØ®")} Â· Ú©Ø¯: ${escapeHtml(p.customerId)}<br>
-  ÙÙØ¨Ø¹: <b>${escapeHtml(p.selectionSource||"Internal")}</b> Â· Ø§ÙÙÙÛØª: ${escapeHtml(p.priority||"Medium")}<br>
-  ${escapeHtml(p.selectionReason||"Ø¨Ø¯ÙÙ Ø¯ÙÛÙ Ø«Ø¨ØªâØ´Ø¯Ù")}</small>
-  <div class="rowactions"><button class="smallbtn secondary" onclick="editPlanRow(${i})">ÙÛØ±Ø§ÛØ´</button><button class="smallbtn" onclick="removePlanRow(${i})">Ø­Ø°Ù</button></div>
+  <small>${escapeHtml(p.visitDay||"")} · ${escapeHtml(p.visitDate||"بدون تاریخ")} · کد: ${escapeHtml(p.customerId)}<br>
+  منبع: <b>${escapeHtml(p.selectionSource||"Internal")}</b> · اولویت: ${escapeHtml(p.priority||"Medium")}<br>
+  ${escapeHtml(p.selectionReason||"بدون دلیل ثبت‌شده")}</small>
+  <div class="rowactions"><button class="smallbtn secondary" onclick="editPlanRow(${i})">ویرایش</button><button class="smallbtn" onclick="removePlanRow(${i})">حذف</button></div>
  </div>`).join("");
 }
 function editPlanRow(i){
  const p=auditPlan[i];if(!p)return;
- const reason=prompt("Ø¯ÙÛÙ Ø§ÙØªØ®Ø§Ø¨ ÙØ±ÙØ´Ú¯Ø§Ù:",p.selectionReason||"");
+ const reason=prompt("دلیل انتخاب فروشگاه:",p.selectionReason||"");
  if(reason===null)return;
  p.selectionReason=reason;
- const priority=prompt("Ø§ÙÙÙÛØª: High / Medium / Low",p.priority||"Medium");
+ const priority=prompt("اولویت: High / Medium / Low",p.priority||"Medium");
  if(priority!==null&&["High","Medium","Low"].includes(priority))p.priority=priority;
  savePlan();
 }
@@ -1038,7 +1037,7 @@ function planRowsForExcel(){
  }));
 }
 function exportAuditPlan(){
- if(!window.XLSX){alert("Ú©ØªØ§Ø¨Ø®Ø§ÙÙ Excel Ø¯Ø± Ø¯Ø³ØªØ±Ø³ ÙÛØ³Øª.");return;}
+ if(!window.XLSX){alert("کتابخانه Excel در دسترس نیست.");return;}
  const wb=XLSX.utils.book_new();
  const rows=planRowsForExcel();
  const headers=["Visit Date","Customer ID","Store Name","Customer Name","Address","Route Name","Latitude","Longitude","Priority","Selection Reason","Auditor Comment","Selection Source"];
@@ -1050,13 +1049,13 @@ function exportAuditPlan(){
  XLSX.writeFile(wb,"Audit_Visit_Plan.xlsx");
 }
 async function importAuditPlan(){
- const file=$("importPlanFile").files[0];if(!file){alert("Ø§Ø¨ØªØ¯Ø§ ÙØ§ÛÙ Ø§Ú©Ø³Ù Ø±Ø§ Ø§ÙØªØ®Ø§Ø¨ Ú©Ù.");return;}
+ const file=$("importPlanFile").files[0];if(!file){alert("ابتدا فایل اکسل را انتخاب کن.");return;}
  try{
   const rows=await readExcel(file,0);
   const valid=[],invalid=[],seen=new Set();
   rows.forEach((r,i)=>{
-   const id=first(r,["Customer ID","CustomerID","Ú©Ø¯ ÙØ´ØªØ±Û"]);
-   const date=first(r,["Visit Date","VisitDate","ØªØ§Ø±ÛØ® Ø¨Ø§Ø²Ø¯ÛØ¯"]);
+   const id=first(r,["Customer ID","CustomerID","کد مشتری"]);
+   const date=first(r,["Visit Date","VisitDate","تاریخ بازدید"]);
    if(!id||!date){invalid.push(i+2);return;}
    const k=String(id)+"|"+String(date);
    if(seen.has(k)){invalid.push(i+2);return;}seen.add(k);
@@ -1071,16 +1070,16 @@ async function importAuditPlan(){
     auditorComment:first(r,["Auditor Comment"]),selectionSource:"External",approved:false});
   });
   pendingExternal=valid;
-  $("importReport").innerHTML=`ØªØ¹Ø¯Ø§Ø¯ Ø±Ø¯ÛÙâÙØ§Û ÙØ¹ØªØ¨Ø±: <b>${valid.length}</b><br>Ø±Ø¯ÛÙâÙØ§Û ÙØ§ÙØ¹ØªØ¨Ø±Ø ØªÚ©Ø±Ø§Ø±Û ÛØ§ Ø¨Ø§ Ú©Ø¯ ÙØ§Ø´ÙØ§Ø®ØªÙ: <b>${invalid.length}</b><br>${valid.length?"Ù¾ÛØ´ÙÙØ§Ø¯ÙØ§ Ø¢ÙØ§Ø¯Ù Ø¨Ø±Ø±Ø³Û ÙØ³ØªÙØ¯. Ø¨Ø±Ø§Û Ø§ÙØ²ÙØ¯Ù Ø¢ÙâÙØ§ ØªØ£ÛÛØ¯ Ú©Ù.":""}
-  ${valid.length?'<button class="smallbtn green" id="acceptExternalBtn">ØªØ£ÛÛØ¯ Ù Ø§ÙØ²ÙØ¯Ù Ù¾ÛØ´ÙÙØ§Ø¯ÙØ§Û ÙØ¯ÛØ±</button>':""}`;
+  $("importReport").innerHTML=`تعداد ردیف‌های معتبر: <b>${valid.length}</b><br>ردیف‌های نامعتبر، تکراری یا با کد ناشناخته: <b>${invalid.length}</b><br>${valid.length?"پیشنهادها آماده بررسی هستند. برای افزودن آن‌ها تأیید کن.":""}
+  ${valid.length?'<button class="smallbtn green" id="acceptExternalBtn">تأیید و افزودن پیشنهادهای مدیر</button>':""}`;
   if(valid.length)$("acceptExternalBtn").onclick=()=>{
    for(const p of pendingExternal){
     const duplicate=auditPlan.some(x=>String(x.customerId)===String(p.customerId)&&String(x.visitDate)===String(p.visitDate));
     if(!duplicate)auditPlan.push(p);
    }
-   pendingExternal=[];savePlan();$("importReport").textContent="Ù¾ÛØ´ÙÙØ§Ø¯ÙØ§Û ØºÛØ±ØªÚ©Ø±Ø§Ø±Û Ø¨Ù Ø¨Ø±ÙØ§ÙÙ Ø§Ø¶Ø§ÙÙ Ø´Ø¯ÙØ¯.";
+   pendingExternal=[];savePlan();$("importReport").textContent="پیشنهادهای غیرتکراری به برنامه اضافه شدند.";
   };
- }catch(e){$("importReport").textContent="Ø®Ø·Ø§ Ø¯Ø± Ø®ÙØ§ÙØ¯Ù ÙØ§ÛÙ: "+e.message;}
+ }catch(e){$("importReport").textContent="خطا در خواندن فایل: "+e.message;}
 }
 function showPage(id){
  document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));
@@ -1103,18 +1102,18 @@ function showAnalysisList(kind){
  if(kind==="nogps")list=stores.filter(s=>!s.hasCoords);
  if(kind==="nopurchase")list=stores.filter(s=>!s.hasSales);
  if(kind==="open")list=stores.filter(s=>(s.openOrders||[]).length);
- $("analysisResults").innerHTML=list.length?list.slice(0,150).map(s=>`<div class="planrow"><strong>${escapeHtml(s.storeName||s.name)}</strong><small>${escapeHtml(s.code)} Â· ${escapeHtml(s.address||"")}</small></div>`).join(""):'<div class="empty">ÙÙØ±Ø¯Û Ù¾ÛØ¯Ø§ ÙØ´Ø¯.</div>';
+ $("analysisResults").innerHTML=list.length?list.slice(0,150).map(s=>`<div class="planrow"><strong>${escapeHtml(s.storeName||s.name)}</strong><small>${escapeHtml(s.code)} · ${escapeHtml(s.address||"")}</small></div>`).join(""):'<div class="empty">موردی پیدا نشد.</div>';
 }
 function findNearby(){
- if(!navigator.geolocation){alert("ÙÙÙØ¹ÛØªâÛØ§Ø¨Û Ø¯Ø± Ø§ÛÙ ÙØ±ÙØ±Ú¯Ø± Ù¾Ø´ØªÛØ¨Ø§ÙÛ ÙÙÛâØ´ÙØ¯.");return;}
+ if(!navigator.geolocation){alert("موقعیت‌یابی در این مرورگر پشتیبانی نمی‌شود.");return;}
  navigator.geolocation.getCurrentPosition(pos=>{
   const {latitude,longitude}=pos.coords;
   const dist=(a,b)=>{const R=6371,d1=(a.lat-latitude)*Math.PI/180,d2=(a.lng-longitude)*Math.PI/180;
    const x=Math.sin(d1/2)**2+Math.cos(latitude*Math.PI/180)*Math.cos(a.lat*Math.PI/180)*Math.sin(d2/2)**2;return 2*R*Math.asin(Math.sqrt(x));};
   const near=stores.filter(s=>s.hasCoords).map(s=>({...s,distance:dist(s)})).filter(s=>s.distance<=5).sort((a,b)=>a.distance-b.distance);
-  $("analysisResults").innerHTML=near.length?near.map(s=>`<div class="planrow"><strong>${escapeHtml(s.storeName||s.name)}</strong><small>${s.distance.toFixed(2)} Ú©ÛÙÙÙØªØ± Â· ${escapeHtml(s.code)}</small></div>`).join(""):'<div class="empty">Ø¯Ø± Ø´Ø¹Ø§Ø¹ Ûµ Ú©ÛÙÙÙØªØ±Û ÙØ±ÙØ´Ú¯Ø§ÙÛ Ù¾ÛØ¯Ø§ ÙØ´Ø¯.</div>';
+  $("analysisResults").innerHTML=near.length?near.map(s=>`<div class="planrow"><strong>${escapeHtml(s.storeName||s.name)}</strong><small>${s.distance.toFixed(2)} کیلومتر · ${escapeHtml(s.code)}</small></div>`).join(""):'<div class="empty">در شعاع ۵ کیلومتری فروشگاهی پیدا نشد.</div>';
   showPage("analysisPage");
- },()=>alert("Ø¯Ø³ØªØ±Ø³Û ÙÙÙØ¹ÛØª ÙÚ©Ø§ÙÛ ÙÙÚ©Ù ÙØ´Ø¯. ÙØ¬ÙØ² Location Ø±Ø§ Ø¨Ø±Ø±Ø³Û Ú©Ù."),{enableHighAccuracy:true,timeout:12000});
+ },()=>alert("دسترسی موقعیت مکانی ممکن نشد. مجوز Location را بررسی کن."),{enableHighAccuracy:true,timeout:12000});
 }
 function applyTheme(){if(localStorage.getItem("tpa_theme")==="dark")document.body.classList.add("dark");}
 function registerOfflineShell(){
@@ -1125,7 +1124,7 @@ function registerOfflineShell(){
  }
 }
 
-/* Ø±ÙÛØ¯Ø§Ø¯ÙØ§ */
+/* رویدادها */
 $("loadBtn").addEventListener("click",loadManualFiles);
 $("closeModal").addEventListener("click",closeModal);
 
@@ -1140,12 +1139,12 @@ $("modal").addEventListener("click",event=>{
  );
 });
 
-/* Ø±ÙÛØ¯Ø§Ø¯ÙØ§Û Ø¨Ø®Ø´ Ø¨Ø±ÙØ§ÙÙ Ø¨Ø§Ø²Ø¯ÛØ¯ Ù ØªØ­ÙÛÙ */
+/* رویدادهای بخش برنامه بازدید و تحلیل */
 document.querySelectorAll(".appnav button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
 $("planSearch").addEventListener("input",()=>{
  const q=norm($("planSearch").value);
  const results=stores.filter(s=>q&&norm([s.code,s.name,s.address].join(" ")).includes(q)).slice(0,12);
- $("planSearchResults").innerHTML=results.map(s=>`<div class="store"><div class="storeinfo"><b>${escapeHtml(s.storeName||s.name)}</b><small>${escapeHtml(s.code)} Â· ${escapeHtml(s.routeName||s.area||"")}</small></div><button class="smallbtn green" onclick="addStoreToPlan('${'${escapeHtml(s.id)}'}')">Ø§ÙØ²ÙØ¯Ù</button></div>`).join("");
+ $("planSearchResults").innerHTML=results.map(s=>`<div class="store"><div class="storeinfo"><b>${escapeHtml(s.storeName||s.name)}</b><small>${escapeHtml(s.code)} · ${escapeHtml(s.routeName||s.area||"")}</small></div><button class="smallbtn green" onclick="addStoreToPlan('${'${escapeHtml(s.id)}'}')">افزودن</button></div>`).join("");
 });
 $("exportPlanBtn").addEventListener("click",exportAuditPlan);
 $("importPlanBtn").addEventListener("click",importAuditPlan);
@@ -1154,8 +1153,8 @@ $("noGpsBtn").addEventListener("click",()=>showAnalysisList("nogps"));
 $("noPurchaseBtn").addEventListener("click",()=>showAnalysisList("nopurchase"));
 $("openOrdersBtn").addEventListener("click",()=>showAnalysisList("open"));
 $("themeBtn").addEventListener("click",()=>{document.body.classList.toggle("dark");localStorage.setItem("tpa_theme",document.body.classList.contains("dark")?"dark":"light");});
-$("langBtn").addEventListener("click",()=>alert("ÙØ³Ø®Ù ÙØ¹ÙÛ Ø¨Ø§ Ø±Ø§Ø¨Ø· ÙØ§Ø±Ø³Û Ø§Ø±Ø§Ø¦Ù Ø´Ø¯Ù Ø§Ø³ØªØ Ø¢ÙØ§Ø¯ÙâØ³Ø§Ø²Û Ú©Ø§ÙÙ ØªØ±Ø¬ÙÙ Ø§ÙÚ¯ÙÛØ³Û ÙÛØ§Ø²ÙÙØ¯ Ø¨Ø§Ø²Ø¨ÛÙÛ ÙÙÙ ÙØªÙâÙØ§ Ù Ù¾ÛØ§ÙâÙØ§Ø³Øª."));
-$("clearLocalBtn").addEventListener("click",()=>{if(confirm("Ø¯Ø§Ø¯ÙâÙØ§Û ÙØ­ÙÛ Ù Ø¨Ø±ÙØ§ÙÙ Ø°Ø®ÛØ±ÙâØ´Ø¯Ù Ù¾Ø§Ú© Ø´ÙÙØ¯Ø")){localStorage.removeItem("tpa_navigation_snapshot_v1");localStorage.removeItem(PLAN_STORAGE_KEY);auditPlan=[];renderPlan();alert("Ø¯Ø§Ø¯ÙâÙØ§Û ÙØ­ÙÛ Ù¾Ø§Ú© Ø´Ø¯ÙØ¯.");}});
+$("langBtn").addEventListener("click",()=>alert("نسخه فعلی با رابط فارسی ارائه شده است؛ آماده‌سازی کامل ترجمه انگلیسی نیازمند بازبینی همه متن‌ها و پیام‌هاست."));
+$("clearLocalBtn").addEventListener("click",()=>{if(confirm("داده‌های محلی و برنامه ذخیره‌شده پاک شوند؟")){localStorage.removeItem("tpa_navigation_snapshot_v1");localStorage.removeItem(PLAN_STORAGE_KEY);auditPlan=[];renderPlan();alert("داده‌های محلی پاک شدند.");}});
 const originalRenderAll=renderAll;
 renderAll=function(){originalRenderAll();renderAnalysis();renderPlan();};
 loadSavedPlan();
