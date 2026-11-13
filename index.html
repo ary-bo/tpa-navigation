@@ -1,0 +1,1469 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TPA Navigation</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0f766e">
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAM8klEQVR4nO1dCXOWVxXuP7i2VanLONO6UMeltc6otVatM85UHae1WGut1eo44zL2hZY1hH0LpKxpIdCQAAkQdiRAKFvZ0gRC2BIia0iggSwkEEIWEr4vxznvgOOgNdt377nvvc+ZeWYyge/Le899nnPXc9771IiAAPhAeeqD+6QfAIAPFAQAEiAQBBgBQAIEAoUpEEiAQBBgDQASIBAoLIJBAgSCALtAIAECgcI2KEiAQBDgHAAkQCBQOAgDCRAIApwEgwQIBApXIUACBIIAd4FAAgQChctwIAECQYDboCABAoHCdWiQAIEgQD4ASIBAoJAQAxIgEATICAMJEAgUUiJBAgSCADnBIAECAZLiQQLy3QeoCmFBJwABBAASQAgKIwBIgEAQYAoEEiAQKKwBQAIEggCLYJAAgUBhFwgkQCAIsA0KEiAQKJwDgAQIBAEOwkACBAKFk2CQAIEgwFUIkACBQOEuEEiAQBDgMpwtJLh/5GD69qxp9GpOJk3Iz6Oc4iIqvHCeTtXWUFVjA11va6XOWCwE/8y/43/j/8P/lz/Dn+Xv4O+Sbo9yFLgNmkBnPjVnBiVt3kBby0vpWmsrJcoaW1vC7xyVtyH8G9KkUQ4BAuinA7+aMoHG5+fRmfpaMmUXrzXSnD076ZupU8QJpCIOCKAPTuMpySvZi6mosoKkjZ+BnwXTpAAC0B0tPpH0BgXrcunc1Tqyzc7W19Hr63LDZ5SOqipCwAjQQ0c9lzE/XKTabhUNV+n3y7PEiaUiAgigGwc9kTqZtp8qp6jZe6dOhs8uTTBlOSCA/+OcP6/KodaODoqqtd/upJF56+lj2EYlCKAXUeFz40fS+uNHyRXbcrKUHp6QJB5tlYXACHCPQ3if/XLTdXLNqq9fp+/OmS5OOGUZIIB7Fro32tvIVWvpuEUvZi0UJ52yCBDAHUf8dc2K8FqC68Zt5LZKE09ZAgjgzmI33tVFvlhXVxf9fe1KcfLZAO8F8JtlGXQ7HiffLBaP02vLl4gTUBpeC+AXixdQhwfTno+yjliMns+YL94PEIDQJTa+Zem7XW9rpcemTxQnohS8HAEGjB5Kx6ovSXPPGiu7Uk0DkoeK9wsEYMgJ2cVF0pyzzpYdKhQnIwRgwAmDMtOluWatvbRkkTghTcOrKdBDycOosrFBmmfW2qVrjfSpMcPE+wkC0OSEt/e9L80x623u3l3ipIQANDjhGzMmebnf35eT4sdnTBInpil4MwVaWXJImluRsZziIvH+ggAS6ASOaIj+vTslfsKTZBovRgAbtj350C23pJj+tmYF/TBtJj0yMYk+nvRGCP75mbSZ4b/lHilOaEmVvlq2J6OA8wL47LgR1NYpl9V1vPrD8M5Nb5LVPzn6TfrDiiVUerla7LnbOzvDxCDp/oMA+umEwetXiRCo/mZzeMu0P+mI/Nm/rF5ODS0yVzZeX5crTlAIoJ9OKL5YaZw4BRXnaODkMQnrvEenjhWpQVRUWSFOUAign1ufpm3jiWNaavPwtGhT6XHjeQNfd/yinNNrgKEb1xglzLZ/nqQHRw3R1p4HRg2hzWUnjLZp8PpV4v2oE04LIK/MXMTkanGfGTtce5s+PWY4na6rNTqiKQv6UhecFQBHS1PbiXzG8L255qo2/2DeW+Fevant2/sdrivkrAC4BIgpSy/Ya7x9GYUHjLXvydnullNxVgB/XLHUCDlu3b5NA6eMNd4+3mXiym8m7DWHc4edFUDKzm1GyMEnt1JtXH30sJE2TtuRL96fuuCsAEyVNuTEeqk2cpErE7bmWIl4f+qCswI48uFF7cTgKQjnF0sm+PAUTLcdvlgl3p+64KwATLzEwgZimBD66bpa8XbqgrMCqGm+oZ0YfLtTup2rDKwDrjQ1ibdTF5wVABeC1W1p+3aLt/Od/frTPJvb28XbqQvOCsDEQVHqrvfE28nPoNti8bh4O3XBWQGYyAHwZQRo7egQb6cuOCsAE3fofVkD1N9sFm+nLjgrgAsNV7UTw5ddoPNX68XbqQvOCuBAxTntxOA9eMmamqbOAfaeOyPen7rgrAB4emLCuNSiVBt/lbXISBuXHz4o3p+64KwAUnbkGyEHz8Gl2rj2WImRNk7DXaBovvnF5dugX546zsj0h+3XS98V709dcHYE4FxWU/Zu4X7j7cssKjDWvq9MGy/en7rgrAC4pIipjDA+KPr+vFRjbeMiWqYywhpaWpx+07yzAmDkl5eRKeOtQi7CZSIn+Ey9uZzgzWUnxPtRJ5wWQPKWjWTStp8qD0sd6moPf/eO0+VG25S0eYN4P+qE0wJ4em4qmTau3cM1fBLdFs47MFnl4q6ZnNpJwGkBMKoE3ghTeOF8WM0tkTs+B6suGG9HTfMNp+f/XghgwYE9JGG8eORqz/2tDcpvdJd6neuSgx+I9x8E0E8nPJs+j6RfQcoVKnozLeLpzp9WLqOTVy6LPvtLS9zd//dmBOCiTiayw3ryQmqu4sAR/Udvz6LPTxwd1hBl8M/8O67GzAnoTW1t0o9LnAQjme8MASTQCVkHzR0auWIrHL7/49UIwHhh8QJpPkXOBgle8oMAEuwErtjMid2wnllN8w2t5xk2wYsRwGSlOBcsZec28f6CABLsBN5Lx5siu7fb8XjoK2liQgAanLC1vNRA/Iy2bTlZKk5KCECTE36ZaaaWZpRtkCeLX+/WAHdPVisMJMtH1aoaG5x+GYb3AmAHjNu6SZpn1tq4rZvECQkBaHYC39m34aTVNmtub/fixdheT4HuYubuHdJ8s87e2r1dvF8gAENOeHhCkpHiuVGxts6O8D6SNBkhAINOSD+wV5p31tiCA3vEiQgBGHYCH/Z0xGLku3XGYk5XfegOXq4B7iK7uIh8t6WHCsX7AQIQcsLjMyaFEdBX64jF6LHpE8VJCAEIOmHRB/vJV1tYsE+cgNLwegrE4N2Pm7f82xHiXbAvTkoW9780vBeAr1eluXiwsoCA0oAA7lRbq7vZTL7Y1ZabRqrYqQgAArjjiJGb1pMvNvwfa8WJpywBBHDHEVydoVKgiJZp4zZyW6WJpywBBPAfzvhtdia5bq9kLxYnnbIIEMA9Dtl15hS5ai6/60tBAIlxyLdmTnXycIxzfZ+cPV2ccMoyYASwqJ6oTuMXakuTTVkICOB/OIW3CG0op5jIF137mOyiIIC+O4ZreLpiXKVammjKUmAE+AjHcHJ48cVKirodqqr0LtFdQQCJcc53ZqdEekHMC9+n5swQJ5myGBgBunHQrPejmz/Muc/SBFOWAwLoxkH8Youz9XUUNeP6RwOS3a/vryAA/U762cI06urqoijZcxnzxcmlIgCMAD10VG5JMUXFVpYcEieWiggggB466pGJSeE1YtuNn5GfVZpYKiKAAHrhrJeXZpDt9rucLHFSqQgBAuilwzacOEq22rrjR8QJpSIGCKCXDuPphY3ZYzz1+QJyfAkC8HQq9GpOpng0VREERoA+Oo6nG7YYv1tYmkgqooAA+jEVsuHGKD8DF/uVJpKKKCCAfjjv+Yz5ogdk/LdfzFooTiIVYUAA/XQgV1eTsvSCveIEUhEHBNBPBw4YPZTKay4bJ//pulrc9RkBAViBp+emGi21zle0n0mbKd5u5QAwAiTIkePz84wJgP+WNHGUI4AAEuRIzrrabaCkyv7zZ+mBUUPEiaMcAQSQQGfySWzNjSZt5OcT6C9NHiNOGuUQIIAEO/SnC9MoFo8nnPzxri7c8R8BAXhbbp2/U7pdykFgBNC0HuAyhImygopzmPePgAAiBX77Sm0CrkrwLc+BU8aKt0c5CowAGp3780XvhHP3vhp/9oXFC8RJohwGBKDZwbP37OyzALgkizRBlOOAADQ7+MFRQ6iosqLX5OfP8GelCaIcBwRgwMm8d3+lqalX+/2PTsW8X0EA7uDH82f36L4Q3/P5Sfo88edVngAjgEFn88vpurNhG/ECOwUBuIvlhw9+JPlXHz0s/nzKM2AEEMgfOFZ96b/IX3almh5KHiZOCOUZIAABp38tZQI1trb8m/z8M/9OmgzKQ0AAQo5/Nn1euCjmGv58YCZNBOUpIABB57+5YU0IaRIojwEBWNAJQAABgAQQgsIIABIgEASYAoEECAQKawCQAIEgwCIYJEAgUNgFAgkQCAJsg4IECAQK5wAgAQJBgIMwkACBQOEkGCRAIAhwFQIkQCBQuAsEEiAQBLgMBxIgECjcBgUJEAgCXIcGCRAIFPIBQAIEggAJMSABAoFCRhhIgEAQICUSJEAgUMgJBgkUfICkeJAg8NoHqAphQScAAQQAEkAICiMASIBAEGAKBBIgECisAUACBIIAi2CQAIFAYRcIJEAgCLANChIgECicA4AECAQBDsJAAgQChZNgkACBIMBVCJAAgUDhLhBIgEAQ4DIcSIBAoHrhg38BPv5CX/t8YBMAAAAASUVORK5CYII=">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#17212b;--mu:#64707d;--bd:#dfe3e8;--pr:#0f766e;--prt:#fff;--g:#16a34a;--o:#f59e0b;--b:#2563eb;--r:#dc2626}
+:root[data-theme=dark]{--bg:#0f1418;--card:#182028;--tx:#e8edf2;--mu:#93a0ad;--bd:#2a343e;--pr:#2dd4bf;--prt:#06201d}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,"Vazirmatn",Tahoma,sans-serif;display:flex;flex-direction:column;overscroll-behavior:none}
+header{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:var(--pr);color:var(--prt);padding-top:max(8px,env(safe-area-inset-top))}
+#net{font-size:12px;opacity:.9}
+main{flex:1;min-height:0;overflow:auto;position:relative}
+main.mapv{overflow:hidden;display:flex;flex-direction:column}
+nav{display:flex;background:var(--card);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;border:0;color:var(--mu);padding:10px 2px;font:inherit;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button .i{font-size:20px;line-height:1}nav button.on{color:var(--pr);font-weight:700}
+.pad{padding:12px 14px}.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:10px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.sp{flex:1}.mu{color:var(--mu);font-size:13px}
+h2{font-size:17px;margin:4px 0 10px}h3{font-size:15px;margin:10px 0 6px}
+input,select,textarea,button.btn{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:9px 10px;min-height:40px}
+input[type=search],input[type=text]{width:100%}
+button.btn{cursor:pointer}button.pri{background:var(--pr);color:var(--prt);border-color:var(--pr);font-weight:600}button.dng{color:var(--r)}button.sm{min-height:32px;padding:4px 10px;font-size:13px}
+.chip{display:inline-block;padding:1px 8px;border-radius:99px;font-size:12px;border:1px solid var(--bd);color:var(--mu)}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-inline-end:6px;vertical-align:middle}
+.g{background:var(--g)}.o{background:var(--o)}.b{background:var(--b)}.r{background:var(--r)}
+.chip.r{color:#fff;background:var(--r);border-color:var(--r)}.chip.o{background:var(--o);color:#222;border-color:var(--o)}.chip.g{background:var(--g);color:#fff;border-color:var(--g)}
+#map{flex:1;min-height:0;z-index:0}
+.mapbar{padding:8px;background:var(--card);border-bottom:1px solid var(--bd);display:flex;gap:6px;align-items:center}
+.legend{font-size:12px;padding:4px 10px;background:var(--card);display:flex;gap:12px;flex-wrap:wrap;border-top:1px solid var(--bd)}
+#sheet{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;display:flex;align-items:flex-end;justify-content:center}
+#sheet[hidden],#toast[hidden]{display:none}
+#sheet .s{background:var(--bg);width:100%;max-width:720px;max-height:90vh;overflow:auto;border-radius:16px 16px 0 0;padding:14px;padding-bottom:max(14px,env(safe-area-inset-bottom))}
+#toast{position:fixed;bottom:76px;inset-inline:16px;background:#111;color:#fff;border-radius:10px;padding:10px 14px;z-index:3000;text-align:center}
+table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th{border-bottom:1px solid var(--bd);padding:5px 4px;text-align:start;vertical-align:top}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:3px 10px;font-size:14px}.kv dt{color:var(--mu)}.kv dd{margin:0;word-break:break-word}
+.tabs{display:flex;gap:6px;overflow:auto;padding-bottom:6px}.tabs button{white-space:nowrap}.tabs .on{background:var(--pr);color:var(--prt);border-color:var(--pr)}
+.err{color:var(--r)}label.f{display:block;margin:8px 0 3px;color:var(--mu);font-size:13px}
+@media(min-width:900px){.wrap{max-width:900px;margin:0 auto}}
+
+</style>
+</head>
+<body>
+<header id="top"><b id="title">TPA Navigation</b><span id="net"></span></header>
+<main id="view"></main>
+<nav id="nav"></nav>
+<div id="sheet" hidden></div>
+<div id="toast" hidden></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+(() => {
+  var D = {
+    fa: {
+      app: "TPA Navigation",
+      map: "\u0646\u0642\u0634\u0647",
+      stores: "\u0641\u0631\u0648\u0634\u06AF\u0627\u0647\u200C\u0647\u0627",
+      plan: "\u0628\u0631\u0646\u0627\u0645\u0647",
+      data: "\u062F\u0627\u062F\u0647",
+      settings: "\u062A\u0646\u0638\u06CC\u0645\u0627\u062A",
+      search: "\u062C\u0633\u062A\u062C\u0648: \u0646\u0627\u0645 \u0641\u0631\u0648\u0634\u06AF\u0627\u0647\u060C \u0645\u0634\u062A\u0631\u06CC\u060C \u06A9\u062F\u060C \u0622\u062F\u0631\u0633",
+      filters: "\u0641\u06CC\u0644\u062A\u0631\u0647\u0627",
+      type: "\u0646\u0648\u0639 \u0641\u0631\u0648\u0634\u06AF\u0627\u0647",
+      all: "\u0647\u0645\u0647",
+      hasSales: "\u062F\u0627\u0631\u0627\u06CC \u0633\u0627\u0628\u0642\u0647 \u0641\u0631\u0648\u0634",
+      noSales: "\u0628\u062F\u0648\u0646 \u0633\u0627\u0628\u0642\u0647 \u0641\u0631\u0648\u0634",
+      salesOnly: "\u0641\u0642\u0637 \u0645\u0648\u062C\u0648\u062F \u062F\u0631 \u06AF\u0632\u0627\u0631\u0634 \u0641\u0631\u0648\u0634",
+      regions: "\u0645\u0646\u0637\u0642\u0647 (Route)",
+      noRoute: "\u0628\u062F\u0648\u0646 \u0645\u0633\u06CC\u0631",
+      salesman: "\u0648\u06CC\u0632\u06CC\u062A\u0648\u0631",
+      day: "\u0631\u0648\u0632",
+      allDays: "\u0647\u0645\u0647 \u0631\u0648\u0632\u0647\u0627",
+      today: "\u0627\u0645\u0631\u0648\u0632",
+      clear: "\u067E\u0627\u06A9 \u06A9\u0631\u062F\u0646 \u0641\u06CC\u0644\u062A\u0631\u0647\u0627",
+      results: "\u0646\u062A\u06CC\u062C\u0647",
+      d_Saturday: "\u0634\u0646\u0628\u0647",
+      d_Sunday: "\u06CC\u06A9\u0634\u0646\u0628\u0647",
+      d_Monday: "\u062F\u0648\u0634\u0646\u0628\u0647",
+      d_Tuesday: "\u0633\u0647\u200C\u0634\u0646\u0628\u0647",
+      d_Wednesday: "\u0686\u0647\u0627\u0631\u0634\u0646\u0628\u0647",
+      d_Thursday: "\u067E\u0646\u062C\u0634\u0646\u0628\u0647",
+      d_Friday: "\u062C\u0645\u0639\u0647",
+      legG: "\u062F\u0631 JP \u0628\u0627 \u0633\u0627\u0628\u0642\u0647 \u0641\u0631\u0648\u0634",
+      legO: "\u062F\u0631 JP \u0628\u062F\u0648\u0646 \u0633\u0627\u0628\u0642\u0647 \u0641\u0631\u0648\u0634",
+      legB: "\u062E\u0627\u0631\u062C \u0627\u0632 JP \u0628\u0627 \u0633\u0627\u0628\u0642\u0647 \u0641\u0631\u0648\u0634",
+      noGPS: "\u0628\u062F\u0648\u0646 GPS",
+      details: "\u062C\u0632\u0626\u06CC\u0627\u062A \u0641\u0631\u0648\u0634\u06AF\u0627\u0647",
+      custId: "\u0634\u0646\u0627\u0633\u0647 \u0645\u0634\u062A\u0631\u06CC",
+      custName: "\u0646\u0627\u0645 \u0645\u0634\u062A\u0631\u06CC",
+      storeName: "\u0646\u0627\u0645 \u0641\u0631\u0648\u0634\u06AF\u0627\u0647",
+      cls: "Customer Class",
+      address: "\u0622\u062F\u0631\u0633",
+      route: "\u0645\u0633\u06CC\u0631 / \u0645\u0646\u0637\u0642\u0647",
+      territory: "\u0642\u0644\u0645\u0631\u0648",
+      area: "Area",
+      mapSource: "\u0645\u0646\u0628\u0639 \u0645\u0633\u06CC\u0631",
+      coords: "\u0645\u062E\u062A\u0635\u0627\u062A",
+      inJP: "\u062F\u0631 Journey Plan",
+      yes: "\u0628\u0644\u0647",
+      no: "\u062E\u06CC\u0631",
+      purchase: "\u0633\u0627\u0628\u0642\u0647 \u062E\u0631\u06CC\u062F",
+      lastPurchase: "\u0622\u062E\u0631\u06CC\u0646 \u062E\u0631\u06CC\u062F",
+      orders: "\u0633\u0641\u0627\u0631\u0634\u200C\u0647\u0627",
+      basket: "\u0627\u0642\u0644\u0627\u0645 \u062E\u0631\u06CC\u062F\u0627\u0631\u06CC\u200C\u0634\u062F\u0647",
+      noOrders: "\u0633\u0641\u0627\u0631\u0634\u06CC \u062B\u0628\u062A \u0646\u0634\u062F\u0647",
+      orderNo: "\u0634\u0645\u0627\u0631\u0647 \u0633\u0641\u0627\u0631\u0634",
+      orderDate: "\u062A\u0627\u0631\u06CC\u062E \u0633\u0641\u0627\u0631\u0634",
+      targetDate: "\u062A\u062D\u0648\u06CC\u0644 \u0645\u0648\u0631\u062F \u0627\u0646\u062A\u0638\u0627\u0631",
+      invoiceDate: "\u062A\u0627\u0631\u06CC\u062E \u0641\u0627\u06A9\u062A\u0648\u0631",
+      open: "\u0628\u0627\u0632",
+      invoiced: "\u0641\u0627\u06A9\u062A\u0648\u0631\u0634\u062F\u0647",
+      overdue: "\u0645\u0639\u0648\u0642",
+      noTarget: "\u0628\u062F\u0648\u0646 \u062A\u0627\u0631\u06CC\u062E \u062A\u062D\u0648\u06CC\u0644",
+      qty: "\u062A\u0639\u062F\u0627\u062F",
+      addPlan: "\u0627\u0641\u0632\u0648\u062F\u0646 \u0628\u0647 \u0628\u0631\u0646\u0627\u0645\u0647",
+      navNeshan: "\u0645\u0633\u06CC\u0631\u06CC\u0627\u0628\u06CC \u0646\u0634\u0627\u0646",
+      navGoogle: "\u0645\u0633\u06CC\u0631\u06CC\u0627\u0628\u06CC \u06AF\u0648\u06AF\u0644",
+      searchDest: "\u062C\u0633\u062A\u062C\u0648\u06CC \u0645\u0642\u0635\u062F \u0628\u0627 \u0622\u062F\u0631\u0633 (\u062F\u0642\u062A \u067E\u0627\u06CC\u06CC\u0646\u200C\u062A\u0631)",
+      close: "\u0628\u0633\u062A\u0646",
+      save: "\u0630\u062E\u06CC\u0631\u0647",
+      cancel: "\u0627\u0646\u0635\u0631\u0627\u0641",
+      delete: "\u062D\u0630\u0641",
+      edit: "\u0648\u06CC\u0631\u0627\u06CC\u0634",
+      visitDate: "\u062A\u0627\u0631\u06CC\u062E \u0628\u0627\u0632\u062F\u06CC\u062F",
+      priority: "\u0627\u0648\u0644\u0648\u06CC\u062A",
+      reason: "\u062F\u0644\u06CC\u0644 \u0627\u0646\u062A\u062E\u0627\u0628",
+      comment: "\u062A\u0648\u0636\u06CC\u062D\u0627\u062A",
+      source: "\u0645\u0646\u0628\u0639",
+      High: "\u0628\u0627\u0644\u0627",
+      Medium: "\u0645\u062A\u0648\u0633\u0637",
+      Low: "\u067E\u0627\u06CC\u06CC\u0646",
+      Internal: "\u062F\u0627\u062E\u0644\u06CC",
+      External: "\u062E\u0627\u0631\u062C\u06CC",
+      week: "\u0647\u0641\u062A\u0647",
+      prevWeek: "\u0647\u0641\u062A\u0647 \u0642\u0628\u0644",
+      nextWeek: "\u0647\u0641\u062A\u0647 \u0628\u0639\u062F",
+      noVisits: "\u0628\u0627\u0632\u062F\u06CC\u062F\u06CC \u062B\u0628\u062A \u0646\u0634\u062F\u0647",
+      moveUp: "\u0628\u0627\u0644\u0627",
+      moveDown: "\u067E\u0627\u06CC\u06CC\u0646",
+      suggest: "\u062A\u0631\u062A\u06CC\u0628 \u067E\u06CC\u0634\u0646\u0647\u0627\u062F\u06CC (\u0641\u0627\u0635\u0644\u0647 \u0645\u0633\u062A\u0642\u06CC\u0645)",
+      suggestNote: "\u062A\u0631\u062A\u06CC\u0628 \u067E\u06CC\u0634\u0646\u0647\u0627\u062F\u06CC \u0628\u0631 \u0627\u0633\u0627\u0633 \u0641\u0627\u0635\u0644\u0647 \u0645\u0633\u062A\u0642\u06CC\u0645 \u0627\u0633\u062A\u060C \u0646\u0647 \u0632\u0645\u0627\u0646 \u0631\u0627\u0646\u0646\u062F\u06AF\u06CC.",
+      exportPlan: "\u062E\u0631\u0648\u062C\u06CC Audit_Visit_Plan.xlsx",
+      importPlan: "\u0648\u0631\u0648\u062F \u0641\u0627\u06CC\u0644 \u0628\u0631\u0646\u0627\u0645\u0647",
+      pending: "\u067E\u06CC\u0634\u0646\u0647\u0627\u062F\u0647\u0627\u06CC \u062E\u0627\u0631\u062C\u06CC (\u062F\u0631 \u0627\u0646\u062A\u0638\u0627\u0631 \u062A\u0623\u06CC\u06CC\u062F)",
+      approve: "\u062A\u0623\u06CC\u06CC\u062F",
+      reject: "\u0631\u062F",
+      moveDay: "\u0627\u0646\u062A\u0642\u0627\u0644 \u0628\u0647 \u0631\u0648\u0632",
+      errorsReport: "\u06AF\u0632\u0627\u0631\u0634 \u062E\u0637\u0627\u06CC \u0648\u0631\u0648\u062F",
+      row: "\u0631\u062F\u06CC\u0641",
+      E_EMPTY_ID: "Customer ID \u062E\u0627\u0644\u06CC",
+      E_BAD_DATE: "\u062A\u0627\u0631\u06CC\u062E \u0646\u0627\u0645\u0639\u062A\u0628\u0631",
+      E_UNKNOWN_ID: "\u06A9\u062F \u0646\u0627\u0634\u0646\u0627\u062E\u062A\u0647",
+      E_BAD_PRIORITY: "\u0627\u0648\u0644\u0648\u06CC\u062A \u0646\u0627\u0645\u0639\u062A\u0628\u0631",
+      E_DUPLICATE: "\u062A\u06A9\u0631\u0627\u0631\u06CC",
+      imported: "\u0631\u062F\u06CC\u0641 \u0645\u0639\u062A\u0628\u0631 \u0648\u0627\u0631\u062F \u0635\u0641 \u062A\u0623\u06CC\u06CC\u062F \u0634\u062F",
+      alreadyIn: "\u0627\u06CC\u0646 \u0641\u0631\u0648\u0634\u06AF\u0627\u0647 \u062F\u0631 \u0627\u06CC\u0646 \u062A\u0627\u0631\u06CC\u062E \u0642\u0628\u0644\u0627\u064B \u062F\u0631 \u0628\u0631\u0646\u0627\u0645\u0647 \u0627\u0633\u062A",
+      files: "\u0641\u0627\u06CC\u0644\u200C\u0647\u0627",
+      fJP: "Journey Plan (JP_\u2026)",
+      fSales: "\u06AF\u0632\u0627\u0631\u0634 \u0641\u0631\u0648\u0634 (TPA_Alborz\u2026)",
+      fMap: "Product Mapping (\u0627\u062E\u062A\u06CC\u0627\u0631\u06CC)",
+      load: "\u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC \u0648 \u0627\u0639\u062A\u0628\u0627\u0631\u0633\u0646\u062C\u06CC",
+      lastSync: "\u0622\u062E\u0631\u06CC\u0646 \u0628\u0647\u200C\u0631\u0648\u0632\u0631\u0633\u0627\u0646\u06CC",
+      loaded: "\u0641\u0627\u06CC\u0644\u200C\u0647\u0627\u06CC \u0641\u0639\u0627\u0644",
+      stats: "\u0622\u0645\u0627\u0631",
+      drive: "Google Drive",
+      driveSync: "\u0647\u0645\u06AF\u0627\u0645\u200C\u0633\u0627\u0632\u06CC \u0627\u0632 Drive",
+      clientId: "OAuth Client ID",
+      folderId: "\u0634\u0646\u0627\u0633\u0647 \u067E\u0648\u0634\u0647 Drive",
+      driveNote: "\u0648\u0631\u0648\u062F Drive \u0648 \u0646\u0642\u0634\u0647 \u0628\u0647 \u0627\u06CC\u0646\u062A\u0631\u0646\u062A \u0646\u06CC\u0627\u0632 \u062F\u0627\u0631\u0646\u062F\u061B \u0622\u0641\u0644\u0627\u06CC\u0646 \u0646\u06CC\u0633\u062A\u0646\u062F.",
+      reports: "\u06AF\u0632\u0627\u0631\u0634\u200C\u0647\u0627",
+      rNoGPS: "\u0641\u0631\u0648\u0634\u06AF\u0627\u0647\u200C\u0647\u0627\u06CC \u0628\u062F\u0648\u0646 GPS",
+      rNoBuy: "\u0641\u0631\u0648\u0634\u06AF\u0627\u0647\u200C\u0647\u0627\u06CC \u0628\u062F\u0648\u0646 \u062E\u0631\u06CC\u062F",
+      rOpen: "\u0633\u0641\u0627\u0631\u0634\u200C\u0647\u0627\u06CC \u0628\u0627\u0632",
+      rOverdue: "\u0633\u0641\u0627\u0631\u0634\u200C\u0647\u0627\u06CC \u0645\u0639\u0648\u0642",
+      exportXlsx: "\u062E\u0631\u0648\u062C\u06CC Excel",
+      nearby: "\u0646\u0632\u062F\u06CC\u06A9 \u0645\u0646",
+      radius: "\u0634\u0639\u0627\u0639",
+      locate: "\u0645\u06A9\u0627\u0646 \u0645\u0646",
+      straight: "\u0641\u0627\u0635\u0644\u0647 \u0645\u0633\u062A\u0642\u06CC\u0645",
+      locDenied: "\u062F\u0633\u062A\u0631\u0633\u06CC \u0628\u0647 \u0645\u0648\u0642\u0639\u06CC\u062A \u062F\u0627\u062F\u0647 \u0646\u0634\u062F",
+      language: "\u0632\u0628\u0627\u0646",
+      theme: "\u067E\u0648\u0633\u062A\u0647",
+      light: "\u0631\u0648\u0634\u0646",
+      dark: "\u062A\u0627\u0631\u06CC\u06A9",
+      auto: "\u062E\u0648\u062F\u06A9\u0627\u0631",
+      tileUrl: "\u0622\u062F\u0631\u0633 \u0646\u0642\u0634\u0647 (Tile)",
+      clearCache: "\u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u062F\u0627\u062F\u0647\u200C\u0647\u0627\u06CC \u0641\u0627\u06CC\u0644\u200C\u0647\u0627 (\u0628\u0631\u0646\u0627\u0645\u0647 \u0628\u0627\u0632\u062F\u06CC\u062F \u062D\u0641\u0638 \u0645\u06CC\u200C\u0634\u0648\u062F)",
+      clearAll: "\u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u0647\u0645\u0647 \u0686\u06CC\u0632 (\u0634\u0627\u0645\u0644 \u0628\u0631\u0646\u0627\u0645\u0647 \u0628\u0627\u0632\u062F\u06CC\u062F)",
+      confirmClear: "\u0645\u0637\u0645\u0626\u0646 \u0647\u0633\u062A\u06CC\u062F\u061F \u0627\u06CC\u0646 \u06A9\u0627\u0631 \u0642\u0627\u0628\u0644 \u0628\u0627\u0632\u06AF\u0634\u062A \u0646\u06CC\u0633\u062A.",
+      mapOffline: "\u0646\u0642\u0634\u0647 \u067E\u0627\u06CC\u0647 \u0622\u0646\u0644\u0627\u06CC\u0646 \u0627\u0633\u062A\u061B \u0628\u062F\u0648\u0646 \u0627\u06CC\u0646\u062A\u0631\u0646\u062A \u06A9\u0627\u0634\u06CC\u200C\u0647\u0627 \u0646\u0645\u0627\u06CC\u0634 \u062F\u0627\u062F\u0647 \u0646\u0645\u06CC\u200C\u0634\u0648\u0646\u062F \u0648\u0644\u06CC \u062F\u0627\u062F\u0647\u200C\u0647\u0627 \u062F\u0631 \u062F\u0633\u062A\u0631\u0633\u200C\u0627\u0646\u062F.",
+      errParse: "\u0641\u0627\u06CC\u0644 \u0646\u0627\u0645\u0639\u062A\u0628\u0631 \u0627\u0633\u062A\u061B \u062F\u0627\u062F\u0647 \u0642\u0628\u0644\u06CC \u062D\u0641\u0638 \u0634\u062F:",
+      ok: "\u0627\u0646\u062C\u0627\u0645 \u0634\u062F",
+      needData: "\u0627\u0628\u062A\u062F\u0627 \u0641\u0627\u06CC\u0644\u200C\u0647\u0627\u06CC JP \u0648 \u0641\u0631\u0648\u0634 \u0631\u0627 \u062F\u0631 \u0628\u062E\u0634 \xAB\u062F\u0627\u062F\u0647\xBB \u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC \u06A9\u0646\u06CC\u062F.",
+      nothing: "\u0645\u0648\u0631\u062F\u06CC \u06CC\u0627\u0641\u062A \u0646\u0634\u062F",
+      sync: "\u0647\u0645\u06AF\u0627\u0645\u200C\u0633\u0627\u0632\u06CC",
+      syncing: "\u062F\u0631 \u062D\u0627\u0644 \u0647\u0645\u06AF\u0627\u0645\u200C\u0633\u0627\u0632\u06CC\u2026",
+      noteClosedUndel: "\u0633\u0641\u0627\u0631\u0634 Closed/Undelivered \u0628\u062F\u0648\u0646 \u0641\u0627\u06A9\u062A\u0648\u0631 \u0627\u0633\u062A",
+      routeFrom: "\u0645\u0646\u0628\u0639 \u0645\u0633\u06CC\u0631",
+      rs_JP: "JP",
+      rs_Sales: "\u06AF\u0632\u0627\u0631\u0634 \u0641\u0631\u0648\u0634",
+      rs_Area: "Area Name"
+    },
+    en: {
+      app: "TPA Navigation",
+      map: "Map",
+      stores: "Stores",
+      plan: "Plan",
+      data: "Data",
+      settings: "Settings",
+      search: "Search: store, customer, code, address",
+      filters: "Filters",
+      type: "Store type",
+      all: "All",
+      hasSales: "With sales history",
+      noSales: "No sales history",
+      salesOnly: "Sales report only",
+      regions: "Region (Route)",
+      noRoute: "No route",
+      salesman: "Salesman",
+      day: "Day",
+      allDays: "All days",
+      today: "Today",
+      clear: "Clear filters",
+      results: "results",
+      d_Saturday: "Saturday",
+      d_Sunday: "Sunday",
+      d_Monday: "Monday",
+      d_Tuesday: "Tuesday",
+      d_Wednesday: "Wednesday",
+      d_Thursday: "Thursday",
+      d_Friday: "Friday",
+      legG: "In JP, with sales",
+      legO: "In JP, no sales",
+      legB: "Not in JP, with sales",
+      noGPS: "No GPS",
+      details: "Store details",
+      custId: "Customer ID",
+      custName: "Customer name",
+      storeName: "Store name",
+      cls: "Customer Class",
+      address: "Address",
+      route: "Route / region",
+      territory: "Territory",
+      area: "Area",
+      mapSource: "Route source",
+      coords: "Coordinates",
+      inJP: "In Journey Plan",
+      yes: "Yes",
+      no: "No",
+      purchase: "Purchase history",
+      lastPurchase: "Last purchase",
+      orders: "Orders",
+      basket: "Purchased items",
+      noOrders: "No orders",
+      orderNo: "Order no.",
+      orderDate: "Order date",
+      targetDate: "Expected delivery",
+      invoiceDate: "Invoice date",
+      open: "Open",
+      invoiced: "Invoiced",
+      overdue: "Overdue",
+      noTarget: "No delivery date",
+      qty: "Qty",
+      addPlan: "Add to visit plan",
+      navNeshan: "Navigate (Neshan)",
+      navGoogle: "Navigate (Google)",
+      searchDest: "Search destination by address (lower accuracy)",
+      close: "Close",
+      save: "Save",
+      cancel: "Cancel",
+      delete: "Delete",
+      edit: "Edit",
+      visitDate: "Visit date",
+      priority: "Priority",
+      reason: "Selection reason",
+      comment: "Auditor comment",
+      source: "Source",
+      High: "High",
+      Medium: "Medium",
+      Low: "Low",
+      Internal: "Internal",
+      External: "External",
+      week: "Week",
+      prevWeek: "Previous",
+      nextWeek: "Next",
+      noVisits: "No visits planned",
+      moveUp: "Up",
+      moveDown: "Down",
+      suggest: "Suggest order (straight-line)",
+      suggestNote: "Suggested order uses straight-line distance, not driving time.",
+      exportPlan: "Export Audit_Visit_Plan.xlsx",
+      importPlan: "Import plan file",
+      pending: "External suggestions (awaiting approval)",
+      approve: "Approve",
+      reject: "Reject",
+      moveDay: "Move to day",
+      errorsReport: "Import error report",
+      row: "Row",
+      E_EMPTY_ID: "Empty Customer ID",
+      E_BAD_DATE: "Invalid date",
+      E_UNKNOWN_ID: "Unknown code",
+      E_BAD_PRIORITY: "Invalid priority",
+      E_DUPLICATE: "Duplicate",
+      imported: "valid rows queued for approval",
+      alreadyIn: "This store is already planned on this date",
+      files: "Files",
+      fJP: "Journey Plan (JP_\u2026)",
+      fSales: "Sales report (TPA_Alborz\u2026)",
+      fMap: "Product Mapping (optional)",
+      load: "Load & validate",
+      lastSync: "Last update",
+      loaded: "Active files",
+      stats: "Stats",
+      drive: "Google Drive",
+      driveSync: "Sync from Drive",
+      clientId: "OAuth Client ID",
+      folderId: "Drive folder ID",
+      driveNote: "Drive sign-in and the base map need internet; they are not offline.",
+      reports: "Reports",
+      rNoGPS: "Stores without GPS",
+      rNoBuy: "Stores without purchases",
+      rOpen: "Open orders",
+      rOverdue: "Overdue orders",
+      exportXlsx: "Export Excel",
+      nearby: "Nearby",
+      radius: "Radius",
+      locate: "My location",
+      straight: "straight-line",
+      locDenied: "Location access denied",
+      language: "Language",
+      theme: "Theme",
+      light: "Light",
+      dark: "Dark",
+      auto: "Auto",
+      tileUrl: "Map tile URL",
+      clearCache: "Clear file data (visit plan is kept)",
+      clearAll: "Clear everything (including visit plan)",
+      confirmClear: "Are you sure? This cannot be undone.",
+      mapOffline: "The base map is online; tiles will not show offline, but your data stays available.",
+      errParse: "Invalid file; previous data kept:",
+      ok: "Done",
+      needData: "Load the JP and sales files in the Data tab first.",
+      nothing: "Nothing found",
+      sync: "Sync",
+      syncing: "Syncing\u2026",
+      noteClosedUndel: "Closed/Undelivered order without invoice",
+      routeFrom: "Route source",
+      rs_JP: "JP",
+      rs_Sales: "Sales report",
+      rs_Area: "Area Name"
+    }
+  };
+  var lang = "fa";
+  var setLang = (l) => {
+    lang = l;
+    document.documentElement.lang = l;
+    document.documentElement.dir = l === "fa" ? "rtl" : "ltr";
+  };
+  var getLang = () => lang;
+  var t = (k) => {
+    var _a, _b;
+    return (_b = (_a = D[lang][k]) != null ? _a : D.en[k]) != null ? _b : k;
+  };
+
+  var FA = "\u06F0\u06F1\u06F2\u06F3\u06F4\u06F5\u06F6\u06F7\u06F8\u06F9";
+  var AR = "\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669";
+  var toStdDigits = (s) => String(s != null ? s : "").replace(/[۰-۹]/g, (c) => FA.indexOf(c)).replace(/[٠-٩]/g, (c) => AR.indexOf(c));
+  var esc = (s) => String(s != null ? s : "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  var normText = (s) => toStdDigits(String(s != null ? s : "")).replace(/ي/g, "\u06CC").replace(/ك/g, "\u06A9").replace(/ى/g, "\u06CC").replace(/ۀ/g, "\u0647").replace(/ة/g, "\u0647").replace(/[‌‏‎ ]/g, " ").replace(/\s+/g, " ").trim().toLowerCase();
+  var normCode = (v) => {
+    if (v === null || v === void 0) return "";
+    return toStdDigits(typeof v === "number" ? String(v) : v).replace(/[\s‌‏‎ ]+/g, "").replace(/\.0+$/, "");
+  };
+  var div = (a, b) => ~~(a / b);
+  var mod = (a, b) => a - ~~(a / b) * b;
+  var BR = [-61, 9, 38, 199, 426, 686, 756, 818, 1111, 1181, 1210, 1635, 2060, 2097, 2192, 2262, 2324, 2394, 2456, 3178];
+  function jalCal(jy) {
+    const gy = jy + 621;
+    let leapJ = -14, jp = BR[0], jm, jump = 0, n, i;
+    for (i = 1; i < BR.length; i++) {
+      jm = BR[i];
+      jump = jm - jp;
+      if (jy < jm) break;
+      leapJ += div(jump, 33) * 8 + div(mod(jump, 33), 4);
+      jp = jm;
+    }
+    n = jy - jp;
+    leapJ += div(n, 33) * 8 + div(mod(n, 33) + 3, 4);
+    if (mod(jump, 33) === 4 && jump - n === 4) leapJ += 1;
+    const leapG = div(gy, 4) - div((div(gy, 100) + 1) * 3, 4) - 150, march = 20 + leapJ - leapG;
+    if (jump - n < 6) n = n - jump + div(jump + 4, 33) * 33;
+    let leap = mod(mod(n + 1, 33) - 1, 4);
+    if (leap === -1) leap = 4;
+    return { leap, gy, march };
+  }
+  var g2d = (gy, gm, gd) => {
+    const d = div((gy + div(gm - 8, 6) + 100100) * 1461, 4) + div(153 * mod(gm + 9, 12) + 2, 5) + gd - 34840408;
+    return d - div(div(gy + 100100 + div(gm - 8, 6), 100) * 3, 4) + 752;
+  };
+  function d2g(jdn) {
+    let j = 4 * jdn + 139361631;
+    j += div(div(4 * jdn + 183187720, 146097) * 3, 4) * 4 - 3908;
+    const i = div(mod(j, 1461), 4) * 5 + 308, gd = div(mod(i, 153), 5) + 1, gm = mod(div(i, 153), 12) + 1;
+    return [div(j, 1461) - 100100 + div(8 - gm, 6), gm, gd];
+  }
+  var j2d = (jy, jm, jd2) => {
+    const r = jalCal(jy);
+    return g2d(r.gy, 3, r.march) + (jm - 1) * 31 - div(jm, 7) * (jm - 7) + jd2 - 1;
+  };
+  function d2j(jdn) {
+    const gy = d2g(jdn)[0];
+    let jy = gy - 621;
+    const r = jalCal(jy), f = g2d(gy, 3, r.march);
+    let jd2, jm, k = jdn - f;
+    if (k >= 0) {
+      if (k <= 185) return [jy, 1 + div(k, 31), mod(k, 31) + 1];
+      k -= 186;
+    } else {
+      jy -= 1;
+      k += 179;
+      if (r.leap === 1) k += 1;
+    }
+    jm = 7 + div(k, 30);
+    jd2 = mod(k, 30) + 1;
+    return [jy, jm, jd2];
+  }
+  var j2g = (jy, jm, jd2) => d2g(j2d(jy, jm, jd2));
+  var g2j = (gy, gm, gd) => d2j(g2d(gy, gm, gd));
+  var p2 = (n) => String(n).padStart(2, "0");
+  var iso = (y, m, d) => `${y}-${p2(m)}-${p2(d)}`;
+  var validG = (y, m, d) => {
+    if (m < 1 || m > 12 || d < 1 || d > 31) return false;
+    const t2 = new Date(Date.UTC(y, m - 1, d));
+    return t2.getUTCFullYear() === y && t2.getUTCMonth() === m - 1 && t2.getUTCDate() === d;
+  };
+  var jToIso = (jy, jm, jd2) => {
+    if (jm < 1 || jm > 12 || jd2 < 1 || jd2 > 31 || jm > 6 && jd2 > 30) return null;
+    const [y, m, d] = j2g(jy, jm, jd2);
+    return validG(y, m, d) ? iso(y, m, d) : null;
+  };
+  var isoToJalaliStr = (s) => {
+    if (!s) return "";
+    const [y, m, d] = s.split("-").map(Number);
+    const [jy, jm, jd2] = g2j(y, m, d);
+    return `${jy}/${p2(jm)}/${p2(jd2)}`;
+  };
+  var todayISO = (d = /* @__PURE__ */ new Date()) => iso(d.getFullYear(), d.getMonth() + 1, d.getDate());
+  var addDaysISO = (s, n) => {
+    const [y, m, d] = s.split("-").map(Number);
+    const t2 = new Date(Date.UTC(y, m - 1, d + n));
+    return iso(t2.getUTCFullYear(), t2.getUTCMonth() + 1, t2.getUTCDate());
+  };
+  var WD = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  var dayKeyOfISO = (s) => {
+    const [y, m, d] = s.split("-").map(Number);
+    return WD[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
+  };
+  var DAY_KEYS = ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"];
+  var yearFromFileName = (name) => {
+    const m = String(name || "").match(/(1[34]\d{2})(0[1-9]|1[0-2])([0-3]\d)/);
+    return m ? +m[1] : null;
+  };
+  var fileDateKey = (name) => {
+    const m = String(name || "").match(/(1[34]\d{2})(0[1-9]|1[0-2])([0-3]\d)/);
+    return m ? +(m[1] + m[2] + m[3]) : 0;
+  };
+  function parseDate(v, fileYear) {
+    if (v === null || v === void 0 || v === "") return null;
+    if (v instanceof Date) {
+      if (isNaN(v)) return null;
+      const t2 = new Date(v.getTime() + 12 * 36e5);
+      return iso(t2.getFullYear(), t2.getMonth() + 1, t2.getDate());
+    }
+    const s = toStdDigits(String(v)).trim().replace(/\.0+$/, "");
+    if (/^\d{5,6}$/.test(s)) {
+      const p = s.padStart(6, "0");
+      return jToIso(Math.floor((fileYear || 1400) / 100) * 100 + +p.slice(0, 2), +p.slice(2, 4), +p.slice(4, 6));
+    }
+    let m = s.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})(?:[T ].*)?$/);
+    if (m) {
+      const y = +m[1], mo = +m[2], d = +m[3];
+      return y < 1700 ? jToIso(y, mo, d) : validG(y, mo, d) ? iso(y, mo, d) : null;
+    }
+    m = s.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})(?:[T ].*)?$/);
+    if (m) {
+      let mo = +m[1], d = +m[2];
+      const y = +m[3];
+      if (mo > 12) [mo, d] = [d, mo];
+      return validG(y, mo, d) ? iso(y, mo, d) : null;
+    }
+    return null;
+  }
+  function distanceM(lat1, lon1, lat2, lon2) {
+    const r = (x) => x * Math.PI / 180, dLat = r(lat2 - lat1), dLon = r(lon2 - lon1);
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(r(lat1)) * Math.cos(r(lat2)) * Math.sin(dLon / 2) ** 2;
+    return 12742e3 * Math.asin(Math.sqrt(a));
+  }
+
+  var DB = "tpa-nav";
+  var ST = "kv";
+  var open = () => new Promise((res, rej) => {
+    const r = indexedDB.open(DB, 1);
+    r.onupgradeneeded = () => r.result.createObjectStore(ST);
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+  async function dbGet(k) {
+    const db = await open();
+    return new Promise((res, rej) => {
+      const q = db.transaction(ST).objectStore(ST).get(k);
+      q.onsuccess = () => res(q.result);
+      q.onerror = () => rej(q.error);
+    });
+  }
+  async function dbSet(k, v) {
+    const db = await open();
+    return new Promise((res, rej) => {
+      const t2 = db.transaction(ST, "readwrite");
+      t2.objectStore(ST).put(v, k);
+      t2.oncomplete = () => res();
+      t2.onerror = () => rej(t2.error);
+      t2.onabort = () => rej(t2.error);
+    });
+  }
+  async function dbDel(k) {
+    const db = await open();
+    return new Promise((res, rej) => {
+      const t2 = db.transaction(ST, "readwrite");
+      t2.objectStore(ST).delete(k);
+      t2.oncomplete = () => res();
+      t2.onerror = () => rej(t2.error);
+    });
+  }
+  var lsGet = (k, d) => {
+    try {
+      const v = localStorage.getItem(k);
+      return v === null ? d : JSON.parse(v);
+    } catch {
+      return d;
+    }
+  };
+  var lsSet = (k, v) => {
+    try {
+      localStorage.setItem(k, JSON.stringify(v));
+    } catch {
+    }
+  };
+
+  var NAME_KEYWORDS = ["\u0633\u0648\u067E\u0631\u0645\u0627\u0631\u06A9\u062A", "\u0633\u0648\u067E\u0631 \u0645\u0627\u0631\u06A9\u062A", "\u0647\u0627\u06CC\u067E\u0631", "\u0633\u0648\u067E\u0631", "\u0645\u0627\u0631\u06A9\u062A", "\u0641\u0631\u0648\u0634\u06AF\u0627\u0647", "\u0645\u0648\u0627\u062F \u063A\u0630\u0627\u06CC\u06CC", "\u0627\u0631\u0632\u0627\u0646\u0633\u0631\u0627\u06CC"];
+  var trimH = (h) => String(h != null ? h : "").trim();
+  function findHeader(aoa, must, scan = 15) {
+    for (let i = 0; i < Math.min(scan, aoa.length); i++) {
+      const row = (aoa[i] || []).map(trimH);
+      if (must.every((m) => row.includes(m))) {
+        const idx = {};
+        row.forEach((h, j) => {
+          if (h && !(h in idx)) idx[h] = j;
+        });
+        return { row: i, idx };
+      }
+    }
+    return null;
+  }
+  var cell = (r, idx, k) => {
+    const j = idx[k];
+    if (j === void 0) return null;
+    const v = r[j];
+    return v === void 0 || v === "" ? null : v;
+  };
+  var str = (v) => v === null || v === void 0 ? "" : String(v).trim();
+  var num = (v) => {
+    if (v === null || v === void 0 || v === "") return null;
+    const n = Number(toNum(v));
+    return isFinite(n) ? n : null;
+  };
+  var toNum = (v) => String(v).replace(/[۰-۹]/g, (d) => "\u06F0\u06F1\u06F2\u06F3\u06F4\u06F5\u06F6\u06F7\u06F8\u06F9".indexOf(d)).replace(/[٠-٩]/g, (d) => "\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669".indexOf(d)).replace(/٫/g, ".").replace(/,/g, "");
+  function extractStoreName(address) {
+    const a = str(address);
+    if (!a) return "";
+    const words = a.split(/\s+/);
+    const n = normText(a).split(" ");
+    for (let i = n.length - 1; i >= 0 && i >= n.length - 6; i--) {
+      for (const k of NAME_KEYWORDS) {
+        const kw = normText(k).split(" ");
+        if (kw.every((w, j) => n[i + j] === w)) {
+          const rest = words.slice(i);
+          if (rest.length >= kw.length + 1 && rest.length <= 5) return rest.join(" ");
+        }
+      }
+    }
+    return "";
+  }
+  function parseJP(aoa) {
+    var _a;
+    const h = findHeader(aoa, ["CustomerI"]);
+    if (!h) throw new Error("JP: header row with CustomerI not found");
+    const need = ["CustomerI", "Latitude", "Longitude", "Salesman Name"];
+    const miss = need.filter((k) => !(k in h.idx));
+    if (miss.length) throw new Error("JP: missing columns: " + miss.join(", "));
+    const rows = [];
+    for (let i = h.row + 1; i < aoa.length; i++) {
+      const r = aoa[i] || [];
+      const id = normCode(cell(r, h.idx, "CustomerI"));
+      if (!id) continue;
+      const lat = num(cell(r, h.idx, "Latitude")), lng = num(cell(r, h.idx, "Longitude"));
+      const validGps = lat !== null && lng !== null && Math.abs(lat) > 1e-4 && Math.abs(lng) > 1e-4 && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+      const days = {};
+      for (const d of [...DAY_KEYS, "Friday"]) {
+        const v = cell(r, h.idx, d);
+        days[d] = v !== null && Number(toNum(v)) !== 0 && String(v).trim() !== "";
+      }
+      rows.push({
+        id,
+        newCode: normCode(cell(r, h.idx, "New Customer Code")),
+        oracle: normCode(cell(r, h.idx, "Oracle Code")),
+        name: str(cell(r, h.idx, "Customer Name")),
+        address: str(cell(r, h.idx, "Address")),
+        lat: validGps ? lat : null,
+        lng: validGps ? lng : null,
+        salesman: str(cell(r, h.idx, "Salesman Name")),
+        salesmanCode: normCode(cell(r, h.idx, "Salesman Code")),
+        territory: str(cell(r, h.idx, "TerritoryNo")),
+        area: str(cell(r, h.idx, "Area Name")),
+        routeJP: str(cell(r, h.idx, "Route Name")) || str(cell(r, h.idx, "DescriptionE")),
+        cls: str((_a = cell(r, h.idx, "Outlet Class")) != null ? _a : cell(r, h.idx, "Customer Class")),
+        days
+      });
+    }
+    if (!rows.length) throw new Error("JP: no data rows");
+    return rows;
+  }
+  function parseMapping(aoa) {
+    const h = findHeader(aoa, ["Item Code"]);
+    const map2 = /* @__PURE__ */ new Map();
+    if (!h) return map2;
+    const pn = Object.keys(h.idx).find((k) => /^product\s*name$/i.test(k.replace(/\s+/g, " ")));
+    for (let i = h.row + 1; i < aoa.length; i++) {
+      const r = aoa[i] || [];
+      const c = normCode(r[h.idx["Item Code"]]);
+      if (c && pn) map2.set(c.replace(/\.0+$/, ""), str(r[h.idx[pn]]));
+    }
+    return map2;
+  }
+  var isExcluded = (s) => /closed\s*\/\s*expired|closex|^expired$/i.test(s.trim());
+  function parseSales(aoa, fileName, mapping = /* @__PURE__ */ new Map()) {
+    var _a, _b;
+    const h = findHeader(aoa, ["\u06A9\u062F \u0645\u0634\u062A\u0631\u06CC", "\u0634\u0645\u0627\u0631\u0647 \u0633\u0641\u0627\u0631\u0634"]);
+    if (!h) throw new Error("Sales: header row not found (\u06A9\u062F \u0645\u0634\u062A\u0631\u06CC / \u0634\u0645\u0627\u0631\u0647 \u0633\u0641\u0627\u0631\u0634)");
+    const fy = yearFromFileName(fileName);
+    const seen = /* @__PURE__ */ new Set();
+    const orders = [];
+    let dropped = 0, dup = 0;
+    for (let i = h.row + 1; i < aoa.length; i++) {
+      const r = aoa[i] || [];
+      const cust = normCode(cell(r, h.idx, "\u06A9\u062F \u0645\u0634\u062A\u0631\u06CC"));
+      const on = normCode(cell(r, h.idx, "\u0634\u0645\u0627\u0631\u0647 \u0633\u0641\u0627\u0631\u0634"));
+      if (!cust || !on) continue;
+      const status = str(cell(r, h.idx, "Status"));
+      if (isExcluded(status)) {
+        dropped++;
+        continue;
+      }
+      const itemCode = normCode(cell(r, h.idx, "\u06A9\u062F \u06A9\u0627\u0644\u0627"));
+      const itemName = str(cell(r, h.idx, "\u0646\u0627\u0645 \u06A9\u0627\u0644\u0627"));
+      const qty = (_a = num(cell(r, h.idx, "\u062A\u0639\u062F\u0627\u062F"))) != null ? _a : 0;
+      const orderDate = parseDate(cell(r, h.idx, "\u062A\u0627\u0631\u06CC\u062E"), fy) || parseDate(cell(r, h.idx, "Confirm Date"), fy);
+      const target = parseDate((_b = cell(r, h.idx, "Target Deilvery Date")) != null ? _b : cell(r, h.idx, "Target Delivery Date"), fy);
+      const inv = parseDate(cell(r, h.idx, "invoicedate"), fy);
+      orders.push({
+        cust,
+        acct: normCode(cell(r, h.idx, "Account Number")),
+        order: on,
+        status,
+        orderDate,
+        target,
+        inv,
+        itemCode,
+        product: mapping.get(itemCode) || itemName,
+        qty,
+        route: str(cell(r, h.idx, "\u0646\u0627\u0645 \u0645\u0633\u06CC\u0631")),
+        name: str(cell(r, h.idx, "\u0646\u0627\u0645 \u0645\u0634\u062A\u0631\u06CC")),
+        address: str(cell(r, h.idx, "\u0622\u062F\u0631\u0633")),
+        cls: str(cell(r, h.idx, "\u06A9\u0644\u0627\u0633 \u0645\u0634\u062A\u0631\u06CC")),
+        salesman: str(cell(r, h.idx, "\u0646\u0627\u0645 \u0641\u0631\u0648\u0634\u0646\u062F\u0647"))
+      });
+    }
+    if (!orders.length) throw new Error("Sales: no valid rows");
+    return { orders, dropped, dup };
+  }
+  function buildDataset(jp, sales, today = todayISO()) {
+    const byId2 = /* @__PURE__ */ new Map(), byOracle = /* @__PURE__ */ new Map(), byNew = /* @__PURE__ */ new Map();
+    const stores = jp.map((j) => {
+      const s = { ...j, inJP: true, orders: [], routeSource: "" };
+      byId2.set(j.id, s);
+      if (j.oracle) byOracle.set(j.oracle, s);
+      if (j.newCode) byNew.set(j.newCode, s);
+      return s;
+    });
+    const salesOnly = /* @__PURE__ */ new Map();
+    const orderMap = /* @__PURE__ */ new Map();
+    for (const o of sales.orders) {
+      let s = byId2.get(o.cust) || o.acct && byOracle.get(o.acct) || byNew.get(o.cust.split("|").pop());
+      if (!s) {
+        s = salesOnly.get(o.cust);
+        if (!s) {
+          s = { id: o.cust, newCode: "", oracle: o.acct, name: o.name, address: o.address, lat: null, lng: null, salesman: o.salesman, salesmanCode: "", territory: "", area: "", cls: o.cls, days: {}, inJP: false, orders: [], routeSource: "" };
+          salesOnly.set(o.cust, s);
+        }
+      }
+      const key = o.order + "#" + o.cust;
+      let ord = orderMap.get(key);
+      if (!ord) {
+        ord = { order: o.order, status: o.status, orderDate: o.orderDate, target: o.target, inv: o.inv, items: [], _lines: /* @__PURE__ */ new Set() };
+        orderMap.set(key, ord);
+        s.orders.push(ord);
+        s._routes = s._routes || {};
+        if (o.route) s._routes[o.route] = (s._routes[o.route] || 0) + 1;
+      }
+      const lk = o.itemCode;
+      ord.items.push({ k: lk, code: o.itemCode, product: o.product, qty: o.qty });
+    }
+    const all = [...stores, ...salesOnly.values()];
+    for (const s of all) {
+      for (const o of s.orders) {
+        delete o._lines;
+        o.items.forEach((x) => delete x.k);
+        o.state = o.inv ? "invoiced" : "open";
+        o.overdue = !o.inv && o.target ? o.target < today : null;
+      }
+      s.orders.sort((a, b) => (b.orderDate || "").localeCompare(a.orderDate || ""));
+      const bought = s.orders.filter((o) => o.inv);
+      s.hasSales = bought.length > 0;
+      s.lastPurchase = bought.reduce((m, o) => o.inv > m ? o.inv : m, "") || null;
+      s.openOrders = s.orders.filter((o) => !o.inv).length;
+      s.overdueOrders = s.orders.filter((o) => o.overdue === true).length;
+      const basket = /* @__PURE__ */ new Map();
+      bought.forEach((o) => o.items.forEach((it) => basket.set(it.product, (basket.get(it.product) || 0) + it.qty)));
+      s.basket = [...basket].map(([product, qty]) => ({ product, qty })).sort((a, b) => b.qty - a.qty);
+      const rs = Object.entries(s._routes || {}).sort((a, b) => b[1] - a[1]);
+      delete s._routes;
+      if (s.routeJP) {
+        s.route = s.routeJP;
+        s.routeSource = "JP";
+      } else if (rs.length) {
+        s.route = rs[0][0];
+        s.routeSource = "Sales";
+      } else {
+        s.route = "";
+        s.routeSource = "";
+      }
+      s.storeName = extractStoreName(s.address);
+      s.status = s.inJP ? s.hasSales ? "green" : "orange" : "blue";
+    }
+    return { stores: all, builtAt: today, stats: { jp: jp.length, salesOnly: salesOnly.size, orders: orderMap.size, droppedRows: sales.dropped } };
+  }
+
+  var PLAN_FILE = "Audit_Visit_Plan.xlsx";
+  var SHEET = "Audit Visit Plan";
+  var INSTR = "Instructions";
+  var COLS = ["Visit Date", "Customer ID", "Store Name", "Customer Name", "Address", "Route Name", "Latitude", "Longitude", "Priority", "Selection Reason", "Auditor Comment", "Selection Source"];
+  var PRIORITIES = ["High", "Medium", "Low"];
+  var INSTRUCTIONS = [
+    ["Audit_Visit_Plan.xlsx \u2014 instructions / \u0631\u0627\u0647\u0646\u0645\u0627"],
+    ["Keep sheet names, column order and column names unchanged. / \u0646\u0627\u0645 \u0634\u06CC\u062A\u200C\u0647\u0627 \u0648 \u0633\u062A\u0648\u0646\u200C\u0647\u0627 \u0648 \u062A\u0631\u062A\u06CC\u0628 \u0622\u0646\u200C\u0647\u0627 \u0631\u0627 \u062A\u063A\u06CC\u06CC\u0631 \u0646\u062F\u0647\u06CC\u062F."],
+    ["Required: Visit Date and Customer ID. Visit Date may be Jalali (1405/08/20) or Gregorian (2026-11-11). / \u062A\u0627\u0631\u06CC\u062E \u0634\u0645\u0633\u06CC \u06CC\u0627 \u0645\u06CC\u0644\u0627\u062F\u06CC \u0642\u0627\u0628\u0644 \u0642\u0628\u0648\u0644 \u0627\u0633\u062A."],
+    ["Customer ID must match the store list, e.g. 5955|4817191. / \u0634\u0646\u0627\u0633\u0647 \u0645\u0634\u062A\u0631\u06CC \u0628\u0627\u06CC\u062F \u0628\u0627 \u0641\u0647\u0631\u0633\u062A \u0641\u0631\u0648\u0634\u06AF\u0627\u0647\u200C\u0647\u0627 \u0645\u0637\u0627\u0628\u0642\u062A \u062F\u0627\u0634\u062A\u0647 \u0628\u0627\u0634\u062F."],
+    ["Priority: High, Medium or Low. All other columns are optional. / \u0633\u0627\u06CC\u0631 \u0633\u062A\u0648\u0646\u200C\u0647\u0627 \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC \u0647\u0633\u062A\u0646\u062F."],
+    ["Selection Source is set by the app (Internal / External); managers do not need to fill it. / \u0627\u06CC\u0646 \u0633\u062A\u0648\u0646 \u0631\u0627 \u0628\u0631\u0646\u0627\u0645\u0647 \u062A\u0639\u06CC\u06CC\u0646 \u0645\u06CC\u200C\u06A9\u0646\u062F."],
+    ["Add new rows below the existing rows; they are imported as External suggestions and need the Auditor's approval. / \u0631\u062F\u06CC\u0641\u200C\u0647\u0627\u06CC \u062C\u062F\u06CC\u062F \u0628\u0647\u200C\u0639\u0646\u0648\u0627\u0646 \u067E\u06CC\u0634\u0646\u0647\u0627\u062F External \u0648\u0627\u0631\u062F \u0648 \u067E\u0633 \u0627\u0632 \u062A\u0623\u06CC\u06CC\u062F Auditor \u0627\u0636\u0627\u0641\u0647 \u0645\u06CC\u200C\u0634\u0648\u0646\u062F."]
+  ];
+  var seq = 0;
+  var newPid = () => "p" + Date.now().toString(36) + (seq++).toString(36) + Math.random().toString(36).slice(2, 6);
+  function makeRecord(s, visitDate, x = {}) {
+    var _a, _b, _c;
+    return {
+      pid: x.pid || newPid(),
+      visitDate,
+      customerId: s.id,
+      storeName: s.storeName || "",
+      customerName: s.name || "",
+      address: s.address || "",
+      route: s.route || "",
+      lat: (_a = s.lat) != null ? _a : null,
+      lng: (_b = s.lng) != null ? _b : null,
+      priority: PRIORITIES.includes(x.priority) ? x.priority : "Medium",
+      reason: x.reason || "",
+      comment: x.comment || "",
+      source: x.source || "Internal",
+      order: (_c = x.order) != null ? _c : 9999
+    };
+  }
+  var sortedForDay = (plan, iso2) => plan.filter((p) => p.visitDate === iso2).sort((a, b) => a.order - b.order);
+  function renumber(plan, iso2) {
+    sortedForDay(plan, iso2).forEach((p, i) => {
+      p.order = i + 1;
+    });
+  }
+  var isDuplicate = (plan, customerId, visitDate) => plan.some((p) => p.customerId === customerId && p.visitDate === visitDate);
+  var safe = (v) => {
+    const s = String(v != null ? v : "");
+    return /^[=+\-@]/.test(s) ? "'" + s : s;
+  };
+  function exportPlan(XLSX2, plan) {
+    const rows = [...plan].sort((a, b) => a.visitDate.localeCompare(b.visitDate) || a.order - b.order).map((p) => {
+      var _a, _b;
+      return [isoToJalaliStr(p.visitDate), safe(p.customerId), safe(p.storeName), safe(p.customerName), safe(p.address), safe(p.route), (_a = p.lat) != null ? _a : "", (_b = p.lng) != null ? _b : "", p.priority, safe(p.reason), safe(p.comment), p.source];
+    });
+    const wb = XLSX2.utils.book_new();
+    XLSX2.utils.book_append_sheet(wb, XLSX2.utils.aoa_to_sheet([COLS, ...rows]), SHEET);
+    XLSX2.utils.book_append_sheet(wb, XLSX2.utils.aoa_to_sheet(INSTRUCTIONS), INSTR);
+    return wb;
+  }
+  function validatePlanRows(aoa, byId2, plan, pending = []) {
+    var _a, _b, _c, _d, _e;
+    const hi = aoa.findIndex((r) => (r || []).some((c) => normText(c) === "customer id"));
+    if (hi < 0) throw new Error('Header "Customer ID" not found');
+    const hdr = aoa[hi].map(normText), col = {};
+    COLS.forEach((c) => {
+      const i = hdr.indexOf(normText(c));
+      if (i >= 0) col[c] = i;
+    });
+    if (!("Visit Date" in col) || !("Customer ID" in col)) throw new Error("Required columns missing: Visit Date / Customer ID");
+    const alt = /* @__PURE__ */ new Map();
+    for (const s of byId2.values()) {
+      if (s.newCode) alt.set(s.newCode, s);
+      if (s.oracle) alt.set(String(s.oracle).toLowerCase(), s);
+    }
+    const valid = [], errors = [], seen = /* @__PURE__ */ new Set();
+    for (let i = hi + 1; i < aoa.length; i++) {
+      const r = aoa[i] || [];
+      if (r.every((c) => c === null || c === void 0 || c === "")) continue;
+      const g = (c) => c in col ? r[col[c]] : null, row = i + 1, rawId = String((_a = g("Customer ID")) != null ? _a : "").trim(), err = (reason) => errors.push({ row, id: rawId, reason });
+      const id = normCode(rawId);
+      if (!id) {
+        err("EMPTY_ID");
+        continue;
+      }
+      const date = parseDate(g("Visit Date"));
+      if (!date) {
+        err("BAD_DATE");
+        continue;
+      }
+      const s = byId2.get(id) || alt.get(id) || alt.get(id.toLowerCase());
+      if (!s) {
+        err("UNKNOWN_ID");
+        continue;
+      }
+      const prRaw = String((_b = g("Priority")) != null ? _b : "").trim();
+      let pr = "Medium";
+      if (prRaw) {
+        const f = PRIORITIES.find((p) => p.toLowerCase() === prRaw.toLowerCase());
+        if (!f) {
+          err("BAD_PRIORITY");
+          continue;
+        }
+        pr = f;
+      }
+      const k = s.id + "|" + date;
+      if (seen.has(k) || isDuplicate(plan, s.id, date) || isDuplicate(pending, s.id, date)) {
+        err("DUPLICATE");
+        continue;
+      }
+      seen.add(k);
+      const rec = makeRecord(s, date, { priority: pr, reason: String((_c = g("Selection Reason")) != null ? _c : ""), comment: String((_d = g("Auditor Comment")) != null ? _d : ""), source: "External" });
+      for (const [f, c] of [["storeName", "Store Name"], ["customerName", "Customer Name"], ["address", "Address"], ["route", "Route Name"]]) {
+        const v = String((_e = g(c)) != null ? _e : "").trim();
+        if (v) rec[f] = v;
+      }
+      valid.push(rec);
+    }
+    return { valid, errors };
+  }
+  function importPlan(XLSX2, buf, byId2, plan, pending) {
+    const wb = XLSX2.read(buf, { type: "array", cellDates: true });
+    const name = wb.SheetNames.find((n) => normText(n) === normText(SHEET)) || wb.SheetNames.find((n) => normText(n) !== normText(INSTR)) || wb.SheetNames[0];
+    const aoa = XLSX2.utils.sheet_to_json(wb.Sheets[name], { header: 1, raw: true, cellDates: true, defval: null });
+    return validatePlanRows(aoa, byId2, plan, pending);
+  }
+
+  var $ = (s) => document.querySelector(s);
+  var S = { ds: null, raw: null, plan: [], pending: [], page: "map", filters: { q: "", type: "all", route: "", salesman: "", day: "" }, weekStart: null, pos: null, radius: 0, importErrors: [], settings: lsGet("settings", { lang: "fa", theme: "auto", clientId: "", folderId: "", tile: "https://tile.openstreetmap.org/{z}/{x}/{y}.png" }) };
+  var map;
+  var layer;
+  var byId = /* @__PURE__ */ new Map();
+  var toastT;
+  var toast = (m) => {
+    const e = $("#toast");
+    e.textContent = m;
+    e.hidden = false;
+    clearTimeout(toastT);
+    toastT = setTimeout(() => e.hidden = true, 3500);
+  };
+  var jd = (iso2) => iso2 ? isoToJalaliStr(iso2) : "\u2014";
+  var saveSettings = () => lsSet("settings", S.settings);
+  var savePlan = () => dbSet("plan", { plan: S.plan, pending: S.pending }).catch((e) => toast("Storage: " + e.message));
+  function applyTheme() {
+    const th = S.settings.theme;
+    document.documentElement.dataset.theme = th === "auto" ? matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light" : th;
+  }
+  var saveXlsx = (wb, name) => XLSX.writeFile(wb, name);
+  var weekStartOf = (iso2) => {
+    const w = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].indexOf(dayKeyOfISO(iso2));
+    return addDaysISO(iso2, -((w + 1) % 7));
+  };
+  var NO_ROUTE = "__none__";
+  var COLOR = { green: "#16a34a", orange: "#f59e0b", blue: "#2563eb" };
+  async function rebuild() {
+    const r = S.raw;
+    if (!r || !r.jp || !r.sales) {
+      S.ds = null;
+      return;
+    }
+    const jp = parseJP(r.jp), map_ = r.map ? parseMapping(r.map) : /* @__PURE__ */ new Map(), sales = parseSales(r.sales, r.names.sales, map_);
+    S.ds = buildDataset(jp, sales, todayISO());
+    byId = new Map(S.ds.stores.map((s) => [s.id, s]));
+  }
+  async function ingest(files) {
+    var _a, _b, _c, _d, _e;
+    const next = { jp: (_a = S.raw) == null ? void 0 : _a.jp, sales: (_b = S.raw) == null ? void 0 : _b.sales, map: (_c = S.raw) == null ? void 0 : _c.map, names: { ...((_d = S.raw) == null ? void 0 : _d.names) || {} }, at: (_e = S.raw) == null ? void 0 : _e.at };
+    for (const k of ["jp", "sales", "map"]) if (files[k]) {
+      next[k] = files[k].aoa;
+      next.names[k] = files[k].name;
+    }
+    if (!next.jp || !next.sales) throw new Error(t("needData"));
+    const prev = S.raw;
+    S.raw = next;
+    try {
+      await rebuild();
+    } catch (e) {
+      S.raw = prev;
+      await rebuild().catch(() => {
+      });
+      throw e;
+    }
+    next.at = (/* @__PURE__ */ new Date()).toISOString();
+    try {
+      await dbSet("raw", next);
+    } catch (e) {
+      toast("Storage/quota: " + e.message);
+    }
+    render();
+  }
+  var readAoa = async (f) => {
+    const buf = f.arrayBuffer ? await f.arrayBuffer() : f;
+    const wb = XLSX.read(buf, { type: "array", cellDates: true });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    return XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, cellDates: true, defval: null });
+  };
+  function matches(s, f, skip) {
+    if (skip !== "type") {
+      if (f.type === "hasSales" && !s.hasSales) return false;
+      if (f.type === "noSales" && (s.hasSales || !s.inJP)) return false;
+      if (f.type === "salesOnly" && s.inJP) return false;
+    }
+    if (skip !== "route" && f.route && (f.route === NO_ROUTE ? !!s.route : s.route !== f.route)) return false;
+    if (skip !== "salesman" && f.salesman && s.salesman !== f.salesman) return false;
+    if (skip !== "day" && f.day) {
+      const k = f.day === "today" ? dayKeyOfISO(todayISO()) : f.day;
+      if (!s.inJP || !s.days[k]) return false;
+    }
+    if (skip !== "q" && f.q) {
+      const q = normText(f.q);
+      if (![s.storeName, s.name, s.id, s.newCode, s.oracle, s.address].some((x) => normText(x).includes(q))) return false;
+    }
+    return true;
+  }
+  var filtered = () => S.ds ? S.ds.stores.filter((s) => matches(s, S.filters)) : [];
+  var options = (key) => [...new Set(S.ds.stores.filter((s) => matches(s, S.filters, key)).map((s) => s[key]).filter(Boolean))].sort((a, b) => a.localeCompare(b, "fa"));
+  function withNearby(list) {
+    if (!S.pos || !S.radius) return list;
+    return list.filter((s) => s.lat !== null).map((s) => ({ s, d: distanceM(S.pos.lat, S.pos.lng, s.lat, s.lng) })).filter((x) => x.d <= S.radius).sort((a, b) => a.d - b.d).map((x) => (x.s._d = x.d, x.s));
+  }
+  function filterUI() {
+    const f = S.filters, sel = (k, label, opts, all) => `<label class="f">${label}</label><select data-f="${k}"><option value="">${all}</option>${opts.map((o) => {
+      const [v, l] = Array.isArray(o) ? o : [o, o];
+      return `<option value="${esc(v)}" ${f[k] === v ? "selected" : ""}>${esc(l)}</option>`;
+    }).join("")}</select>`;
+    const dayOpts = [["", t("allDays")], ["today", t("today")], ...DAY_KEYS.map((d) => [d, t("d_" + d)])];
+    return `<label class="f">${t("type")}</label><select data-f="type">${["all", "hasSales", "noSales", "salesOnly"].map((v) => `<option value="${v}" ${f.type === v ? "selected" : ""}>${t(v)}</option>`).join("")}</select>
+  ${sel("route", t("regions"), [...options("route"), ...S.ds.stores.some((x) => !x.route && matches(x, S.filters, "route")) ? [[NO_ROUTE, t("noRoute")]] : []], t("all"))}${sel("salesman", t("salesman"), options("salesman"), t("all"))}
+  <label class="f">${t("day")}</label><select data-f="day">${dayOpts.map(([v, l]) => `<option value="${v}" ${f.day === v ? "selected" : ""}>${l}</option>`).join("")}</select>
+  <div class="row" style="margin-top:12px"><button class="btn" id="fclr">${t("clear")}</button><span class="sp"></span><button class="btn pri" id="fok">${t("close")}</button></div>`;
+  }
+  function openFilters() {
+    sheet(`<h2>${t("filters")}</h2>${filterUI()}`, (el) => {
+      el.querySelectorAll("select[data-f]").forEach((s) => s.onchange = () => {
+        S.filters[s.dataset.f] = s.value;
+        openFilters();
+      });
+      el.querySelector("#fclr").onclick = () => {
+        S.filters = { q: S.filters.q, type: "all", route: "", salesman: "", day: "" };
+        openFilters();
+      };
+      el.querySelector("#fok").onclick = () => {
+        closeSheet();
+        render();
+      };
+    });
+  }
+  function sheet(html, after) {
+    const sh = $("#sheet");
+    sh.innerHTML = `<div class="s">${html}</div>`;
+    sh.hidden = false;
+    sh.onclick = (e) => {
+      if (e.target === sh) {
+        closeSheet();
+        if (S.page !== "map") render();
+      }
+    };
+    after && after(sh.firstChild);
+  }
+  function closeSheet() {
+    $("#sheet").hidden = true;
+    $("#sheet").innerHTML = "";
+  }
+  function nav() {
+    const items = [["map", "\u{1F5FA}\uFE0F"], ["stores", "\u{1F3EA}"], ["plan", "\u{1F4C5}"], ["data", "\u{1F4C1}"], ["settings", "\u2699\uFE0F"]];
+    $("#nav").innerHTML = items.map(([k, i]) => `<button data-p="${k}" class="${S.page === k ? "on" : ""}"><span class="i">${i}</span>${t(k)}</button>`).join("");
+    $("#nav").querySelectorAll("button").forEach((b) => b.onclick = () => {
+      S.page = b.dataset.p;
+      render();
+    });
+    $("#net").textContent = navigator.onLine ? "" : "\u26A0 offline";
+  }
+  function render() {
+    nav();
+    const v = $("#view");
+    v.className = S.page === "map" ? "mapv" : "";
+    if (map && S.page !== "map") {
+      map.remove();
+      map = null;
+    }
+    ({ map: pageMap, stores: pageStores, plan: pagePlan, data: pageData, settings: pageSettings })[S.page](v);
+  }
+  var needData = (v) => {
+    v.innerHTML = `<div class="pad wrap"><div class="card">${t("needData")}</div><button class="btn pri" id="go">${t("data")}</button></div>`;
+    $("#go").onclick = () => {
+      S.page = "data";
+      render();
+    };
+  };
+  function pageMap(v) {
+    if (!S.ds) return needData(v);
+    const list = withNearby(filtered());
+    v.innerHTML = `<div class="mapbar"><input type="search" id="q" placeholder="${esc(t("search"))}" value="${esc(S.filters.q)}"><button class="btn" id="fb">\u2699 ${t("filters")}</button><button class="btn" id="loc" title="${t("locate")}">\u{1F4CD}</button></div><div id="map"></div>
+  <div class="legend"><span><i class="dot g"></i>${t("legG")}</span><span><i class="dot o"></i>${t("legO")}</span><span><i class="dot b"></i>${t("legB")}</span><span class="mu">${list.length} ${t("results")} \xB7 ${list.filter((s) => s.lat === null).length} ${t("noGPS")}</span></div>`;
+    $("#q").oninput = (e) => {
+      S.filters.q = e.target.value;
+      clearTimeout(pageMap.tm);
+      pageMap.tm = setTimeout(() => drawMarkers(withNearby(filtered())), 250);
+    };
+    $("#fb").onclick = openFilters;
+    $("#loc").onclick = () => locate(true);
+    if (typeof L === "undefined") {
+      $("#map").innerHTML = `<div class="pad">Leaflet not loaded (offline first run?). ${t("mapOffline")}</div>`;
+      return;
+    }
+    map = L.map("map", { preferCanvas: true, zoomControl: true }).setView([35.8, 51], 11);
+    L.tileLayer(S.settings.tile, { maxZoom: 19, attribution: "\xA9 OpenStreetMap" }).addTo(map);
+    layer = L.layerGroup().addTo(map);
+    drawMarkers(list, true);
+    requestAnimationFrame(() => map && map.invalidateSize());
+    setTimeout(() => map && map.invalidateSize(), 300);
+    if (!navigator.onLine) toast(t("mapOffline"));
+  }
+  if (typeof window !== "undefined") {
+    addEventListener("resize", () => map && map.invalidateSize());
+    addEventListener("online", nav);
+    addEventListener("offline", nav);
+  }
+  function drawMarkers(list, fit) {
+    if (!map) return;
+    layer.clearLayers();
+    const pts = [];
+    for (const s of list) {
+      if (s.lat === null) continue;
+      pts.push([s.lat, s.lng]);
+      L.circleMarker([s.lat, s.lng], { radius: 7, color: "#fff", weight: 1.5, fillColor: COLOR[s.status], fillOpacity: 0.95 }).on("click", () => detail(s.id)).addTo(layer);
+    }
+    if (S.pos) L.circleMarker([S.pos.lat, S.pos.lng], { radius: 9, color: "#fff", fillColor: "#dc2626", fillOpacity: 1 }).addTo(layer);
+    if (fit && pts.length) map.fitBounds(pts, { padding: [24, 24], maxZoom: 15 });
+    const lg = document.querySelector(".legend .mu");
+    if (lg) lg.textContent = `${list.length} ${t("results")} \xB7 ${list.filter((s) => s.lat === null).length} ${t("noGPS")}`;
+  }
+  function locate(center) {
+    if (!navigator.geolocation) return toast(t("locDenied"));
+    navigator.geolocation.getCurrentPosition((p) => {
+      S.pos = { lat: p.coords.latitude, lng: p.coords.longitude };
+      if (center && map) {
+        map.setView([S.pos.lat, S.pos.lng], 15);
+        drawMarkers(withNearby(filtered()));
+      } else if (S.page === "stores") render();
+    }, () => toast(t("locDenied")), { enableHighAccuracy: true, timeout: 15e3 });
+  }
+  var badge = (s) => `<i class="dot ${s.status === "green" ? "g" : s.status === "orange" ? "o" : "b"}"></i>`;
+  function storeCard(s) {
+    return `<div class="card" data-id="${esc(s.id)}" style="cursor:pointer"><div class="row"><b>${badge(s)}${esc(s.storeName || s.name || s.id)}</b><span class="sp"></span>${s._d !== void 0 ? `<span class="chip">${s._d < 1e3 ? Math.round(s._d) + " m" : (s._d / 1e3).toFixed(1) + " km"} \xB7 ${t("straight")}</span>` : ""}${s.lat === null ? `<span class="chip">${t("noGPS")}</span>` : ""}</div>
+  <div class="mu">${esc(s.name)} \xB7 ${esc(s.id)} \xB7 ${esc(s.cls)}</div><div class="mu">${esc(s.address)}</div><div class="mu">${esc(s.route)}${s.lastPurchase ? " \xB7 " + t("lastPurchase") + " " + jd(s.lastPurchase) : ""}${s.openOrders ? ` \xB7 <span class="chip o">${t("open")} ${s.openOrders}</span>` : ""}${s.overdueOrders ? ` <span class="chip r">${t("overdue")} ${s.overdueOrders}</span>` : ""}</div></div>`;
+  }
+  function pageStores(v) {
+    if (!S.ds) return needData(v);
+    const list = withNearby(filtered()), shown = list.slice(0, 200);
+    v.innerHTML = `<div class="pad wrap"><div class="row"><input type="search" id="q" placeholder="${esc(t("search"))}" value="${esc(S.filters.q)}" style="flex:1"><button class="btn" id="fb">\u2699</button></div>
+  <div class="row" style="margin:8px 0"><button class="btn sm" id="loc">\u{1F4CD} ${t("nearby")}</button><select id="rad" class="sm"><option value="0">${t("radius")}</option>${[500, 1e3, 5e3].map((r) => `<option value="${r}" ${S.radius === r ? "selected" : ""}>${r < 1e3 ? r + " m" : r / 1e3 + " km"}</option>`).join("")}</select><span class="mu">${list.length} ${t("results")}</span></div>
+  <div id="lst">${shown.map(storeCard).join("") || `<div class="card">${t("nothing")}</div>`}</div>${list.length > 200 ? `<button class="btn" id="more">+200 \u2026</button>` : ""}</div>`;
+    $("#q").oninput = (e) => {
+      S.filters.q = e.target.value;
+      clearTimeout(pageStores.tm);
+      pageStores.tm = setTimeout(() => {
+        const pos = $("#q").selectionStart;
+        pageStores(v);
+        const q = $("#q");
+        q.focus();
+        q.setSelectionRange(pos, pos);
+      }, 300);
+    };
+    $("#fb").onclick = openFilters;
+    $("#loc").onclick = () => locate(false);
+    $("#rad").onchange = (e) => {
+      S.radius = +e.target.value;
+      if (S.radius && !S.pos) locate(false);
+      else render();
+    };
+    let n = 200;
+    const bind = () => v.querySelectorAll(".card[data-id]").forEach((c) => c.onclick = () => detail(c.dataset.id));
+    bind();
+    const more = $("#more");
+    if (more) more.onclick = () => {
+      n += 200;
+      $("#lst").innerHTML = list.slice(0, n).map(storeCard).join("");
+      bind();
+      if (n >= list.length) more.remove();
+    };
+  }
+  function navLinks(s) {
+    if (s.lat !== null) return `<a class="btn" target="_blank" rel="noopener" href="https://nshn.ir/?lat=${s.lat}&lng=${s.lng}">${t("navNeshan")}</a> <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}">${t("navGoogle")}</a>`;
+    const q = encodeURIComponent(s.storeName || s.name || s.address) + "%20" + encodeURIComponent(s.address);
+    return `<a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${q}">${t("searchDest")}</a>`;
+  }
+  function detail(id) {
+    const s = byId.get(id);
+    if (!s) return;
+    const orders = s.orders.map((o) => `<tr><td>${esc(o.order)}<br><span class="mu">${esc(o.status)}</span></td><td>${jd(o.orderDate)}</td><td>${jd(o.target)}</td><td>${jd(o.inv)}</td><td>${o.state === "open" ? `<span class="chip o">${t("open")}</span>` : `<span class="chip g">${t("invoiced")}</span>`}${o.overdue === true ? ` <span class="chip r">${t("overdue")}</span>` : ""}${o.state === "open" && o.overdue === null ? `<br><span class="mu">${t("noTarget")}</span>` : ""}</td></tr><tr><td colspan="5" class="mu">${o.items.map((i) => `${esc(i.product)} \xD7 ${i.qty}`).join(" \xB7 ")}</td></tr>`).join("");
+    sheet(`<h2>${badge(s)}${esc(s.storeName || s.name || s.id)}</h2>
+  <dl class="kv"><dt>${t("custId")}</dt><dd>${esc(s.id)}</dd><dt>${t("custName")}</dt><dd>${esc(s.name)}</dd><dt>${t("storeName")}</dt><dd>${esc(s.storeName) || "\u2014"}</dd><dt>${t("cls")}</dt><dd>${esc(s.cls) || "\u2014"}</dd><dt>${t("address")}</dt><dd>${esc(s.address)}</dd><dt>${t("route")}</dt><dd>${esc(s.route) || "\u2014"} <span class="mu">(${t("rs_" + (s.routeSource || "Area"))})</span></dd><dt>${t("area")} / ${t("territory")}</dt><dd>${esc(s.area) || "\u2014"} / ${esc(s.territory) || "\u2014"}</dd><dt>${t("salesman")}</dt><dd>${esc(s.salesman) || "\u2014"}</dd><dt>${t("coords")}</dt><dd>${s.lat !== null ? s.lat.toFixed(6) + ", " + s.lng.toFixed(6) : t("noGPS")}</dd><dt>${t("inJP")}</dt><dd>${s.inJP ? t("yes") : t("no")}${s.inJP ? " \xB7 " + DAY_KEYS.filter((d) => s.days[d]).map((d) => t("d_" + d)).join("\u060C ") : ""}</dd><dt>${t("purchase")}</dt><dd>${s.hasSales ? t("yes") : t("no")} \xB7 ${t("lastPurchase")}: ${jd(s.lastPurchase)}</dd></dl>
+  <div class="row" style="margin:10px 0">${navLinks(s)}<button class="btn pri" id="addp">${t("addPlan")}</button></div>
+  <h3>${t("orders")} (${s.orders.length})</h3>${orders ? `<table class="t"><tr><th>${t("orderNo")}</th><th>${t("orderDate")}</th><th>${t("targetDate")}</th><th>${t("invoiceDate")}</th><th></th></tr>${orders}</table>` : `<div class="mu">${t("noOrders")}</div>`}
+  <h3>${t("basket")}</h3>${s.basket.length ? `<table class="t">${s.basket.map((b) => `<tr><td>${esc(b.product)}</td><td>${b.qty}</td></tr>`).join("")}</table>` : `<div class="mu">\u2014</div>`}
+  <div class="row" style="margin-top:12px"><button class="btn" id="cl">${t("close")}</button></div>`, (el) => {
+      el.querySelector("#cl").onclick = () => {
+        closeSheet();
+      };
+      el.querySelector("#addp").onclick = () => addPlanDialog(s);
+    });
+  }
+  function addPlanDialog(s, prefDate) {
+    const base = weekStartOf(todayISO());
+    const dd = prefDate || todayISO();
+    const quick = [...Array(14)].map((_, i) => addDaysISO(base, i)).filter((d) => dayKeyOfISO(d) !== "Friday");
+    sheet(`<h2>${t("addPlan")}</h2><div class="mu">${esc(s.storeName || s.name)} \xB7 ${esc(s.id)}</div>
+  <label class="f">${t("visitDate")}</label><select id="pd">${quick.map((d) => `<option value="${d}" ${d === dd ? "selected" : ""}>${t("d_" + dayKeyOfISO(d))} ${jd(d)}</option>`).join("")}</select>
+  <label class="f">${t("priority")}</label><select id="pp">${PRIORITIES.map((p) => `<option value="${p}" ${p === "Medium" ? "selected" : ""}>${t(p)}</option>`).join("")}</select>
+  <label class="f">${t("reason")}</label><input type="text" id="pr"><label class="f">${t("comment")}</label><textarea id="pc" rows="2" style="width:100%"></textarea>
+  <div class="row" style="margin-top:12px"><button class="btn pri" id="ok">${t("save")}</button><button class="btn" id="no">${t("cancel")}</button></div>`, (el) => {
+      el.querySelector("#no").onclick = () => detail(s.id);
+      el.querySelector("#ok").onclick = () => {
+        const date = el.querySelector("#pd").value;
+        if (isDuplicate(S.plan, s.id, date)) return toast(t("alreadyIn"));
+        S.plan.push(makeRecord(s, date, { priority: el.querySelector("#pp").value, reason: el.querySelector("#pr").value, comment: el.querySelector("#pc").value, source: "Internal", order: 9999 }));
+        renumber(S.plan, date);
+        savePlan();
+        toast(t("ok"));
+        closeSheet();
+      };
+    });
+  }
+  function editPlanDialog(p) {
+    sheet(`<h2>${t("edit")}</h2><div class="mu">${esc(p.storeName || p.customerName)} \xB7 ${esc(p.customerId)}</div>
+  <label class="f">${t("priority")}</label><select id="pp">${PRIORITIES.map((x) => `<option value="${x}" ${x === p.priority ? "selected" : ""}>${t(x)}</option>`).join("")}</select>
+  <label class="f">${t("reason")}</label><input type="text" id="pr" value="${esc(p.reason)}"><label class="f">${t("comment")}</label><textarea id="pc" rows="2" style="width:100%">${esc(p.comment)}</textarea>
+  <div class="row" style="margin-top:12px"><button class="btn pri" id="ok">${t("save")}</button><button class="btn dng" id="del">${t("delete")}</button><button class="btn" id="no">${t("cancel")}</button></div>`, (el) => {
+      el.querySelector("#no").onclick = () => {
+        closeSheet();
+        render();
+      };
+      el.querySelector("#ok").onclick = () => {
+        p.priority = el.querySelector("#pp").value;
+        p.reason = el.querySelector("#pr").value;
+        p.comment = el.querySelector("#pc").value;
+        savePlan();
+        closeSheet();
+        render();
+      };
+      el.querySelector("#del").onclick = () => {
+        S.plan = S.plan.filter((x) => x.pid !== p.pid);
+        renumber(S.plan, p.visitDate);
+        savePlan();
+        closeSheet();
+        render();
+      };
+    });
+  }
+  function moveDayDialog(p, listName) {
+    const base = weekStartOf(todayISO());
+    const days = [...Array(14)].map((_, i) => addDaysISO(base, i)).filter((d) => dayKeyOfISO(d) !== "Friday");
+    sheet(`<h2>${t("moveDay")}</h2><select id="d">${days.map((d) => `<option value="${d}">${t("d_" + dayKeyOfISO(d))} ${jd(d)}</option>`).join("")}</select><div class="row" style="margin-top:12px"><button class="btn pri" id="ok">${t("save")}</button><button class="btn" id="no">${t("cancel")}</button></div>`, (el) => {
+      el.querySelector("#no").onclick = () => {
+        closeSheet();
+        render();
+      };
+      el.querySelector("#ok").onclick = () => {
+        const d = el.querySelector("#d").value;
+        if (isDuplicate(S.plan, p.customerId, d)) return toast(t("alreadyIn"));
+        S.pending = S.pending.filter((x) => x.pid !== p.pid);
+        p.visitDate = d;
+        p.order = 9999;
+        S.plan.push(p);
+        renumber(S.plan, d);
+        savePlan();
+        closeSheet();
+        render();
+      };
+    });
+  }
+  function suggestOrder(iso2) {
+    const items = sortedForDay(S.plan, iso2);
+    if (items.length < 2) return;
+    const withG = items.filter((p) => p.lat !== null), without = items.filter((p) => p.lat === null);
+    if (!withG.length) return;
+    let cur = S.pos ? { lat: S.pos.lat, lng: S.pos.lng } : withG[0], rest = [...withG], out = [];
+    while (rest.length) {
+      rest.sort((a, b) => distanceM(cur.lat, cur.lng, a.lat, a.lng) - distanceM(cur.lat, cur.lng, b.lat, b.lng));
+      cur = rest.shift();
+      out.push(cur);
+    }
+    [...out, ...without].forEach((p, i) => p.order = i + 1);
+    savePlan();
+    toast(t("suggestNote"));
+    render();
+  }
+  function pagePlan(v) {
+    if (!S.weekStart) S.weekStart = weekStartOf(todayISO());
+    const days = [...Array(6)].map((_, i) => addDaysISO(S.weekStart, i));
+    S.selDay = days.includes(S.selDay) ? S.selDay : days.includes(todayISO()) ? todayISO() : days[0];
+    const items = sortedForDay(S.plan, S.selDay);
+    const cnt = (d) => S.plan.filter((p) => p.visitDate === d).length;
+    v.innerHTML = `<div class="pad wrap"><div class="row"><button class="btn sm" id="pw">\u2039 ${t("prevWeek")}</button><span class="sp mu" style="text-align:center">${t("week")} ${jd(days[0])} \u2013 ${jd(days[5])}</span><button class="btn sm" id="nw">${t("nextWeek")} \u203A</button></div>
+  <div class="tabs" style="margin-top:8px">${days.map((d) => `<button class="btn sm ${d === S.selDay ? "on" : ""}" data-d="${d}">${t("d_" + dayKeyOfISO(d))}<br>${jd(d).slice(5)} (${cnt(d)})</button>`).join("")}</div>
+  <div class="row" style="margin:6px 0"><button class="btn sm" id="sg">${t("suggest")}</button></div>
+  <div id="pl">${items.map((p, i) => `<div class="card"><div class="row"><b>${i + 1}. ${esc(p.storeName || p.customerName)}</b><span class="chip">${t(p.priority)}</span><span class="chip">${t(p.source)}</span><span class="sp"></span></div><div class="mu">${esc(p.customerName)} \xB7 ${esc(p.customerId)} \xB7 ${esc(p.route)}</div><div class="mu">${esc(p.address)}</div>${p.reason ? `<div class="mu">${t("reason")}: ${esc(p.reason)}</div>` : ""}${p.comment ? `<div class="mu">${esc(p.comment)}</div>` : ""}<div class="row" style="margin-top:6px"><button class="btn sm" data-up="${p.pid}" ${i === 0 ? "disabled" : ""}>\u2191</button><button class="btn sm" data-dn="${p.pid}" ${i === items.length - 1 ? "disabled" : ""}>\u2193</button><button class="btn sm" data-ed="${p.pid}">${t("edit")}</button><button class="btn sm" data-sd="${p.pid}">${t("details")}</button></div></div>`).join("") || `<div class="card mu">${t("noVisits")}</div>`}</div>
+  ${S.pending.length ? `<h3>${t("pending")} (${S.pending.length})</h3>${S.pending.map((p) => `<div class="card"><div class="row"><b>${esc(p.storeName || p.customerName)}</b><span class="chip">${jd(p.visitDate)}</span><span class="chip">${t(p.priority)}</span><span class="chip">External</span></div><div class="mu">${esc(p.customerId)} \xB7 ${esc(p.address)}</div>${p.reason ? `<div class="mu">${esc(p.reason)}</div>` : ""}<div class="row" style="margin-top:6px"><button class="btn sm pri" data-ap="${p.pid}">${t("approve")}</button><button class="btn sm" data-mv="${p.pid}">${t("moveDay")}</button><button class="btn sm dng" data-rj="${p.pid}">${t("reject")}</button></div></div>`).join("")}` : ""}
+  ${S.importErrors.length ? `<h3 class="err">${t("errorsReport")} (${S.importErrors.length})</h3><table class="t">${S.importErrors.map((e) => `<tr><td>${t("row")} ${e.row}</td><td>${esc(e.id)}</td><td class="err">${t("E_" + e.reason)}</td></tr>`).join("")}</table>` : ""}
+  <div class="row" style="margin-top:14px"><button class="btn pri" id="ex">${t("exportPlan")}</button><label class="btn">${t("importPlan")}<input type="file" id="im" accept=".xlsx" hidden></label></div></div>`;
+    v.querySelector("#pw").onclick = () => {
+      S.weekStart = addDaysISO(S.weekStart, -7);
+      render();
+    };
+    v.querySelector("#nw").onclick = () => {
+      S.weekStart = addDaysISO(S.weekStart, 7);
+      render();
+    };
+    v.querySelectorAll("[data-d]").forEach((b) => b.onclick = () => {
+      S.selDay = b.dataset.d;
+      render();
+    });
+    v.querySelector("#sg").onclick = () => suggestOrder(S.selDay);
+    const mv = (pid, dir) => {
+      const l = sortedForDay(S.plan, S.selDay), i = l.findIndex((p) => p.pid === pid), j = i + dir;
+      if (j < 0 || j >= l.length) return;
+      [l[i], l[j]] = [l[j], l[i]];
+      l.forEach((p, k) => p.order = k + 1);
+      savePlan();
+      render();
+    };
+    v.querySelectorAll("[data-up]").forEach((b) => b.onclick = () => mv(b.dataset.up, -1));
+    v.querySelectorAll("[data-dn]").forEach((b) => b.onclick = () => mv(b.dataset.dn, 1));
+    v.querySelectorAll("[data-ed]").forEach((b) => b.onclick = () => editPlanDialog(S.plan.find((p) => p.pid === b.dataset.ed)));
+    v.querySelectorAll("[data-sd]").forEach((b) => b.onclick = () => detail(S.plan.find((p) => p.pid === b.dataset.sd).customerId));
+    v.querySelectorAll("[data-ap]").forEach((b) => b.onclick = () => {
+      const p = S.pending.find((x) => x.pid === b.dataset.ap);
+      if (isDuplicate(S.plan, p.customerId, p.visitDate)) return toast(t("alreadyIn"));
+      S.pending = S.pending.filter((x) => x !== p);
+      p.order = 9999;
+      S.plan.push(p);
+      renumber(S.plan, p.visitDate);
+      savePlan();
+      render();
+    });
+    v.querySelectorAll("[data-rj]").forEach((b) => b.onclick = () => {
+      S.pending = S.pending.filter((x) => x.pid !== b.dataset.rj);
+      savePlan();
+      render();
+    });
+    v.querySelectorAll("[data-mv]").forEach((b) => b.onclick = () => moveDayDialog(S.pending.find((x) => x.pid === b.dataset.mv)));
+    v.querySelector("#ex").onclick = () => saveXlsx(exportPlan(XLSX, S.plan), PLAN_FILE);
+    v.querySelector("#im").onchange = async (e) => {
+      const f = e.target.files[0];
+      if (!f) return;
+      if (!S.ds) return toast(t("needData"));
+      try {
+        const r = importPlan(XLSX, await f.arrayBuffer(), byId, S.plan, S.pending);
+        S.pending.push(...r.valid);
+        S.importErrors = r.errors;
+        savePlan();
+        toast(`${r.valid.length} ${t("imported")}`);
+        render();
+      } catch (er) {
+        toast(t("errParse") + " " + er.message);
+      }
+    };
+  }
+  function reportRows(kind) {
+    const st = S.ds.stores, base = (r) => [r.id, r.name, r.storeName, r.cls, r.address, r.route, r.salesman, r.lat, r.lng];
+    const H = ["Customer ID", "Customer Name", "Store Name", "Customer Class", "Address", "Route", "Salesman", "Latitude", "Longitude"];
+    if (kind === "nogps") return [H, ...st.filter((s) => s.lat === null).map(base)];
+    if (kind === "nobuy") return [H, ...st.filter((s) => s.inJP && !s.hasSales).map(base)];
+    const o = [];
+    st.forEach((s) => s.orders.forEach((x) => {
+      if (kind === "open" && x.state === "open" || kind === "overdue" && x.overdue === true) o.push([s.id, s.name, s.storeName, x.order, x.status, isoToJalaliStr(x.orderDate || ""), isoToJalaliStr(x.target || ""), x.items.map((i) => `${i.product} \xD7 ${i.qty}`).join(" | ")]);
+    }));
+    return [["Customer ID", "Customer Name", "Store Name", "Order No", "Status", "Order Date", "Expected Delivery", "Items"], ...o];
+  }
+  function exportReport(kind) {
+    const safe2 = (v) => typeof v === "string" && /^[=+\-@]/.test(v) ? "'" + v : v;
+    const rows = reportRows(kind).map((r, i) => i ? r.map(safe2) : r), wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), "Report");
+    saveXlsx(wb, `TPA_${kind}_${todayISO()}.xlsx`);
+  }
+  function pageData(v) {
+    var _a;
+    const r = S.raw, st = (_a = S.ds) == null ? void 0 : _a.stats;
+    v.innerHTML = `<div class="pad wrap"><div class="card"><h2>${t("files")}</h2>
+  ${[["jp", "fJP"], ["sales", "fSales"], ["map", "fMap"]].map(([k, l]) => {
+      var _a2;
+      return `<label class="f">${t(l)}${((_a2 = r == null ? void 0 : r.names) == null ? void 0 : _a2[k]) ? ` \u2014 <b>${esc(r.names[k])}</b>` : ""}</label><input type="file" data-k="${k}" accept=".xlsx,.xls,.csv">`;
+    }).join("")}
+  <div class="row" style="margin-top:10px"><button class="btn pri" id="ld">${t("load")}</button></div><div id="msg" class="err" style="margin-top:6px"></div></div>
+  <div class="card"><h2>${t("drive")}</h2><div class="mu">${t("driveNote")}</div><button class="btn pri" id="ds" style="margin-top:8px">${t("driveSync")}</button><div id="dmsg" class="mu"></div></div>
+  ${S.ds ? `<div class="card"><h2>${t("stats")}</h2><div class="mu">${t("lastSync")}: ${esc(r.at ? new Date(r.at).toLocaleString(getLang() === "fa" ? "fa-IR-u-ca-persian" : "en-GB") : "")}</div><div>JP: ${st.jp} \xB7 ${t("salesOnly")}: ${st.salesOnly} \xB7 ${t("orders")}: ${st.orders} \xB7 Closed/expired: ${st.droppedRows}</div><div class="mu">${t("noteClosedUndel")}</div></div>
+  <div class="card"><h2>${t("reports")}</h2><div class="row">${[["nogps", "rNoGPS"], ["nobuy", "rNoBuy"], ["open", "rOpen"], ["overdue", "rOverdue"]].map(([k, l]) => `<button class="btn sm" data-r="${k}">\u2B07 ${t(l)} (${reportRows(k).length - 1})</button>`).join("")}</div></div>` : ""}</div>`;
+    v.querySelector("#ld").onclick = async () => {
+      const files = {};
+      try {
+        for (const i of v.querySelectorAll("input[type=file]")) if (i.files[0]) files[i.dataset.k] = { aoa: await readAoa(i.files[0]), name: i.files[0].name };
+        await ingest(files);
+        toast(t("ok"));
+      } catch (e) {
+        $("#msg").textContent = t("errParse") + " " + e.message;
+      }
+    };
+    v.querySelector("#ds").onclick = driveSync;
+    v.querySelectorAll("[data-r]").forEach((b) => b.onclick = () => exportReport(b.dataset.r));
+  }
+  var gToken = null;
+  var loadScript = (src) => new Promise((res, rej) => {
+    if (document.querySelector(`script[src="${src}"]`)) return res();
+    const s = document.createElement("script");
+    s.src = src;
+    s.onload = res;
+    s.onerror = () => rej(new Error("Network"));
+    document.head.appendChild(s);
+  });
+  async function driveToken() {
+    if (gToken && gToken.exp > Date.now() + 3e4) return gToken.v;
+    if (!S.settings.clientId || !S.settings.folderId) throw new Error("Settings: Client ID / Folder ID");
+    await loadScript("https://accounts.google.com/gsi/client");
+    return new Promise((res, rej) => google.accounts.oauth2.initTokenClient({ client_id: S.settings.clientId, scope: "https://www.googleapis.com/auth/drive.readonly", callback: (r) => r.access_token ? (gToken = { v: r.access_token, exp: Date.now() + (r.expires_in || 3e3) * 1e3 }, res(r.access_token)) : rej(new Error(r.error || "OAuth")) }).requestAccessToken());
+  }
+  async function driveSync() {
+    const msg = $("#dmsg");
+    msg.textContent = t("syncing");
+    try {
+      const tok = await driveToken(), H = { Authorization: "Bearer " + tok };
+      const q = encodeURIComponent(`'${S.settings.folderId}' in parents and trashed=false`);
+      const lr = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime)&pageSize=200&supportsAllDrives=true&includeItemsFromAllDrives=true`, { headers: H });
+      if (!lr.ok) throw new Error("Drive list " + lr.status);
+      const fl = (await lr.json()).files.filter((f) => /\.xlsx?$/i.test(f.name));
+      const grp = { jp: fl.filter((f) => /^JP_/i.test(f.name)), sales: fl.filter((f) => /^TPA_Alborz/i.test(f.name)), map: fl.filter((f) => /product[\s_]*mapping/i.test(f.name)) };
+      const out = {}, used = [];
+      for (const [k, arr] of Object.entries(grp)) {
+        arr.sort((a, b) => fileDateKey(b.name) - fileDateKey(a.name) || b.modifiedTime.localeCompare(a.modifiedTime));
+        for (const f of arr) {
+          try {
+            const r = await fetch(`https://www.googleapis.com/drive/v3/files/${f.id}?alt=media&supportsAllDrives=true`, { headers: H });
+            if (!r.ok) throw new Error(r.status);
+            const aoa = await readAoa(await r.arrayBuffer());
+            if (k === "jp") parseJP(aoa);
+            if (k === "sales") parseSales(aoa, f.name);
+            out[k] = { aoa, name: f.name };
+            used.push(f.name);
+            break;
+          } catch (e) {
+            msg.textContent += ` \u26A0 ${f.name}: ${e.message}`;
+          }
+        }
+      }
+      if (!Object.keys(out).length) throw new Error(t("nothing"));
+      await ingest(out);
+      toast(t("ok") + ": " + used.join(", "));
+    } catch (e) {
+      msg.textContent = t("errParse") + " " + e.message;
+    }
+  }
+  function pageSettings(v) {
+    const s = S.settings;
+    v.innerHTML = `<div class="pad wrap"><div class="card"><label class="f">${t("language")}</label><select id="lg"><option value="fa" ${s.lang === "fa" ? "selected" : ""}>\u0641\u0627\u0631\u0633\u06CC</option><option value="en" ${s.lang === "en" ? "selected" : ""}>English</option></select>
+  <label class="f">${t("theme")}</label><select id="th">${["auto", "light", "dark"].map((x) => `<option value="${x}" ${s.theme === x ? "selected" : ""}>${t(x)}</option>`).join("")}</select>
+  <label class="f">${t("clientId")}</label><input type="text" id="ci" value="${esc(s.clientId)}" dir="ltr"><label class="f">${t("folderId")}</label><input type="text" id="fi" value="${esc(s.folderId)}" dir="ltr"><label class="f">${t("tileUrl")}</label><input type="text" id="tl" value="${esc(s.tile)}" dir="ltr">
+  <div class="row" style="margin-top:12px"><button class="btn pri" id="sv">${t("save")}</button></div></div>
+  <div class="card"><button class="btn dng" id="c1">${t("clearCache")}</button><br><br><button class="btn dng" id="c2">${t("clearAll")}</button></div></div>`;
+    v.querySelector("#sv").onclick = () => {
+      Object.assign(S.settings, { lang: $("#lg").value, theme: $("#th").value, clientId: $("#ci").value.trim(), folderId: $("#fi").value.trim(), tile: $("#tl").value.trim() || "https://tile.openstreetmap.org/{z}/{x}/{y}.png" });
+      saveSettings();
+      setLang(S.settings.lang);
+      applyTheme();
+      toast(t("ok"));
+      render();
+    };
+    v.querySelector("#c1").onclick = async () => {
+      if (!confirm(t("confirmClear"))) return;
+      await dbDel("raw");
+      S.raw = null;
+      S.ds = null;
+      render();
+    };
+    v.querySelector("#c2").onclick = async () => {
+      if (!confirm(t("confirmClear"))) return;
+      await dbDel("raw");
+      await dbDel("plan");
+      S.raw = null;
+      S.ds = null;
+      S.plan = [];
+      S.pending = [];
+      render();
+    };
+  }
+  async function boot() {
+    setLang(S.settings.lang);
+    applyTheme();
+    try {
+      const p = await dbGet("plan");
+      if (p) {
+        S.plan = p.plan || [];
+        S.pending = p.pending || [];
+      }
+    } catch {
+    }
+    try {
+      S.raw = await dbGet("raw") || null;
+      if (S.raw) await rebuild();
+    } catch (e) {
+      console.warn(e);
+    }
+    render();
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {
+    });
+  }
+  boot();
+})();
+
+</script>
+</body>
+</html>
