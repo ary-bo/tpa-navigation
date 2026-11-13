@@ -1620,6 +1620,50 @@ input,select,textarea{font-size:16px!important}
     }
     map = L.map("map", { preferCanvas: true, zoomControl: false }).setView([35.8, 51], 11);
     L.control.zoom({ position: "bottomright" }).addTo(map);
+    // Google Maps-style one-finger zoom: double-tap, hold the second tap, then drag vertically.
+    const mapTouchTarget = map.getContainer();
+    let oneFingerLastTap = 0, oneFingerLastPoint = null, oneFingerActive = false;
+    let oneFingerStartY = 0, oneFingerStartZoom = map.getZoom();
+    mapTouchTarget.addEventListener("touchstart", (event) => {
+      if (event.touches.length !== 1) {
+        oneFingerLastTap = 0;
+        oneFingerLastPoint = null;
+        return;
+      }
+      const touch = event.touches[0], now = Date.now();
+      const closeToLastTap = oneFingerLastPoint &&
+        Math.hypot(touch.clientX - oneFingerLastPoint.x, touch.clientY - oneFingerLastPoint.y) < 32;
+      if (oneFingerLastTap && now - oneFingerLastTap < 380 && closeToLastTap) {
+        oneFingerActive = true;
+        oneFingerStartY = touch.clientY;
+        oneFingerStartZoom = map.getZoom();
+        map.dragging.disable();
+        if (event.cancelable) event.preventDefault();
+      }
+    }, { capture: true, passive: false });
+    mapTouchTarget.addEventListener("touchmove", (event) => {
+      if (!oneFingerActive || event.touches.length !== 1) return;
+      if (event.cancelable) event.preventDefault();
+      const delta = oneFingerStartY - event.touches[0].clientY;
+      const zoomDelta = Math.round(delta / 90);
+      const nextZoom = Math.max(map.getMinZoom(), Math.min(map.getMaxZoom(), oneFingerStartZoom + zoomDelta));
+      if (nextZoom !== map.getZoom()) map.setZoom(nextZoom, { animate: false });
+    }, { capture: true, passive: false });
+    const finishOneFingerZoom = (event) => {
+      if (oneFingerActive) {
+        if (event && event.cancelable) event.preventDefault();
+        oneFingerActive = false;
+        map.dragging.enable();
+        oneFingerLastTap = 0;
+        oneFingerLastPoint = null;
+      } else if (event && event.type === "touchend" && event.changedTouches.length === 1) {
+        const touch = event.changedTouches[0];
+        oneFingerLastTap = Date.now();
+        oneFingerLastPoint = { x: touch.clientX, y: touch.clientY };
+      }
+    };
+    mapTouchTarget.addEventListener("touchend", finishOneFingerZoom, { capture: true, passive: false });
+    mapTouchTarget.addEventListener("touchcancel", finishOneFingerZoom, { capture: true, passive: false });
     L.tileLayer(S.settings.tile, { maxZoom: 19, attribution: "\xA9 OpenStreetMap" }).addTo(map);
     layer = L.layerGroup().addTo(map);
     drawMarkers(list, !(fs && fs.lat !== null));
