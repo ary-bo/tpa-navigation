@@ -224,6 +224,17 @@ input,select,textarea{font-size:16px!important}
       folderId: "\u0634\u0646\u0627\u0633\u0647 \u067E\u0648\u0634\u0647 Drive",
       driveNote: "\u0648\u0631\u0648\u062F Drive \u0648 \u0646\u0642\u0634\u0647 \u0628\u0647 \u0627\u06CC\u0646\u062A\u0631\u0646\u062A \u0646\u06CC\u0627\u0632 \u062F\u0627\u0631\u0646\u062F\u061B \u0622\u0641\u0644\u0627\u06CC\u0646 \u0646\u06CC\u0633\u062A\u0646\u062F.",
       reports: "\u06AF\u0632\u0627\u0631\u0634\u200C\u0647\u0627",
+      salesSummary: "خلاصه فروش فاکتور قطعی",
+      salesFrom: "از تاریخ (شمسی)",
+      salesTo: "تا تاریخ (شمسی)",
+      salesTon: "تناژ فروش (تن)",
+      salesAmount: "مبلغ فروش (ریال)",
+      salesInvoiceRows: "تعداد ردیف‌های فاکتور قطعی",
+      salesDateHint: "برای نمایش کل فروش، تاریخ‌ها را خالی بگذارید.",
+      salesDateError: "تاریخ نامعتبر است یا بازه تاریخ صحیح نیست.",
+      salesSummaryUnavailable: "ستون‌های موردنیاز برای محاسبه فروش در فایل وجود ندارد.",
+      salesNoRows: "در این بازه فاکتور قطعی ثبت نشده است.",
+      salesIncomplete: "تعدادی از ردیف‌ها داده ناقص برای محاسبه داشته‌اند:"
       rNoGPS: "\u0641\u0631\u0648\u0634\u06AF\u0627\u0647\u200C\u0647\u0627\u06CC \u0628\u062F\u0648\u0646 GPS",
       rNoBuy: "\u0641\u0631\u0648\u0634\u06AF\u0627\u0647\u200C\u0647\u0627\u06CC \u0628\u062F\u0648\u0646 \u062E\u0631\u06CC\u062F",
       rOpen: "\u0633\u0641\u0627\u0631\u0634\u200C\u0647\u0627\u06CC \u0628\u0627\u0632",
@@ -357,7 +368,18 @@ input,select,textarea{font-size:16px!important}
       E_UNKNOWN_ID: "Unknown code",
       E_BAD_PRIORITY: "Invalid priority",
       E_DUPLICATE: "Duplicate",
-      imported: "valid rows queued for approval",
+      imported: "vali
+      salesSummary: "Confirmed invoice sales summary",
+      salesFrom: "From date (Jalali)",
+      salesTo: "To date (Jalali)",
+      salesTon: "Sales volume (tons)",
+      salesAmount: "Sales amount (Rial)",
+      salesInvoiceRows: "Confirmed invoice rows",
+      salesDateHint: "Leave both dates blank to show all confirmed invoices.",
+      salesDateError: "Invalid date or date range.",
+      salesSummaryUnavailable: "Required sales columns are missing from the file.",
+      salesNoRows: "No confirmed invoices in this date range.",
+      salesIncomplete: "Some invoice rows have missing values for calculation:"d rows queued for approval",
       alreadyIn: "This store is already planned on this date",
       files: "Files",
       fJP: "Journey Plan (JP_\u2026)",
@@ -1851,6 +1873,35 @@ input,select,textarea{font-size:16px!important}
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), "Report");
     saveXlsx(wb, `TPA_${kind}_${todayISO()}.xlsx`);
   }
+  function invoicedSalesSummary(fromText, toText) {
+    const raw = S.raw;
+    if (!raw || !raw.sales) return { error: t("salesSummaryUnavailable") };
+    const h = findHeader(raw.sales, ["Status", "invoicedate", "وزن خالص", "قیمت واحد", "تعداد"]);
+    if (!h) return { error: t("salesSummaryUnavailable") };
+    const fy = yearFromFileName(raw.names && raw.names.sales);
+    const from = fromText ? parseDate(fromText, fy) : null;
+    const to = toText ? parseDate(toText, fy) : null;
+    if ((fromText && !from) || (toText && !to) || (from && to && from > to)) {
+      return { error: t("salesDateError") };
+    }
+    let count = 0, totalKg = 0, totalAmount = 0, missingWeight = 0, missingAmount = 0;
+    for (let i = h.row + 1; i < raw.sales.length; i++) {
+      const row = raw.sales[i] || [];
+      if (str(cell(row, h.idx, "Status")).toLowerCase() !== "invoiced") continue;
+      const invoiceDate = parseDate(cell(row, h.idx, "invoicedate"), fy);
+      if (!invoiceDate || (from && invoiceDate < from) || (to && invoiceDate > to)) continue;
+      count++;
+      const weight = num(cell(row, h.idx, "وزن خالص"));
+      if (weight === null) missingWeight++;
+      else totalKg += weight;
+      const price = num(cell(row, h.idx, "قیمت واحد"));
+      const quantity = num(cell(row, h.idx, "تعداد"));
+      if (price === null || quantity === null) missingAmount++;
+      else totalAmount += price * quantity;
+    }
+    return { count, tons: totalKg / 1000, amount: totalAmount, missingWeight, missingAmount };
+  }
+
   function pageData(v) {
     var _a;
     const r = S.raw, st = (_a = S.ds) == null ? void 0 : _a.stats, qa = S.ds ? quality() : null;
@@ -1863,7 +1914,20 @@ input,select,textarea{font-size:16px!important}
   <div class="card"><h2>${t("drive")}</h2><div class="mu">${t("driveNote")}</div><button class="btn pri" id="ds" style="margin-top:8px">${t("driveSync")}</button><div class="row" style="margin-top:6px"><button class="btn sm" id="bk3">${t("backup")}</button><button class="btn sm" id="rs3">${t("restore")}</button></div><div id="dmsg" class="mu"></div></div>
   ${qa ? `<div class="card"><h2>${t("quality")}</h2><table class="t">${qa.map(([k, n, tot]) => `<tr><td>${t("q_" + k)}</td><td>${n}${tot ? ` <span class="mu">(${Math.round(n * 100 / tot)}%)</span>` : ""}</td></tr>`).join("")}</table></div>` : ""}
   ${S.ds ? `<div class="card"><h2>${t("stats")}</h2><div class="mu">${t("lastSync")}: ${esc(r.at ? new Date(r.at).toLocaleString(getLang() === "fa" ? "fa-IR-u-ca-persian" : "en-GB") : "")}</div><div>JP: ${st.jp} \xB7 ${t("salesOnly")}: ${st.salesOnly} \xB7 ${t("orders")}: ${st.orders} \xB7 Closed/expired: ${st.droppedRows}</div><div class="mu">${t("noteClosedUndel")}</div></div>
-  <div class="card"><h2>${t("reports")}</h2><div class="row">${[["nogps", "rNoGPS"], ["nobuy", "rNoBuy"], ["open", "rOpen"], ["overdue", "rOverdue"]].map(([k, l]) => `<button class="btn sm" data-r="${k}">\u2B07 ${t(l)} (${reportRows(k).length - 1})</button>`).join("")}</div></div>` : ""}</div>`;
+  <div class="card"><h2>${t("reports")}</h2><div class="row">${[["nogps", "rNoGPS"], ["nobuy", "rNoBuy"], ["open", "rOpen"], ["overdue", "rOverdue"]].map(([k, l]) => `<button class="btn sm" data-r="${k}">\u2B07 ${t(l)} (${reportRows(k).length - 1})</button>`).join("")}</div></div>
+  <div class="card"><h2>${t("salesSummary")}</h2>
+    <div class="row" style="gap:10px;margin-bottom:8px">
+      <div style="flex:1;min-width:145px"><label class="f" for="salesFrom">${t("salesFrom")}</label><input id="salesFrom" type="text" inputmode="numeric" maxlength="10" placeholder="YYYY/MM/DD" dir="ltr" autocomplete="off"></div>
+      <div style="flex:1;min-width:145px"><label class="f" for="salesTo">${t("salesTo")}</label><input id="salesTo" type="text" inputmode="numeric" maxlength="10" placeholder="YYYY/MM/DD" dir="ltr" autocomplete="off"></div>
+    </div>
+    <div class="mu">${t("salesDateHint")}</div>
+    <div class="row" style="gap:18px;margin-top:12px">
+      <div style="flex:1;min-width:130px"><div class="mu">${t("salesTon")}</div><b id="salesTons" style="font-size:22px">—</b></div>
+      <div style="flex:1;min-width:160px"><div class="mu">${t("salesAmount")}</div><b id="salesAmount" style="font-size:22px">—</b></div>
+      <div style="flex:1;min-width:130px"><div class="mu">${t("salesInvoiceRows")}</div><b id="salesInvoiceRows" style="font-size:22px">—</b></div>
+    </div>
+    <div id="salesSummaryNote" class="mu" role="status" aria-live="polite" style="margin-top:8px"></div>
+  </div>` : ""}</div>`;
     v.querySelector("#ld").onclick = async () => {
       const files = {};
       try {
@@ -1878,6 +1942,27 @@ input,select,textarea{font-size:16px!important}
     v.querySelector("#bk3").onclick = backupPlan;
     v.querySelector("#rs3").onclick = restorePlan;
     v.querySelectorAll("[data-r]").forEach((b) => b.onclick = () => exportReport(b.dataset.r));
+    const refreshSalesSummary = () => {
+      const result = invoicedSalesSummary(v.querySelector("#salesFrom").value.trim(), v.querySelector("#salesTo").value.trim());
+      const note = v.querySelector("#salesSummaryNote");
+      if (result.error) {
+        v.querySelector("#salesTons").textContent = "—";
+        v.querySelector("#salesAmount").textContent = "—";
+        v.querySelector("#salesInvoiceRows").textContent = "—";
+        note.textContent = result.error;
+        return;
+      }
+      const locale = getLang() === "fa" ? "fa-IR" : "en-US";
+      const fmt = (value, digits = 0) => new Intl.NumberFormat(locale, { maximumFractionDigits: digits, minimumFractionDigits: digits }).format(value);
+      v.querySelector("#salesTons").textContent = fmt(result.tons, 2);
+      v.querySelector("#salesAmount").textContent = fmt(result.amount);
+      v.querySelector("#salesInvoiceRows").textContent = fmt(result.count);
+      const incomplete = result.missingWeight + result.missingAmount;
+      note.textContent = result.count === 0 ? t("salesNoRows") : incomplete ? t("salesIncomplete") + " " + fmt(incomplete) : "";
+    };
+    v.querySelector("#salesFrom").addEventListener("input", refreshSalesSummary);
+    v.querySelector("#salesTo").addEventListener("input", refreshSalesSummary);
+    refreshSalesSummary();
   }
   var gToken = null;
   var scripts = {};
