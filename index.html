@@ -1921,8 +1921,8 @@ input,select,textarea{font-size:16px!important}
   <div class="card"><h2>${t("reports")}</h2><div class="row">${[["nogps", "rNoGPS"], ["nobuy", "rNoBuy"], ["open", "rOpen"], ["overdue", "rOverdue"]].map(([k, l]) => `<button class="btn sm" data-r="${k}">\u2B07 ${t(l)} (${reportRows(k).length - 1})</button>`).join("")}</div></div>
   <div class="card"><h2>${t("salesSummary")}</h2>
     <div class="row" style="gap:10px;margin-bottom:8px">
-      <div class="sales-date-wrap"><label class="f" for="salesFrom">${t("salesFrom")}</label><input id="salesFrom" type="text" readonly placeholder="انتخاب تاریخ" dir="ltr" autocomplete="off" aria-haspopup="dialog" aria-expanded="false"><div class="jalali-picker" id="salesFromPicker" hidden></div></div>
-      <div class="sales-date-wrap"><label class="f" for="salesTo">${t("salesTo")}</label><input id="salesTo" type="text" readonly placeholder="انتخاب تاریخ" dir="ltr" autocomplete="off" aria-haspopup="dialog" aria-expanded="false"><div class="jalali-picker" id="salesToPicker" hidden></div></div>
+      <div class="sales-date-wrap"><label class="f" for="salesFrom">${t("salesFrom")}</label><input id="salesFrom" type="text" readonly placeholder="${getLang() === "fa" ? "انتخاب تاریخ" : "Select date"}" dir="ltr" autocomplete="off" aria-haspopup="dialog" aria-expanded="false"><div class="jalali-picker" id="salesFromPicker" hidden></div></div>
+      <div class="sales-date-wrap"><label class="f" for="salesTo">${t("salesTo")}</label><input id="salesTo" type="text" readonly placeholder="${getLang() === "fa" ? "انتخاب تاریخ" : "Select date"}" dir="ltr" autocomplete="off" aria-haspopup="dialog" aria-expanded="false"><div class="jalali-picker" id="salesToPicker" hidden></div></div>
     </div>
     <div class="mu">${t("salesDateHint")}</div>
     <div class="row" style="gap:18px;margin-top:12px">
@@ -1989,7 +1989,7 @@ input,select,textarea{font-size:16px!important}
         const today = todayJ[0] === state.year && todayJ[1] === state.month && todayJ[2] === day;
         cells.push('<button type="button" class="jp-day' + (selected ? ' selected' : '') + (today ? ' today' : '') + '" data-day="' + day + '">' + (getLang() === "fa" ? String(day).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[+d]) : day) + '</button>');
       }
-      panel.innerHTML = '<div class="jp-head"><button type="button" data-nav="-1" aria-label="ماه قبل">‹</button><div class="jp-month">' + jalaliMonths[state.month - 1] + ' ' + state.year + '</div><button type="button" data-nav="1" aria-label="ماه بعد">›</button></div><div class="jp-week">' + jalaliWeek.map((d) => '<span>' + d + '</span>').join("") + '</div><div class="jp-days">' + cells.join("") + '</div><div class="jp-foot"><button type="button" data-action="today">' + (getLang() === "fa" ? "امروز" : "Today") + '</button><button type="button" data-action="clear">' + (getLang() === "fa" ? "پاک کردن" : "Clear") + '</button></div>';
+      panel.innerHTML = '<div class="jp-head"><button type="button" data-nav="-1" aria-label="${getLang() === "fa" ? "ماه قبل" : "Previous month"}">‹</button><div class="jp-month">' + jalaliMonths[state.month - 1] + ' ' + state.year + '</div><button type="button" data-nav="1" aria-label="${getLang() === "fa" ? "ماه بعد" : "Next month"}">›</button></div><div class="jp-week">' + jalaliWeek.map((d) => '<span>' + d + '</span>').join("") + '</div><div class="jp-days">' + cells.join("") + '</div><div class="jp-foot"><button type="button" data-action="today">' + (getLang() === "fa" ? "امروز" : "Today") + '</button><button type="button" data-action="clear">' + (getLang() === "fa" ? "پاک کردن" : "Clear") + '</button></div>';
     };
     ["salesFrom", "salesTo"].forEach((id) => {
       const input = v.querySelector("#" + id), panel = v.querySelector("#" + id + "Picker");
