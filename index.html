@@ -2,7 +2,7 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>TPA Navigation</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0f766e">
@@ -44,10 +44,20 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
 .err{color:var(--r)}label.f{display:block;margin:8px 0 3px;color:var(--mu);font-size:13px}
 @media(min-width:900px){.wrap{max-width:900px;margin:0 auto}}
 
+/* v2: app-like fixed page, fixed nav order, no zoom */
+html{-webkit-text-size-adjust:100%;touch-action:manipulation}
+body{position:fixed;inset:0;width:100%;height:100dvh;overflow:hidden}
+input,select,textarea{font-size:16px!important}
+nav{direction:ltr}
+#hr{display:flex;gap:8px;align-items:center;font-size:11px}#rf{background:none;border:0;color:inherit;font-size:18px;padding:0 2px;line-height:1}
+#lock{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
+#lock .box{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:20px;width:100%;max-width:320px;display:flex;flex-direction:column;gap:10px;text-align:center}
+#lock input{text-align:center;letter-spacing:6px}
+
 </style>
 </head>
 <body>
-<header id="top"><b id="title">TPA Navigation</b><span id="net"></span></header>
+<header id="top"><b id="title">TPA Navigation</b><span id="hr"><span id="dinfo"></span><span id="net"></span><button id="rf" aria-label="sync">🔄</button></span></header>
 <main id="view"></main>
 <nav id="nav"></nav>
 <div id="sheet" hidden></div>
@@ -356,6 +366,8 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
       rs_Area: "Area Name"
     }
   };
+  Object.assign(D.fa, { "showMap": "\u0646\u0645\u0627\u06CC\u0634 \u0631\u0648\u06CC \u0646\u0642\u0634\u0647", "noChange": "\u0641\u0627\u06CC\u0644 \u062C\u062F\u06CC\u062F\u06CC \u062F\u0631 Drive \u0646\u0628\u0648\u062F\u061B \u062F\u0627\u062F\u0647 \u0628\u0647\u200C\u0631\u0648\u0632 \u0627\u0633\u062A", "exportLimit": "\u0641\u0627\u06CC\u0644 Google Sheet \u0628\u0632\u0631\u06AF\u200C\u062A\u0631 \u0627\u0632 \u06F1\u06F0 \u0645\u06AF\u0627\u0628\u0627\u06CC\u062A \u0627\u0633\u062A\u061B \u0622\u0646 \u0631\u0627 \u0628\u0647\u200C\u0635\u0648\u0631\u062A xlsx \u062F\u0631 Drive \u0628\u06AF\u0630\u0627\u0631\u06CC\u062F", "backup": "\u067E\u0634\u062A\u06CC\u0628\u0627\u0646 \u0627\u0632 \u0628\u0631\u0646\u0627\u0645\u0647", "restore": "\u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0628\u0631\u0646\u0627\u0645\u0647", "backupOk": "\u067E\u0634\u062A\u06CC\u0628\u0627\u0646 \u062F\u0631 Drive \u0630\u062E\u06CC\u0631\u0647 \u0634\u062F", "noBackup": "\u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC \u062F\u0631 Drive \u067E\u06CC\u062F\u0627 \u0646\u0634\u062F", "confirmRestore": "\u0628\u0631\u0646\u0627\u0645\u0647 \u0641\u0639\u0644\u06CC \u0628\u0627 \u067E\u0634\u062A\u06CC\u0628\u0627\u0646 \u062C\u0627\u06CC\u06AF\u0632\u06CC\u0646 \u0634\u0648\u062F\u061F", "backupDirty": "\u062A\u063A\u06CC\u06CC\u0631\u0627\u062A \u0628\u0631\u0646\u0627\u0645\u0647 \u0647\u0646\u0648\u0632 \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u200C\u06AF\u06CC\u0631\u06CC \u0646\u0634\u062F\u0647 \u0627\u0633\u062A", "quality": "\u06A9\u06CC\u0641\u06CC\u062A \u062F\u0627\u062F\u0647", "salesShort": "\u0641\u0631\u0648\u0634", "savedF": "\u0641\u06CC\u0644\u062A\u0631\u0647\u0627\u06CC \u0630\u062E\u06CC\u0631\u0647\u200C\u0634\u062F\u0647", "savedName": "\u0646\u0627\u0645 \u0641\u06CC\u0644\u062A\u0631", "q_jp": "\u0641\u0631\u0648\u0634\u06AF\u0627\u0647\u200C\u0647\u0627\u06CC JP", "q_noGps": "\u0628\u062F\u0648\u0646 \u0645\u062E\u062A\u0635\u0627\u062A", "q_noRoute": "\u0628\u062F\u0648\u0646 \u0645\u0633\u06CC\u0631", "q_noSales": "JP \u0628\u062F\u0648\u0646 \u0633\u0627\u0628\u0642\u0647 \u0641\u0631\u0648\u0634", "q_salesOnly": "\u0641\u0642\u0637 \u062F\u0631 \u06AF\u0632\u0627\u0631\u0634 \u0641\u0631\u0648\u0634", "q_orders": "\u0633\u0641\u0627\u0631\u0634\u200C\u0647\u0627\u06CC \u0645\u0639\u062A\u0628\u0631", "q_openNoTarget": "\u0633\u0641\u0627\u0631\u0634 \u0628\u0627\u0632 \u0628\u062F\u0648\u0646 \u062A\u0627\u0631\u06CC\u062E \u062A\u062D\u0648\u06CC\u0644", "q_noOrderDate": "\u0633\u0641\u0627\u0631\u0634 \u0628\u062F\u0648\u0646 \u062A\u0627\u0631\u06CC\u062E", "q_dropped": "\u0631\u062F\u06CC\u0641\u200C\u0647\u0627\u06CC \u062D\u0630\u0641\u200C\u0634\u062F\u0647 (Closed/expired)", "v_done": "\u0627\u0646\u062C\u0627\u0645 \u0634\u062F", "v_skip": "\u0627\u0646\u062C\u0627\u0645 \u0646\u0634\u062F", "pinTitle": "\u0642\u0641\u0644 \u0628\u0631\u0646\u0627\u0645\u0647 (PIN)", "pinNote": "\u0642\u0641\u0644 \u0633\u0627\u062F\u0647 \u0628\u0631\u0627\u06CC \u062C\u0644\u0648\u06AF\u06CC\u0631\u06CC \u0627\u0632 \u062F\u06CC\u062F\u0646 \u062A\u0635\u0627\u062F\u0641\u06CC \u062F\u0627\u062F\u0647\u061B \u062F\u0627\u062F\u0647 \u0631\u0645\u0632\u0646\u06AF\u0627\u0631\u06CC \u0646\u0645\u06CC\u200C\u0634\u0648\u062F. \u0627\u06AF\u0631 PIN \u0631\u0627 \u0641\u0631\u0627\u0645\u0648\u0634 \u06A9\u0631\u062F\u06CC\u062F \u0628\u0627\u06CC\u062F \u062F\u0627\u062F\u0647\u200C\u0647\u0627\u06CC \u0633\u0627\u06CC\u062A \u0631\u0627 \u0627\u0632 Safari \u067E\u0627\u06A9 \u06A9\u0646\u06CC\u062F.", "pinFormat": "\u06F4 \u062A\u0627 \u06F1\u06F2 \u0631\u0642\u0645", "pinRemove": "\u062D\u0630\u0641 PIN", "unlock": "\u0648\u0631\u0648\u062F", "pinWrong": "PIN \u0627\u0634\u062A\u0628\u0627\u0647 \u0627\u0633\u062A", "pinWait": "\u06F3\u06F0 \u062B\u0627\u0646\u06CC\u0647 \u0635\u0628\u0631 \u06A9\u0646\u06CC\u062F", "version": "\u0646\u0633\u062E\u0647" });
+  Object.assign(D.en, { "showMap": "Show on map", "noChange": "No newer files in Drive; data is up to date", "exportLimit": "Google Sheet is over 10 MB; store it as xlsx in Drive", "backup": "Back up plan", "restore": "Restore plan", "backupOk": "Backup saved to Drive", "noBackup": "No backup found in Drive", "confirmRestore": "Replace the current plan with the backup?", "backupDirty": "Plan changes are not backed up yet", "quality": "Data quality", "salesShort": "Sales", "savedF": "Saved filters", "savedName": "Filter name", "q_jp": "JP stores", "q_noGps": "Without coordinates", "q_noRoute": "Without route", "q_noSales": "JP without sales history", "q_salesOnly": "Only in sales report", "q_orders": "Valid orders", "q_openNoTarget": "Open orders without delivery date", "q_noOrderDate": "Orders without date", "q_dropped": "Rows removed (Closed/expired)", "v_done": "Visited", "v_skip": "Not visited", "pinTitle": "App lock (PIN)", "pinNote": "A simple lock to keep casual viewers out; data is not encrypted. If you forget the PIN, clear the site data in Safari.", "pinFormat": "4\u201312 digits", "pinRemove": "Remove PIN", "unlock": "Unlock", "pinWrong": "Wrong PIN", "pinWait": "Wait 30 seconds", "version": "Version" });
   var lang = "fa";
   var setLang = (l) => {
     lang = l;
@@ -883,12 +895,27 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
     return validatePlanRows(aoa, byId2, plan, pending);
   }
 
+  var VERSION = "2.0.0";
+  var DEF = { clientId: "1098731892951-2e7jipvf33evn0a69tt0tje94oor54lm.apps.googleusercontent.com", folderId: "1sgTsZu2zzSBi-pz2M9pVBHtjCtQELYhk" };
   var $ = (s) => document.querySelector(s);
   var S = { ds: null, raw: null, plan: [], pending: [], page: "map", filters: { q: "", type: "all", route: "", salesman: "", day: "" }, weekStart: null, pos: null, radius: 0, importErrors: [], settings: lsGet("settings", { lang: "fa", theme: "auto", clientId: "", folderId: "", tile: "https://tile.openstreetmap.org/{z}/{x}/{y}.png" }) };
+  S.settings.clientId = S.settings.clientId || DEF.clientId;
+  S.settings.folderId = S.settings.folderId || DEF.folderId;
   var map;
   var layer;
   var byId = /* @__PURE__ */ new Map();
   var toastT;
+  var nameDate = (n) => {
+    const m = String(n || "").match(/(1[34]\d{2})(\d{2})(\d{2})/);
+    return m ? `${m[1]}/${m[2]}/${m[3]}` : "\u2014";
+  };
+  var sigOf = () => {
+    const x = JSON.stringify([S.plan, S.pending]);
+    let h = 0;
+    for (let i = 0; i < x.length; i++) h = h * 31 + x.charCodeAt(i) | 0;
+    return h;
+  };
+  var savedFilters = () => lsGet("savedFilters", []);
   var toast = (m) => {
     const e = $("#toast");
     e.textContent = m;
@@ -921,11 +948,12 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
     byId = new Map(S.ds.stores.map((s) => [s.id, s]));
   }
   async function ingest(files) {
-    var _a, _b, _c, _d, _e;
-    const next = { jp: (_a = S.raw) == null ? void 0 : _a.jp, sales: (_b = S.raw) == null ? void 0 : _b.sales, map: (_c = S.raw) == null ? void 0 : _c.map, names: { ...((_d = S.raw) == null ? void 0 : _d.names) || {} }, at: (_e = S.raw) == null ? void 0 : _e.at };
+    var _a, _b, _c, _d, _e, _f;
+    const next = { jp: (_a = S.raw) == null ? void 0 : _a.jp, sales: (_b = S.raw) == null ? void 0 : _b.sales, map: (_c = S.raw) == null ? void 0 : _c.map, names: { ...((_d = S.raw) == null ? void 0 : _d.names) || {} }, meta: { ...((_e = S.raw) == null ? void 0 : _e.meta) || {} }, at: (_f = S.raw) == null ? void 0 : _f.at };
     for (const k of ["jp", "sales", "map"]) if (files[k]) {
       next[k] = files[k].aoa;
       next.names[k] = files[k].name;
+      next.meta[k] = files[k].meta || null;
     }
     if (!next.jp || !next.sales) throw new Error(t("needData"));
     const prev = S.raw;
@@ -985,6 +1013,8 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
     return `<label class="f">${t("type")}</label><select data-f="type">${["all", "hasSales", "noSales", "salesOnly"].map((v) => `<option value="${v}" ${f.type === v ? "selected" : ""}>${t(v)}</option>`).join("")}</select>
   ${sel("route", t("regions"), [...options("route"), ...S.ds.stores.some((x) => !x.route && matches(x, S.filters, "route")) ? [[NO_ROUTE, t("noRoute")]] : []], t("all"))}${sel("salesman", t("salesman"), options("salesman"), t("all"))}
   <label class="f">${t("day")}</label><select data-f="day">${dayOpts.map(([v, l]) => `<option value="${v}" ${f.day === v ? "selected" : ""}>${l}</option>`).join("")}</select>
+  <h3>${t("savedF")}</h3><div class="row">${savedFilters().map((x, i) => `<span class="row" style="gap:2px"><button class="btn sm" data-sf="${i}">${esc(x.name)}</button><button class="btn sm dng" data-sx="${i}">\u2715</button></span>`).join("") || `<span class="mu">\u2014</span>`}</div>
+  <div class="row" style="margin-top:6px"><input type="text" id="sfn" placeholder="${esc(t("savedName"))}" style="flex:1"><button class="btn sm" id="sfs">\u{1F4BE} ${t("save")}</button></div>
   <div class="row" style="margin-top:12px"><button class="btn" id="fclr">${t("clear")}</button><span class="sp"></span><button class="btn pri" id="fok">${t("close")}</button></div>`;
   }
   function openFilters() {
@@ -1000,6 +1030,28 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
       el.querySelector("#fok").onclick = () => {
         closeSheet();
         render();
+      };
+      el.querySelectorAll("[data-sf]").forEach((b) => b.onclick = () => {
+        const x = savedFilters()[+b.dataset.sf];
+        if (x) {
+          S.filters = { ...x.f, q: S.filters.q };
+          openFilters();
+        }
+      });
+      el.querySelectorAll("[data-sx]").forEach((b) => b.onclick = () => {
+        const a = savedFilters();
+        a.splice(+b.dataset.sx, 1);
+        lsSet("savedFilters", a);
+        openFilters();
+      });
+      el.querySelector("#sfs").onclick = () => {
+        const n = el.querySelector("#sfn").value.trim();
+        if (!n) return toast(t("savedName"));
+        const a = savedFilters().filter((x) => x.name !== n);
+        const { type, route, salesman, day } = S.filters;
+        a.push({ name: n, f: { type, route, salesman, day } });
+        lsSet("savedFilters", a.slice(-12));
+        openFilters();
       };
     });
   }
@@ -1020,6 +1072,7 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
     $("#sheet").innerHTML = "";
   }
   function nav() {
+    var _a;
     const items = [["map", "\u{1F5FA}\uFE0F"], ["stores", "\u{1F3EA}"], ["plan", "\u{1F4C5}"], ["data", "\u{1F4C1}"], ["settings", "\u2699\uFE0F"]];
     $("#nav").innerHTML = items.map(([k, i]) => `<button data-p="${k}" class="${S.page === k ? "on" : ""}"><span class="i">${i}</span>${t(k)}</button>`).join("");
     $("#nav").querySelectorAll("button").forEach((b) => b.onclick = () => {
@@ -1027,11 +1080,15 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
       render();
     });
     $("#net").textContent = navigator.onLine ? "" : "\u26A0 offline";
+    const n = (_a = S.raw) == null ? void 0 : _a.names;
+    $("#dinfo").textContent = n ? `JP ${nameDate(n.jp)} \xB7 ${t("salesShort")} ${nameDate(n.sales)}` : "";
+    $("#rf").onclick = driveSync;
   }
   function render() {
     nav();
     const v = $("#view");
     v.className = S.page === "map" ? "mapv" : "";
+    if (S.page !== "map") S.focus = null;
     if (map && S.page !== "map") {
       map.remove();
       map = null;
@@ -1047,7 +1104,9 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
   };
   function pageMap(v) {
     if (!S.ds) return needData(v);
-    const list = withNearby(filtered());
+    let list = withNearby(filtered());
+    const fs = S.focus && byId.get(S.focus);
+    if (fs && !list.includes(fs)) list = [...list, fs];
     v.innerHTML = `<div class="mapbar"><input type="search" id="q" placeholder="${esc(t("search"))}" value="${esc(S.filters.q)}"><button class="btn" id="fb">\u2699 ${t("filters")}</button><button class="btn" id="loc" title="${t("locate")}">\u{1F4CD}</button></div><div id="map"></div>
   <div class="legend"><span><i class="dot g"></i>${t("legG")}</span><span><i class="dot o"></i>${t("legO")}</span><span><i class="dot b"></i>${t("legB")}</span><span class="mu">${list.length} ${t("results")} \xB7 ${list.filter((s) => s.lat === null).length} ${t("noGPS")}</span></div>`;
     $("#q").oninput = (e) => {
@@ -1064,7 +1123,8 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
     map = L.map("map", { preferCanvas: true, zoomControl: true }).setView([35.8, 51], 11);
     L.tileLayer(S.settings.tile, { maxZoom: 19, attribution: "\xA9 OpenStreetMap" }).addTo(map);
     layer = L.layerGroup().addTo(map);
-    drawMarkers(list, true);
+    drawMarkers(list, !(fs && fs.lat !== null));
+    if (fs && fs.lat !== null) map.setView([fs.lat, fs.lng], 17);
     requestAnimationFrame(() => map && map.invalidateSize());
     setTimeout(() => map && map.invalidateSize(), 300);
     if (!navigator.onLine) toast(t("mapOffline"));
@@ -1083,6 +1143,8 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
       pts.push([s.lat, s.lng]);
       L.circleMarker([s.lat, s.lng], { radius: 7, color: "#fff", weight: 1.5, fillColor: COLOR[s.status], fillOpacity: 0.95 }).on("click", () => detail(s.id)).addTo(layer);
     }
+    const fo = S.focus && byId.get(S.focus);
+    if (fo && fo.lat !== null) L.circleMarker([fo.lat, fo.lng], { radius: 15, color: "#dc2626", weight: 3, fill: false }).addTo(layer);
     if (S.pos) L.circleMarker([S.pos.lat, S.pos.lng], { radius: 9, color: "#fff", fillColor: "#dc2626", fillOpacity: 1 }).addTo(layer);
     if (fit && pts.length) map.fitBounds(pts, { padding: [24, 24], maxZoom: 15 });
     const lg = document.querySelector(".legend .mu");
@@ -1107,7 +1169,7 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
     if (!S.ds) return needData(v);
     const list = withNearby(filtered()), shown = list.slice(0, 200);
     v.innerHTML = `<div class="pad wrap"><div class="row"><input type="search" id="q" placeholder="${esc(t("search"))}" value="${esc(S.filters.q)}" style="flex:1"><button class="btn" id="fb">\u2699</button></div>
-  <div class="row" style="margin:8px 0"><button class="btn sm" id="loc">\u{1F4CD} ${t("nearby")}</button><select id="rad" class="sm"><option value="0">${t("radius")}</option>${[500, 1e3, 5e3].map((r) => `<option value="${r}" ${S.radius === r ? "selected" : ""}>${r < 1e3 ? r + " m" : r / 1e3 + " km"}</option>`).join("")}</select><span class="mu">${list.length} ${t("results")}</span></div>
+  <div class="row" style="margin:8px 0"><button class="btn sm" id="loc">\u{1F4CD} ${t("nearby")}</button><select id="rad" class="sm"><option value="0">${t("radius")}</option>${[500, 1e3, 5e3].map((r) => `<option value="${r}" ${S.radius === r ? "selected" : ""}>${r < 1e3 ? r + " m" : r / 1e3 + " km"}</option>`).join("")}</select><span class="mu">${list.length} ${t("results")}</span><span class="sp"></span><button class="btn sm pri" id="onmap">\u{1F5FA} ${t("showMap")}</button></div>
   <div id="lst">${shown.map(storeCard).join("") || `<div class="card">${t("nothing")}</div>`}</div>${list.length > 200 ? `<button class="btn" id="more">+200 \u2026</button>` : ""}</div>`;
     $("#q").oninput = (e) => {
       S.filters.q = e.target.value;
@@ -1122,6 +1184,11 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
     };
     $("#fb").onclick = openFilters;
     $("#loc").onclick = () => locate(false);
+    $("#onmap").onclick = () => {
+      S.focus = null;
+      S.page = "map";
+      render();
+    };
     $("#rad").onchange = (e) => {
       S.radius = +e.target.value;
       if (S.radius && !S.pos) locate(false);
@@ -1149,7 +1216,7 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
     const orders = s.orders.map((o) => `<tr><td>${esc(o.order)}<br><span class="mu">${esc(o.status)}</span></td><td>${jd(o.orderDate)}</td><td>${jd(o.target)}</td><td>${jd(o.inv)}</td><td>${o.state === "open" ? `<span class="chip o">${t("open")}</span>` : `<span class="chip g">${t("invoiced")}</span>`}${o.overdue === true ? ` <span class="chip r">${t("overdue")}</span>` : ""}${o.state === "open" && o.overdue === null ? `<br><span class="mu">${t("noTarget")}</span>` : ""}</td></tr><tr><td colspan="5" class="mu">${o.items.map((i) => `${esc(i.product)} \xD7 ${i.qty}`).join(" \xB7 ")}</td></tr>`).join("");
     sheet(`<h2>${badge(s)}${esc(s.storeName || s.name || s.id)}</h2>
   <dl class="kv"><dt>${t("custId")}</dt><dd>${esc(s.id)}</dd><dt>${t("custName")}</dt><dd>${esc(s.name)}</dd><dt>${t("storeName")}</dt><dd>${esc(s.storeName) || "\u2014"}</dd><dt>${t("cls")}</dt><dd>${esc(s.cls) || "\u2014"}</dd><dt>${t("address")}</dt><dd>${esc(s.address)}</dd><dt>${t("route")}</dt><dd>${esc(s.route) || "\u2014"} <span class="mu">(${t("rs_" + (s.routeSource || "Area"))})</span></dd><dt>${t("area")} / ${t("territory")}</dt><dd>${esc(s.area) || "\u2014"} / ${esc(s.territory) || "\u2014"}</dd><dt>${t("salesman")}</dt><dd>${esc(s.salesman) || "\u2014"}</dd><dt>${t("coords")}</dt><dd>${s.lat !== null ? s.lat.toFixed(6) + ", " + s.lng.toFixed(6) : t("noGPS")}</dd><dt>${t("inJP")}</dt><dd>${s.inJP ? t("yes") : t("no")}${s.inJP ? " \xB7 " + DAY_KEYS.filter((d) => s.days[d]).map((d) => t("d_" + d)).join("\u060C ") : ""}</dd><dt>${t("purchase")}</dt><dd>${s.hasSales ? t("yes") : t("no")} \xB7 ${t("lastPurchase")}: ${jd(s.lastPurchase)}</dd></dl>
-  <div class="row" style="margin:10px 0">${navLinks(s)}<button class="btn pri" id="addp">${t("addPlan")}</button></div>
+  <div class="row" style="margin:10px 0">${navLinks(s)}<button class="btn pri" id="addp">${t("addPlan")}</button><button class="btn" id="onm">\u{1F5FA} ${t("showMap")}</button></div>
   <h3>${t("orders")} (${s.orders.length})</h3>${orders ? `<table class="t"><tr><th>${t("orderNo")}</th><th>${t("orderDate")}</th><th>${t("targetDate")}</th><th>${t("invoiceDate")}</th><th></th></tr>${orders}</table>` : `<div class="mu">${t("noOrders")}</div>`}
   <h3>${t("basket")}</h3>${s.basket.length ? `<table class="t">${s.basket.map((b) => `<tr><td>${esc(b.product)}</td><td>${b.qty}</td></tr>`).join("")}</table>` : `<div class="mu">\u2014</div>`}
   <div class="row" style="margin-top:12px"><button class="btn" id="cl">${t("close")}</button></div>`, (el) => {
@@ -1157,6 +1224,13 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
         closeSheet();
       };
       el.querySelector("#addp").onclick = () => addPlanDialog(s);
+      el.querySelector("#onm").onclick = () => {
+        if (s.lat === null) return toast(t("noGPS"));
+        S.focus = s.id;
+        closeSheet();
+        S.page = "map";
+        render();
+      };
     });
   }
   function addPlanDialog(s, prefDate) {
@@ -1252,11 +1326,12 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
     const cnt = (d) => S.plan.filter((p) => p.visitDate === d).length;
     v.innerHTML = `<div class="pad wrap"><div class="row"><button class="btn sm" id="pw">\u2039 ${t("prevWeek")}</button><span class="sp mu" style="text-align:center">${t("week")} ${jd(days[0])} \u2013 ${jd(days[5])}</span><button class="btn sm" id="nw">${t("nextWeek")} \u203A</button></div>
   <div class="tabs" style="margin-top:8px">${days.map((d) => `<button class="btn sm ${d === S.selDay ? "on" : ""}" data-d="${d}">${t("d_" + dayKeyOfISO(d))}<br>${jd(d).slice(5)} (${cnt(d)})</button>`).join("")}</div>
-  <div class="row" style="margin:6px 0"><button class="btn sm" id="sg">${t("suggest")}</button></div>
-  <div id="pl">${items.map((p, i) => `<div class="card"><div class="row"><b>${i + 1}. ${esc(p.storeName || p.customerName)}</b><span class="chip">${t(p.priority)}</span><span class="chip">${t(p.source)}</span><span class="sp"></span></div><div class="mu">${esc(p.customerName)} \xB7 ${esc(p.customerId)} \xB7 ${esc(p.route)}</div><div class="mu">${esc(p.address)}</div>${p.reason ? `<div class="mu">${t("reason")}: ${esc(p.reason)}</div>` : ""}${p.comment ? `<div class="mu">${esc(p.comment)}</div>` : ""}<div class="row" style="margin-top:6px"><button class="btn sm" data-up="${p.pid}" ${i === 0 ? "disabled" : ""}>\u2191</button><button class="btn sm" data-dn="${p.pid}" ${i === items.length - 1 ? "disabled" : ""}>\u2193</button><button class="btn sm" data-ed="${p.pid}">${t("edit")}</button><button class="btn sm" data-sd="${p.pid}">${t("details")}</button></div></div>`).join("") || `<div class="card mu">${t("noVisits")}</div>`}</div>
+  <div class="row" style="margin:6px 0"><button class="btn sm" id="sg">${t("suggest")}</button><span class="sp"></span><span class="mu">\u2714 ${items.filter((p) => p.visit === "done").length}/${items.length}</span></div>
+  ${S.plan.length + S.pending.length && lsGet("lastBackup", {}).sig !== sigOf() ? `<div class="card" style="border-color:var(--o)"><div class="mu">\u26A0 ${t("backupDirty")}</div><button class="btn sm pri" id="bk2" style="margin-top:6px">\u2601 ${t("backup")}</button></div>` : ""}
+  <div id="pl">${items.map((p, i) => `<div class="card"><div class="row"><b>${i + 1}. ${esc(p.storeName || p.customerName)}</b><span class="chip">${t(p.priority)}</span><span class="chip">${t(p.source)}</span>${p.visit ? `<span class="chip ${p.visit === "done" ? "g" : "r"}">${t("v_" + p.visit)}</span>` : ""}<span class="sp"></span></div><div class="mu">${esc(p.customerName)} \xB7 ${esc(p.customerId)} \xB7 ${esc(p.route)}</div><div class="mu">${esc(p.address)}</div>${p.reason ? `<div class="mu">${t("reason")}: ${esc(p.reason)}</div>` : ""}${p.comment ? `<div class="mu">${esc(p.comment)}</div>` : ""}<div class="row" style="margin-top:6px"><button class="btn sm" data-up="${p.pid}" ${i === 0 ? "disabled" : ""}>\u2191</button><button class="btn sm" data-dn="${p.pid}" ${i === items.length - 1 ? "disabled" : ""}>\u2193</button><button class="btn sm" data-ed="${p.pid}">${t("edit")}</button><button class="btn sm" data-sd="${p.pid}">${t("details")}</button><button class="btn sm" data-vd="${p.pid}">\u2714</button><button class="btn sm" data-vs="${p.pid}">\u2716</button></div></div>`).join("") || `<div class="card mu">${t("noVisits")}</div>`}</div>
   ${S.pending.length ? `<h3>${t("pending")} (${S.pending.length})</h3>${S.pending.map((p) => `<div class="card"><div class="row"><b>${esc(p.storeName || p.customerName)}</b><span class="chip">${jd(p.visitDate)}</span><span class="chip">${t(p.priority)}</span><span class="chip">External</span></div><div class="mu">${esc(p.customerId)} \xB7 ${esc(p.address)}</div>${p.reason ? `<div class="mu">${esc(p.reason)}</div>` : ""}<div class="row" style="margin-top:6px"><button class="btn sm pri" data-ap="${p.pid}">${t("approve")}</button><button class="btn sm" data-mv="${p.pid}">${t("moveDay")}</button><button class="btn sm dng" data-rj="${p.pid}">${t("reject")}</button></div></div>`).join("")}` : ""}
   ${S.importErrors.length ? `<h3 class="err">${t("errorsReport")} (${S.importErrors.length})</h3><table class="t">${S.importErrors.map((e) => `<tr><td>${t("row")} ${e.row}</td><td>${esc(e.id)}</td><td class="err">${t("E_" + e.reason)}</td></tr>`).join("")}</table>` : ""}
-  <div class="row" style="margin-top:14px"><button class="btn pri" id="ex">${t("exportPlan")}</button><label class="btn">${t("importPlan")}<input type="file" id="im" accept=".xlsx" hidden></label></div></div>`;
+  <div class="row" style="margin-top:14px"><button class="btn pri" id="ex">${t("exportPlan")}</button><label class="btn">${t("importPlan")}<input type="file" id="im" accept=".xlsx" hidden></label><button class="btn" id="bk">\u2601 ${t("backup")}</button><button class="btn" id="rs">\u2913 ${t("restore")}</button></div></div>`;
     v.querySelector("#pw").onclick = () => {
       S.weekStart = addDaysISO(S.weekStart, -7);
       render();
@@ -1270,6 +1345,18 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
       render();
     });
     v.querySelector("#sg").onclick = () => suggestOrder(S.selDay);
+    const vis = (pid, val) => {
+      const p = S.plan.find((x) => x.pid === pid);
+      p.visit = p.visit === val ? "" : val;
+      savePlan();
+      render();
+    };
+    v.querySelectorAll("[data-vd]").forEach((b) => b.onclick = () => vis(b.dataset.vd, "done"));
+    v.querySelectorAll("[data-vs]").forEach((b) => b.onclick = () => vis(b.dataset.vs, "skip"));
+    v.querySelector("#bk").onclick = backupPlan;
+    v.querySelector("#rs").onclick = restorePlan;
+    const b2 = v.querySelector("#bk2");
+    if (b2) b2.onclick = backupPlan;
     const mv = (pid, dir) => {
       const l = sortedForDay(S.plan, S.selDay), i = l.findIndex((p) => p.pid === pid), j = i + dir;
       if (j < 0 || j >= l.length) return;
@@ -1315,6 +1402,20 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
       }
     };
   }
+  function quality() {
+    const st = S.ds.stores, jp = st.filter((s) => s.inJP), ords = st.flatMap((s) => s.orders), x = S.ds.stats;
+    return [
+      ["jp", jp.length],
+      ["noGps", jp.filter((s) => s.lat === null).length, jp.length],
+      ["noRoute", st.filter((s) => !s.route).length, st.length],
+      ["noSales", jp.filter((s) => !s.hasSales).length, jp.length],
+      ["salesOnly", st.filter((s) => !s.inJP).length],
+      ["orders", ords.length],
+      ["openNoTarget", ords.filter((o) => o.state === "open" && !o.target).length],
+      ["noOrderDate", ords.filter((o) => !o.orderDate).length],
+      ["dropped", x.droppedRows]
+    ];
+  }
   function reportRows(kind) {
     const st = S.ds.stores, base = (r) => [r.id, r.name, r.storeName, r.cls, r.address, r.route, r.salesman, r.lat, r.lng];
     const H = ["Customer ID", "Customer Name", "Store Name", "Customer Class", "Address", "Route", "Salesman", "Latitude", "Longitude"];
@@ -1334,14 +1435,15 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
   }
   function pageData(v) {
     var _a;
-    const r = S.raw, st = (_a = S.ds) == null ? void 0 : _a.stats;
+    const r = S.raw, st = (_a = S.ds) == null ? void 0 : _a.stats, qa = S.ds ? quality() : null;
     v.innerHTML = `<div class="pad wrap"><div class="card"><h2>${t("files")}</h2>
   ${[["jp", "fJP"], ["sales", "fSales"], ["map", "fMap"]].map(([k, l]) => {
       var _a2;
       return `<label class="f">${t(l)}${((_a2 = r == null ? void 0 : r.names) == null ? void 0 : _a2[k]) ? ` \u2014 <b>${esc(r.names[k])}</b>` : ""}</label><input type="file" data-k="${k}" accept=".xlsx,.xls,.csv">`;
     }).join("")}
   <div class="row" style="margin-top:10px"><button class="btn pri" id="ld">${t("load")}</button></div><div id="msg" class="err" style="margin-top:6px"></div></div>
-  <div class="card"><h2>${t("drive")}</h2><div class="mu">${t("driveNote")}</div><button class="btn pri" id="ds" style="margin-top:8px">${t("driveSync")}</button><div id="dmsg" class="mu"></div></div>
+  <div class="card"><h2>${t("drive")}</h2><div class="mu">${t("driveNote")}</div><button class="btn pri" id="ds" style="margin-top:8px">${t("driveSync")}</button><div class="row" style="margin-top:6px"><button class="btn sm" id="bk3">\u2601 ${t("backup")}</button><button class="btn sm" id="rs3">\u2913 ${t("restore")}</button></div><div id="dmsg" class="mu"></div></div>
+  ${qa ? `<div class="card"><h2>${t("quality")}</h2><table class="t">${qa.map(([k, n, tot]) => `<tr><td>${t("q_" + k)}</td><td>${n}${tot ? ` <span class="mu">(${Math.round(n * 100 / tot)}%)</span>` : ""}</td></tr>`).join("")}</table></div>` : ""}
   ${S.ds ? `<div class="card"><h2>${t("stats")}</h2><div class="mu">${t("lastSync")}: ${esc(r.at ? new Date(r.at).toLocaleString(getLang() === "fa" ? "fa-IR-u-ca-persian" : "en-GB") : "")}</div><div>JP: ${st.jp} \xB7 ${t("salesOnly")}: ${st.salesOnly} \xB7 ${t("orders")}: ${st.orders} \xB7 Closed/expired: ${st.droppedRows}</div><div class="mu">${t("noteClosedUndel")}</div></div>
   <div class="card"><h2>${t("reports")}</h2><div class="row">${[["nogps", "rNoGPS"], ["nobuy", "rNoBuy"], ["open", "rOpen"], ["overdue", "rOverdue"]].map(([k, l]) => `<button class="btn sm" data-r="${k}">\u2B07 ${t(l)} (${reportRows(k).length - 1})</button>`).join("")}</div></div>` : ""}</div>`;
     v.querySelector("#ld").onclick = async () => {
@@ -1355,65 +1457,204 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
       }
     };
     v.querySelector("#ds").onclick = driveSync;
+    v.querySelector("#bk3").onclick = backupPlan;
+    v.querySelector("#rs3").onclick = restorePlan;
     v.querySelectorAll("[data-r]").forEach((b) => b.onclick = () => exportReport(b.dataset.r));
   }
   var gToken = null;
-  var loadScript = (src) => new Promise((res, rej) => {
-    if (document.querySelector(`script[src="${src}"]`)) return res();
+  var scripts = {};
+  var loadScript = (src) => scripts[src] || (scripts[src] = new Promise((res, rej) => {
     const s = document.createElement("script");
     s.src = src;
     s.onload = res;
-    s.onerror = () => rej(new Error("Network"));
+    s.onerror = () => {
+      delete scripts[src];
+      rej(new Error("Network"));
+    };
     document.head.appendChild(s);
-  });
+  }));
+  var SCOPE = "https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/drive.appdata";
+  var MIME_SHEET = "application/vnd.google-apps.spreadsheet";
+  var MIME_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
   async function driveToken() {
     if (gToken && gToken.exp > Date.now() + 3e4) return gToken.v;
     if (!S.settings.clientId || !S.settings.folderId) throw new Error("Settings: Client ID / Folder ID");
     await loadScript("https://accounts.google.com/gsi/client");
-    return new Promise((res, rej) => google.accounts.oauth2.initTokenClient({ client_id: S.settings.clientId, scope: "https://www.googleapis.com/auth/drive.readonly", callback: (r) => r.access_token ? (gToken = { v: r.access_token, exp: Date.now() + (r.expires_in || 3e3) * 1e3 }, res(r.access_token)) : rej(new Error(r.error || "OAuth")) }).requestAccessToken());
+    return new Promise((res, rej) => google.accounts.oauth2.initTokenClient({ client_id: S.settings.clientId, scope: SCOPE, error_callback: (e) => rej(new Error(e.type || "OAuth popup")), callback: (r) => r.access_token ? (gToken = { v: r.access_token, exp: Date.now() + (r.expires_in || 3e3) * 1e3 }, res(r.access_token)) : rej(new Error(r.error || "OAuth")) }).requestAccessToken());
+  }
+  async function gfetch(url, opt = {}) {
+    const tok = await driveToken();
+    const r = await fetch(url, { ...opt, headers: { Authorization: "Bearer " + tok, ...opt.headers || {} } });
+    if (!r.ok) {
+      const e = new Error("Drive " + r.status);
+      e.status = r.status;
+      throw e;
+    }
+    return r;
   }
   async function driveSync() {
-    const msg = $("#dmsg");
-    msg.textContent = t("syncing");
+    var _a, _b;
+    const msg = $("#dmsg") || {}, say = (m) => {
+      msg.textContent = m;
+    };
+    say(t("syncing"));
+    toast(t("syncing"));
     try {
-      const tok = await driveToken(), H = { Authorization: "Bearer " + tok };
-      const q = encodeURIComponent(`'${S.settings.folderId}' in parents and trashed=false`);
-      const lr = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime)&pageSize=200&supportsAllDrives=true&includeItemsFromAllDrives=true`, { headers: H });
-      if (!lr.ok) throw new Error("Drive list " + lr.status);
-      const fl = (await lr.json()).files.filter((f) => /\.xlsx?$/i.test(f.name));
+      await driveToken();
+      const q = encodeURIComponent(`'${S.settings.folderId}' in parents and trashed=false and mimeType!='application/vnd.google-apps.folder'`);
+      const fl = (await (await gfetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,mimeType,modifiedTime)&pageSize=200&supportsAllDrives=true&includeItemsFromAllDrives=true`)).json()).files.filter((f) => /\.xlsx?$/i.test(f.name) || f.mimeType === MIME_SHEET || f.mimeType === MIME_XLSX);
       const grp = { jp: fl.filter((f) => /^JP_/i.test(f.name)), sales: fl.filter((f) => /^TPA_Alborz/i.test(f.name)), map: fl.filter((f) => /product[\s_]*mapping/i.test(f.name)) };
       const out = {}, used = [];
+      let same = 0, warn = "";
       for (const [k, arr] of Object.entries(grp)) {
         arr.sort((a, b) => fileDateKey(b.name) - fileDateKey(a.name) || b.modifiedTime.localeCompare(a.modifiedTime));
         for (const f of arr) {
+          const pm = (_b = (_a = S.raw) == null ? void 0 : _a.meta) == null ? void 0 : _b[k];
+          if (pm && pm.id === f.id && pm.mt === f.modifiedTime && S.raw[k]) {
+            same++;
+            break;
+          }
           try {
-            const r = await fetch(`https://www.googleapis.com/drive/v3/files/${f.id}?alt=media&supportsAllDrives=true`, { headers: H });
-            if (!r.ok) throw new Error(r.status);
-            const aoa = await readAoa(await r.arrayBuffer());
+            const url = f.mimeType === MIME_SHEET ? `https://www.googleapis.com/drive/v3/files/${f.id}/export?mimeType=${encodeURIComponent(MIME_XLSX)}` : `https://www.googleapis.com/drive/v3/files/${f.id}?alt=media&supportsAllDrives=true`;
+            const aoa = await readAoa(await (await gfetch(url)).arrayBuffer());
             if (k === "jp") parseJP(aoa);
             if (k === "sales") parseSales(aoa, f.name);
-            out[k] = { aoa, name: f.name };
+            out[k] = { aoa, name: f.name, meta: { id: f.id, mt: f.modifiedTime } };
             used.push(f.name);
             break;
           } catch (e) {
-            msg.textContent += ` \u26A0 ${f.name}: ${e.message}`;
+            warn += ` \u26A0 ${f.name}: ${e.status === 403 ? t("exportLimit") : e.message}`;
           }
         }
       }
-      if (!Object.keys(out).length) throw new Error(t("nothing"));
+      if (!Object.keys(out).length) {
+        if (same && !warn) {
+          say(t("noChange"));
+          return toast(t("noChange"));
+        }
+        throw new Error((warn || t("nothing")).trim());
+      }
       await ingest(out);
+      say(t("ok") + ": " + used.join(", ") + warn);
       toast(t("ok") + ": " + used.join(", "));
     } catch (e) {
-      msg.textContent = t("errParse") + " " + e.message;
+      say(t("errParse") + " " + e.message);
+      toast(t("errParse") + " " + e.message);
     }
   }
+  var BK = "tpa_plan_backup.json";
+  var findBackup = async () => (await (await gfetch(`https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=${encodeURIComponent(`name='${BK}'`)}&fields=files(id,modifiedTime)`)).json()).files[0];
+  async function backupPlan() {
+    try {
+      toast(t("syncing"));
+      const ex = await findBackup(), bd = "tpa" + Date.now();
+      const body = JSON.stringify({ v: 1, at: (/* @__PURE__ */ new Date()).toISOString(), plan: S.plan, pending: S.pending }), meta = ex ? {} : { name: BK, parents: ["appDataFolder"] };
+      const mp = `--${bd}\r
+Content-Type: application/json; charset=UTF-8\r
+\r
+${JSON.stringify(meta)}\r
+--${bd}\r
+Content-Type: application/json; charset=UTF-8\r
+\r
+${body}\r
+--${bd}--`;
+      await gfetch(ex ? `https://www.googleapis.com/upload/drive/v3/files/${ex.id}?uploadType=multipart` : "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart", { method: ex ? "PATCH" : "POST", headers: { "Content-Type": `multipart/related; boundary=${bd}` }, body: mp });
+      lsSet("lastBackup", { at: Date.now(), sig: sigOf() });
+      toast(t("backupOk"));
+      if (S.page === "plan") render();
+    } catch (e) {
+      toast(t("errParse") + " " + e.message);
+    }
+  }
+  async function restorePlan() {
+    try {
+      const ex = await findBackup();
+      if (!ex) return toast(t("noBackup"));
+      const d = await (await gfetch(`https://www.googleapis.com/drive/v3/files/${ex.id}?alt=media`)).json();
+      if (!Array.isArray(d.plan)) throw new Error("bad backup");
+      if (!confirm(`${t("confirmRestore")}
+${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
+      S.plan = d.plan;
+      S.pending = Array.isArray(d.pending) ? d.pending : [];
+      await savePlan();
+      lsSet("lastBackup", { at: Date.now(), sig: sigOf() });
+      toast(t("ok"));
+      render();
+    } catch (e) {
+      toast(t("errParse") + " " + e.message);
+    }
+  }
+  var sha = async (x) => [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(x)))].map((b) => b.toString(16).padStart(2, "0")).join("");
+  var fails = 0;
+  var lockedUntil = 0;
+  function lockScreen() {
+    const pin = lsGet("pin", null);
+    if (!pin || document.getElementById("lock")) return;
+    const d = document.createElement("div");
+    d.id = "lock";
+    d.innerHTML = `<div class="box"><h2>${t("pinTitle")}</h2><input type="password" inputmode="numeric" id="lp" maxlength="12" autocomplete="off" dir="ltr"><div id="le" class="err"></div><button class="btn pri" id="lb">${t("unlock")}</button></div>`;
+    document.body.appendChild(d);
+    const go = async () => {
+      if (Date.now() < lockedUntil) {
+        $("#le").textContent = t("pinWait");
+        return;
+      }
+      if (await sha(pin.salt + $("#lp").value) === pin.hash) {
+        fails = 0;
+        d.remove();
+      } else {
+        $("#le").textContent = t("pinWrong");
+        $("#lp").value = "";
+        if (++fails >= 5) {
+          lockedUntil = Date.now() + 3e4;
+          fails = 0;
+        }
+      }
+    };
+    $("#lb").onclick = go;
+    $("#lp").onkeydown = (e) => {
+      if (e.key === "Enter") go();
+    };
+    setTimeout(() => $("#lp").focus(), 50);
+  }
+  async function setPin(v) {
+    if (!crypto.subtle) return toast("PIN needs HTTPS");
+    if (!/^\d{4,12}$/.test(v)) return toast(t("pinFormat"));
+    const salt = Math.random().toString(36).slice(2);
+    lsSet("pin", { salt, hash: await sha(salt + v) });
+    toast(t("ok"));
+    render();
+  }
+  var hiddenAt = 0;
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) hiddenAt = Date.now();
+    else if (hiddenAt && Date.now() - hiddenAt > 12e4) lockScreen();
+  });
+  ["gesturestart", "gesturechange", "gestureend"].forEach((ev) => document.addEventListener(ev, (e) => {
+    if (!(e.target.closest && e.target.closest("#map"))) e.preventDefault();
+  }, { passive: false }));
+  document.addEventListener("touchmove", (e) => {
+    if (e.touches.length > 1 && !(e.target.closest && e.target.closest("#map"))) e.preventDefault();
+  }, { passive: false });
   function pageSettings(v) {
     const s = S.settings;
     v.innerHTML = `<div class="pad wrap"><div class="card"><label class="f">${t("language")}</label><select id="lg"><option value="fa" ${s.lang === "fa" ? "selected" : ""}>\u0641\u0627\u0631\u0633\u06CC</option><option value="en" ${s.lang === "en" ? "selected" : ""}>English</option></select>
   <label class="f">${t("theme")}</label><select id="th">${["auto", "light", "dark"].map((x) => `<option value="${x}" ${s.theme === x ? "selected" : ""}>${t(x)}</option>`).join("")}</select>
   <label class="f">${t("clientId")}</label><input type="text" id="ci" value="${esc(s.clientId)}" dir="ltr"><label class="f">${t("folderId")}</label><input type="text" id="fi" value="${esc(s.folderId)}" dir="ltr"><label class="f">${t("tileUrl")}</label><input type="text" id="tl" value="${esc(s.tile)}" dir="ltr">
   <div class="row" style="margin-top:12px"><button class="btn pri" id="sv">${t("save")}</button></div></div>
-  <div class="card"><button class="btn dng" id="c1">${t("clearCache")}</button><br><br><button class="btn dng" id="c2">${t("clearAll")}</button></div></div>`;
+  <div class="card"><h2>${t("pinTitle")}</h2><div class="mu">${t("pinNote")}</div><div class="row" style="margin-top:6px"><input type="password" inputmode="numeric" id="pn" maxlength="12" dir="ltr" placeholder="${esc(t("pinFormat"))}" style="flex:1"><button class="btn sm pri" id="pset">${t("save")}</button>${lsGet("pin", null) ? `<button class="btn sm dng" id="prm">${t("pinRemove")}</button>` : ""}</div></div>
+  <div class="card"><button class="btn dng" id="c1">${t("clearCache")}</button><br><br><button class="btn dng" id="c2">${t("clearAll")}</button></div><div class="mu" style="text-align:center">${t("version")} ${VERSION}</div></div>`;
+    v.querySelector("#pset").onclick = () => setPin($("#pn").value);
+    const pr = v.querySelector("#prm");
+    if (pr) pr.onclick = () => {
+      if (confirm(t("confirmClear"))) {
+        try {
+          localStorage.removeItem("pin");
+        } catch {
+        }
+        render();
+      }
+    };
     v.querySelector("#sv").onclick = () => {
       Object.assign(S.settings, { lang: $("#lg").value, theme: $("#th").value, clientId: $("#ci").value.trim(), folderId: $("#fi").value.trim(), tile: $("#tl").value.trim() || "https://tile.openstreetmap.org/{z}/{x}/{y}.png" });
       saveSettings();
@@ -1441,8 +1682,16 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
     };
   }
   async function boot() {
+    var _a, _b;
     setLang(S.settings.lang);
     applyTheme();
+    lockScreen();
+    try {
+      (_b = (_a = navigator.storage) == null ? void 0 : _a.persist) == null ? void 0 : _b.call(_a);
+    } catch {
+    }
+    if (navigator.onLine) loadScript("https://accounts.google.com/gsi/client").catch(() => {
+    });
     try {
       const p = await dbGet("plan");
       if (p) {
