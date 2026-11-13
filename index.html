@@ -232,7 +232,7 @@ input,select,textarea{font-size:16px!important}
       salesTo: "تا تاریخ (شمسی)",
       salesTon: "تناژ فروش (تن)",
       salesAmount: "مبلغ فروش (ریال)",
-      salesInvoiceRows: "تعداد ردیف‌های فاکتور قطعی",
+      salesInvoiceRows: "مشتریان فعال",
       salesDateHint: "برای نمایش کل فروش، تاریخ‌ها را خالی بگذارید.",
       salesDateError: "تاریخ نامعتبر است یا بازه تاریخ صحیح نیست.",
       salesSummaryUnavailable: "ستون‌های موردنیاز برای محاسبه فروش در فایل وجود ندارد.",
@@ -378,7 +378,7 @@ input,select,textarea{font-size:16px!important}
       salesTo: "To date (Jalali)",
       salesTon: "Sales volume (tons)",
       salesAmount: "Sales amount (Rial)",
-      salesInvoiceRows: "Confirmed invoice rows",
+      salesInvoiceRows: "Active Customers",
       salesDateHint: "Leave both dates blank to show all confirmed invoices.",
       salesDateError: "Invalid date or date range.",
       salesSummaryUnavailable: "Required sales columns are missing from the file.",
@@ -1880,7 +1880,7 @@ input,select,textarea{font-size:16px!important}
   function invoicedSalesSummary(fromText, toText) {
     const raw = S.raw;
     if (!raw || !raw.sales) return { error: t("salesSummaryUnavailable") };
-    const h = findHeader(raw.sales, ["Status", "invoicedate", "وزن خالص", "قیمت واحد", "تعداد"]);
+    const h = findHeader(raw.sales, ["Status", "invoicedate", "کد مشتری", "وزن خالص", "قیمت واحد", "تعداد"]);
     if (!h) return { error: t("salesSummaryUnavailable") };
     const fy = yearFromFileName(raw.names && raw.names.sales);
     const from = fromText ? parseDate(fromText, fy) : null;
@@ -1888,13 +1888,16 @@ input,select,textarea{font-size:16px!important}
     if ((fromText && !from) || (toText && !to) || (from && to && from > to)) {
       return { error: t("salesDateError") };
     }
-    let count = 0, totalKg = 0, totalAmount = 0, missingWeight = 0, missingAmount = 0;
+    let invoiceRows = 0, totalKg = 0, totalAmount = 0, missingWeight = 0, missingAmount = 0;
+    const activeCustomers = new Set();
     for (let i = h.row + 1; i < raw.sales.length; i++) {
       const row = raw.sales[i] || [];
       if (str(cell(row, h.idx, "Status")).toLowerCase() !== "invoiced") continue;
       const invoiceDate = parseDate(cell(row, h.idx, "invoicedate"), fy);
       if (!invoiceDate || (from && invoiceDate < from) || (to && invoiceDate > to)) continue;
-      count++;
+      invoiceRows++;
+      const customerCode = normCode(cell(row, h.idx, "کد مشتری"));
+      if (customerCode) activeCustomers.add(customerCode);
       const weight = num(cell(row, h.idx, "وزن خالص"));
       if (weight === null) missingWeight++;
       else totalKg += weight;
@@ -1903,7 +1906,7 @@ input,select,textarea{font-size:16px!important}
       if (price === null || quantity === null) missingAmount++;
       else totalAmount += price * quantity;
     }
-    return { count, tons: totalKg / 1000, amount: totalAmount, missingWeight, missingAmount };
+    return { invoiceRows, activeCustomers: activeCustomers.size, tons: totalKg / 1000, amount: totalAmount, missingWeight, missingAmount };
   }
 
   function pageData(v) {
@@ -1940,9 +1943,9 @@ input,select,textarea{font-size:16px!important}
       const fmt = (value, digits = 0) => new Intl.NumberFormat(locale, { maximumFractionDigits: digits, minimumFractionDigits: digits }).format(value);
       v.querySelector("#salesTons").textContent = fmt(result.tons, 2);
       v.querySelector("#salesAmount").textContent = fmt(result.amount);
-      v.querySelector("#salesInvoiceRows").textContent = fmt(result.count);
+      v.querySelector("#salesInvoiceRows").textContent = fmt(result.activeCustomers);
       const incomplete = result.missingWeight + result.missingAmount;
-      note.textContent = result.count === 0 ? t("salesNoRows") : incomplete ? t("salesIncomplete") + " " + fmt(incomplete) : "";
+      note.textContent = result.invoiceRows === 0 ? t("salesNoRows") : incomplete ? t("salesIncomplete") + " " + fmt(incomplete) : "";
     };
     const jalaliMonths = getLang() === "fa" ? ["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"] : ["Farvardin","Ordibehesht","Khordad","Tir","Mordad","Shahrivar","Mehr","Aban","Azar","Dey","Bahman","Esfand"];
     const jalaliWeek = getLang() === "fa" ? ["ش","ی","د","س","چ","پ","ج"] : ["Sa","Su","Mo","Tu","We","Th","Fr"];
