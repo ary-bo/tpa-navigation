@@ -1830,9 +1830,12 @@ input,select,textarea{font-size:16px!important}
     });
   }
   function addPlanDialog(s, prefDate) {
-    const base = weekStartOf(todayISO());
-    const dd = prefDate || todayISO();
-    const quick = [...Array(14)].map((_, i) => addDaysISO(base, i)).filter((d) => dayKeyOfISO(d) !== "Friday");
+    const today = todayISO();
+    const base = weekStartOf(today);
+    // Keep the current/future dates only; Friday remains unavailable for visit planning.
+    const quick = [...Array(21)].map((_, i) => addDaysISO(base, i))
+      .filter((d) => d >= today && dayKeyOfISO(d) !== "Friday");
+    const dd = quick.includes(prefDate) ? prefDate : quick[0];
     sheet(`<h2>${t("addPlan")}</h2><div class="mu">${esc(s.storeName || s.name)} \xB7 ${esc(s.id)}</div>
   <label class="f">${t("visitDate")}</label><select id="pd">${quick.map((d) => `<option value="${d}" ${d === dd ? "selected" : ""}>${t("d_" + dayKeyOfISO(d))} ${jd(d)}</option>`).join("")}</select>
   <label class="f">${t("priority")}</label><select id="pp">${PRIORITIES.map((p) => `<option value="${p}" ${p === "Medium" ? "selected" : ""}>${t(p)}</option>`).join("")}</select>
