@@ -52,7 +52,7 @@ button.btn:active{transform:scale(.97)}
 button.pri{background:var(--pr);color:var(--prt);border-color:var(--pr)}button.dng{color:var(--r);border-color:color-mix(in srgb,var(--r) 35%,var(--bd))}
 button.sm{min-height:34px;padding:4px 12px;font-size:13px;border-radius:10px}button:disabled{opacity:.4}
 .chip{display:inline-block;padding:1px 9px;border-radius:99px;font-size:12px;font-weight:600;border:1px solid var(--bd);color:var(--mu);background:var(--bg)}
-.chip.r{color:#fff;background:var(--r);border-color:var(--r)}.chip.o{background:var(--o);color:#2a1d00;border-color:var(--o)}.chip.g{background:var(--g);color:#fff;border-color:var(--g)}
+.chip.r{color:#fff;background:var(--r);border-color:var(--r)}.chip.o{background:var(--o);color:#2a1d00;border-color:var(--o)}.chip.g{background:var(--g);color:#fff;border-color:var(--g)}.chip.vp{background:#9333ea;color:#fff;border-color:#9333ea}
 .dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-inline-end:6px;vertical-align:middle}
 .g{background:var(--g)}.o{background:var(--o)}.b{background:var(--b)}.r{background:var(--r)}
 .num{display:inline-grid;place-items:center;min-width:26px;height:26px;border-radius:50%;background:var(--pr);color:var(--prt);font-weight:700;font-size:13px;margin-inline-end:8px}
@@ -1185,7 +1185,7 @@ input,select,textarea{font-size:16px!important}
       p.order = i + 1;
     });
   }
-  var isDuplicate = (plan, customerId, visitDate) => plan.some((p) => p.customerId === customerId && p.visitDate === visitDate);
+  var isDuplicate = (plan, customerId, visitDate, exceptPid) => plan.some((p) => String(p.customerId) === String(customerId) && p.pid !== exceptPid);
   var safe = (v) => {
     const s = String(v != null ? v : "");
     return /^[=+\-@]/.test(s) ? "'" + s : s;
@@ -1245,7 +1245,7 @@ input,select,textarea{font-size:16px!important}
         }
         pr = f;
       }
-      const k = s.id + "|" + date;
+      const k = String(s.id);
       if (seen.has(k) || isDuplicate(plan, s.id, date) || isDuplicate(pending, s.id, date)) {
         err("DUPLICATE");
         continue;
@@ -1741,7 +1741,7 @@ input,select,textarea{font-size:16px!important}
   var badge = (s) => `<i class="dot ${s.status === "red" ? "r" : s.status === "green" ? "g" : s.status === "orange" ? "o" : "b"}"></i>`;
   function storeCard(s) {
     const inVisitPlan = S.plan.some((p) => String(p.customerId) === String(s.id)) || S.pending.some((p) => String(p.customerId) === String(s.id));
-    return `<div class="card st ${s.status}" data-id="${esc(s.id)}"><div class="row"><b>${esc(s.storeName || s.name || s.id)}</b>${inVisitPlan ? `<span class="chip g">✓ ${t("inVisitPlan")}</span>` : ""}<span class="sp"></span>${s._d !== void 0 ? `<span class="chip">${s._d < 1e3 ? Math.round(s._d) + " m" : (s._d / 1e3).toFixed(1) + " km"} \xB7 ${t("straight")}</span>` : ""}${s.lat === null ? `<span class="chip">${t("noGPS")}</span>` : ""}</div>
+    return `<div class="card st ${s.status}" data-id="${esc(s.id)}"><div class="row"><b>${esc(s.storeName || s.name || s.id)}</b>${inVisitPlan ? `<span class="chip vp">✓ ${t("inVisitPlan")}</span>` : ""}<span class="sp"></span>${s._d !== void 0 ? `<span class="chip">${s._d < 1e3 ? Math.round(s._d) + " m" : (s._d / 1e3).toFixed(1) + " km"} \xB7 ${t("straight")}</span>` : ""}${s.lat === null ? `<span class="chip">${t("noGPS")}</span>` : ""}</div>
   <div class="mu">${esc(s.name)} \xB7 ${esc(s.id)} \xB7 ${esc(s.cls)}</div><div class="mu">${esc(s.address)}</div><div class="mu">${esc(s.route)}${s.lastPurchase ? " \xB7 " + t("lastPurchase") + " " + jd(s.lastPurchase) : ""}${s.openOrders ? ` \xB7 <span class="chip o">${t("open")} ${s.openOrders}</span>` : ""}${s.overdueOrders ? ` <span class="chip r">${t("overdue")} ${s.overdueOrders}</span>` : ""}</div></div>`;
   }
   function pageStores(v) {
@@ -1846,12 +1846,13 @@ input,select,textarea{font-size:16px!important}
       el.querySelector("#no").onclick = () => detail(s.id);
       el.querySelector("#ok").onclick = () => {
         const date = el.querySelector("#pd").value;
-        if (isDuplicate(S.plan, s.id, date)) return toast(t("alreadyIn"));
+        if (isDuplicate(S.plan, s.id, date) || isDuplicate(S.pending, s.id, date)) return toast(t("alreadyIn"));
         S.plan.push(makeRecord(s, date, { comment: el.querySelector("#pc").value, source: "Internal", order: 9999 }));
         renumber(S.plan, date);
         savePlan();
         toast(t("ok"));
         closeSheet();
+        render();
       };
     });
   }
@@ -1891,7 +1892,7 @@ input,select,textarea{font-size:16px!important}
       };
       el.querySelector("#ok").onclick = () => {
         const d = el.querySelector("#d").value;
-        if (isDuplicate(S.plan, p.customerId, d)) return toast(t("alreadyIn"));
+        if (isDuplicate(S.plan, p.customerId, d, p.pid)) return toast(t("alreadyIn"));
         S.pending = S.pending.filter((x) => x.pid !== p.pid);
         p.visitDate = d;
         p.order = 9999;
