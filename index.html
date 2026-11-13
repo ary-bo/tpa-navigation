@@ -277,6 +277,7 @@ input,select,textarea{font-size:16px!important}
       clearCache: "\u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u062F\u0627\u062F\u0647\u200C\u0647\u0627\u06CC \u0641\u0627\u06CC\u0644\u200C\u0647\u0627 (\u0628\u0631\u0646\u0627\u0645\u0647 \u0628\u0627\u0632\u062F\u06CC\u062F \u062D\u0641\u0638 \u0645\u06CC\u200C\u0634\u0648\u062F)",
       clearAll: "\u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u0647\u0645\u0647 \u0686\u06CC\u0632 (\u0634\u0627\u0645\u0644 \u0628\u0631\u0646\u0627\u0645\u0647 \u0628\u0627\u0632\u062F\u06CC\u062F)",
       confirmClear: "\u0645\u0637\u0645\u0626\u0646 \u0647\u0633\u062A\u06CC\u062F\u061F \u0627\u06CC\u0646 \u06A9\u0627\u0631 \u0642\u0627\u0628\u0644 \u0628\u0627\u0632\u06AF\u0634\u062A \u0646\u06CC\u0633\u062A.",
+      confirmRemoveVisit: "\u0627\u0632 \u062D\u0630\u0641 \u0627\u06CC\u0646 \u0641\u0631\u0648\u0634\u06AF\u0627\u0647 \u0627\u0632 \u0628\u0631\u0646\u0627\u0645\u0647 \u0648\u06CC\u0632\u06CC\u062A \u0645\u0637\u0645\u0626\u0646 \u0647\u0633\u062A\u06CC\u062F\u061F",
       mapOffline: "\u0646\u0642\u0634\u0647 \u067E\u0627\u06CC\u0647 \u0622\u0646\u0644\u0627\u06CC\u0646 \u0627\u0633\u062A\u061B \u0628\u062F\u0648\u0646 \u0627\u06CC\u0646\u062A\u0631\u0646\u062A \u06A9\u0627\u0634\u06CC\u200C\u0647\u0627 \u0646\u0645\u0627\u06CC\u0634 \u062F\u0627\u062F\u0647 \u0646\u0645\u06CC\u200C\u0634\u0648\u0646\u062F \u0648\u0644\u06CC \u062F\u0627\u062F\u0647\u200C\u0647\u0627 \u062F\u0631 \u062F\u0633\u062A\u0631\u0633\u200C\u0627\u0646\u062F.",
       errParse: "\u0641\u0627\u06CC\u0644 \u0646\u0627\u0645\u0639\u062A\u0628\u0631 \u0627\u0633\u062A\u061B \u062F\u0627\u062F\u0647 \u0642\u0628\u0644\u06CC \u062D\u0641\u0638 \u0634\u062F:",
       ok: "\u0627\u0646\u062C\u0627\u0645 \u0634\u062F",
@@ -444,6 +445,7 @@ input,select,textarea{font-size:16px!important}
       clearCache: "Clear file data (visit plan is kept)",
       clearAll: "Clear everything (including visit plan)",
       confirmClear: "Are you sure? This cannot be undone.",
+      confirmRemoveVisit: "Remove this store from the visit plan?",
       mapOffline: "The base map is online; tiles will not show offline, but your data stays available.",
       errParse: "Invalid file; previous data kept:",
       ok: "Done",
@@ -1903,16 +1905,13 @@ input,select,textarea{font-size:16px!important}
   }
   function editPlanDialog(p) {
     sheet(`<h2>${t("edit")}</h2><div class="mu">${esc(p.storeName || p.customerName)} \xB7 ${esc(p.customerId)}</div>
-  <label class="f">${t("priority")}</label><select id="pp">${PRIORITIES.map((x) => `<option value="${x}" ${x === p.priority ? "selected" : ""}>${t(x)}</option>`).join("")}</select>
-  <label class="f">${t("reason")}</label><input type="text" id="pr" value="${esc(p.reason)}"><label class="f">${t("comment")}</label><textarea id="pc" rows="2" style="width:100%">${esc(p.comment)}</textarea>
+  <label class="f">${t("comment")}</label><textarea id="pc" rows="2" style="width:100%">${esc(p.comment)}</textarea>
   <div class="row" style="margin-top:12px"><button class="btn pri" id="ok">${t("save")}</button><button class="btn dng" id="del">${t("delete")}</button><button class="btn" id="no">${t("cancel")}</button></div>`, (el) => {
       el.querySelector("#no").onclick = () => {
         closeSheet();
         render();
       };
       el.querySelector("#ok").onclick = () => {
-        p.priority = el.querySelector("#pp").value;
-        p.reason = el.querySelector("#pr").value;
         p.comment = el.querySelector("#pc").value;
         savePlan();
         closeSheet();
@@ -1978,8 +1977,8 @@ input,select,textarea{font-size:16px!important}
   <div class="tabs" style="margin-top:8px">${days.map((d) => `<button class="btn sm ${d === S.selDay ? "on" : ""}" data-d="${d}">${t("d_" + dayKeyOfISO(d))}<br>${jd(d).slice(5)} (${cnt(d)})</button>`).join("")}</div>
   <div class="row" style="margin:6px 0"><button class="btn sm" id="sg">${t("suggest")}</button><button class="btn sm pri" id="pm">${ic("map")} ${t("planMap")}</button><span class="sp"></span><span class="mu">\u2714 ${items.filter((p) => p.visit === "done").length}/${items.length}</span></div>
   ${S.plan.length + S.pending.length && lsGet("lastBackup", {}).sig !== sigOf() ? `<div class="card" style="border-color:var(--o)"><div class="mu">\u26A0 ${t("backupDirty")}</div><button class="btn sm pri" id="bk2" style="margin-top:6px">${t("backup")}</button></div>` : ""}
-  <div id="pl">${items.map((p, i) => `<div class="card"><div class="row"><span class="num">${i + 1}</span><b>${esc(p.storeName || p.customerName)}</b><span class="chip">${t(p.priority)}</span><span class="chip">${t(p.source)}</span>${p.visit ? `<span class="chip ${p.visit === "done" ? "g" : "r"}">${t("v_" + p.visit)}</span>` : ""}<span class="sp"></span></div><div class="mu">${esc(p.customerName)} \xB7 ${esc(p.customerId)} \xB7 ${esc(p.route)}</div><div class="mu">${esc(p.address)}</div>${p.reason ? `<div class="mu">${t("reason")}: ${esc(p.reason)}</div>` : ""}${p.comment ? `<div class="mu">${esc(p.comment)}</div>` : ""}<div class="row" style="margin-top:6px"><button class="btn sm" data-up="${p.pid}" ${i === 0 ? "disabled" : ""}>\u2191</button><button class="btn sm" data-dn="${p.pid}" ${i === items.length - 1 ? "disabled" : ""}>\u2193</button><button class="btn sm" data-ed="${p.pid}">${t("edit")}</button><button class="btn sm" data-sd="${p.pid}">${t("details")}</button><button class="btn sm" data-vd="${p.pid}">\u2714</button><button class="btn sm" data-vs="${p.pid}">\u2716</button></div></div>`).join("") || `<div class="card mu">${t("noVisits")}</div>`}</div>
-  ${S.pending.length ? `<h3>${t("pending")} (${S.pending.length})</h3>${S.pending.map((p) => `<div class="card"><div class="row"><b>${esc(p.storeName || p.customerName)}</b><span class="chip">${jd(p.visitDate)}</span><span class="chip">${t(p.priority)}</span><span class="chip">External</span></div><div class="mu">${esc(p.customerId)} \xB7 ${esc(p.address)}</div>${p.reason ? `<div class="mu">${esc(p.reason)}</div>` : ""}<div class="row" style="margin-top:6px"><button class="btn sm pri" data-ap="${p.pid}">${t("approve")}</button><button class="btn sm" data-mv="${p.pid}">${t("moveDay")}</button><button class="btn sm dng" data-rj="${p.pid}">${t("reject")}</button></div></div>`).join("")}` : ""}
+  <div id="pl">${items.map((p, i) => `<div class="card"><div class="row"><span class="num">${i + 1}</span><b>${esc(p.storeName || p.customerName)}</b><span class="chip">${t(p.source)}</span>${p.visit ? `<span class="chip ${p.visit === "done" ? "g" : "r"}">${t("v_" + p.visit)}</span>` : ""}<span class="sp"></span></div><div class="mu">${esc(p.customerName)} \xB7 ${esc(p.customerId)} \xB7 ${esc(p.route)}</div><div class="mu">${esc(p.address)}</div>${p.reason ? `<div class="mu">${t("reason")}: ${esc(p.reason)}</div>` : ""}${p.comment ? `<div class="mu">${esc(p.comment)}</div>` : ""}<div class="row" style="margin-top:6px"><button class="btn sm" data-up="${p.pid}" ${i === 0 ? "disabled" : ""}>\u2191</button><button class="btn sm" data-dn="${p.pid}" ${i === items.length - 1 ? "disabled" : ""}>\u2193</button><button class="btn sm" data-ed="${p.pid}">${t("edit")}</button><button class="btn sm" data-sd="${p.pid}">${t("details")}</button><button class="btn sm" data-vd="${p.pid}">\u2714</button><button class="btn sm" data-vs="${p.pid}">\u2716</button><button class="btn sm dng" data-rp="${p.pid}" aria-label="${t("removePlan")}" title="${t("removePlan")}">\u2716</button></div></div>`).join("") || `<div class="card mu">${t("noVisits")}</div>`}</div>
+  ${S.pending.length ? `<h3>${t("pending")} (${S.pending.length})</h3>${S.pending.map((p) => `<div class="card"><div class="row"><b>${esc(p.storeName || p.customerName)}</b><span class="chip">${jd(p.visitDate)}</span><span class="chip">External</span></div><div class="mu">${esc(p.customerId)} \xB7 ${esc(p.address)}</div>${p.reason ? `<div class="mu">${esc(p.reason)}</div>` : ""}<div class="row" style="margin-top:6px"><button class="btn sm pri" data-ap="${p.pid}">${t("approve")}</button><button class="btn sm" data-mv="${p.pid}">${t("moveDay")}</button><button class="btn sm dng" data-rj="${p.pid}">${t("reject")}</button></div></div>`).join("")}` : ""}
   ${S.importErrors.length ? `<h3 class="err">${t("errorsReport")} (${S.importErrors.length})</h3><table class="t">${S.importErrors.map((e) => `<tr><td>${t("row")} ${e.row}</td><td>${esc(e.id)}</td><td class="err">${t("E_" + e.reason)}</td></tr>`).join("")}</table>` : ""}
   <div class="row" style="margin-top:14px"><button class="btn pri" id="ex">${t("exportPlan")}</button><label class="btn">${t("importPlan")}<input type="file" id="im" accept=".xlsx" hidden></label><button class="btn" id="bk">${t("backup")}</button><button class="btn" id="rs">${t("restore")}</button></div></div>`;
     v.querySelector("#pw").onclick = () => {
@@ -2009,6 +2008,14 @@ input,select,textarea{font-size:16px!important}
     };
     v.querySelectorAll("[data-vd]").forEach((b) => b.onclick = () => vis(b.dataset.vd, "done"));
     v.querySelectorAll("[data-vs]").forEach((b) => b.onclick = () => vis(b.dataset.vs, "skip"));
+    v.querySelectorAll("[data-rp]").forEach((b) => b.onclick = () => {
+      const p = S.plan.find((x) => x.pid === b.dataset.rp);
+      if (!p || !confirm(t("confirmRemoveVisit"))) return;
+      S.plan = S.plan.filter((x) => x.pid !== p.pid);
+      renumber(S.plan, p.visitDate);
+      savePlan();
+      render();
+    });
     v.querySelector("#bk").onclick = backupPlan;
     v.querySelector("#rs").onclick = restorePlan;
     const b2 = v.querySelector("#bk2");
