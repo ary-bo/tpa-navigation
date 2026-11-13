@@ -1,101 +1,14 @@
-'use strict';
-
-/* TPA Navigation — Service Worker
-   Cache version: v9
-   This version includes the app icon referenced by index.html and manifest. */
-
-const CACHE_PREFIX = 'tpa-navigation-';
-const SHELL_CACHE = `${CACHE_PREFIX}shell-v10`;
-const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-v10`;
-
-const APP_SHELL = [
-  './',
-  './index.html',
-  './style.css',
-  './app.js',
-  './manifest.webmanifest',
-  './icon.svg'
-];
-
-self.addEventListener('install', event => {
-  event.waitUntil((async () => {
-    const cache = await caches.open(SHELL_CACHE);
-    await cache.addAll(APP_SHELL);
-    await self.skipWaiting();
-  })());
-});
-
-self.addEventListener('activate', event => {
-  event.waitUntil((async () => {
-    const keys = await caches.keys();
-    await Promise.all(
-      keys
-        .filter(key => key.startsWith(CACHE_PREFIX))
-        .filter(key => key !== SHELL_CACHE && key !== RUNTIME_CACHE)
-        .map(key => caches.delete(key))
-    );
-    await self.clients.claim();
-  })());
-});
-
-self.addEventListener('fetch', event => {
-  const request = event.request;
-  if (request.method !== 'GET') return;
-
-  const url = new URL(request.url);
-
-  if (url.origin === self.location.origin) {
-    if (request.mode === 'navigate') {
-      event.respondWith(
-        fetch(request)
-          .then(response => {
-            if (response && response.ok) {
-              const copy = response.clone();
-              caches.open(SHELL_CACHE).then(cache => cache.put('./index.html', copy));
-            }
-            return response;
-          })
-          .catch(async () => {
-            const cached = await caches.match('./index.html');
-            return cached || Response.error();
-          })
-      );
-      return;
-    }
-
-    event.respondWith(
-      caches.match(request).then(cached => {
-        if (cached) return cached;
-        return fetch(request).then(response => {
-          if (response && response.ok) {
-            const copy = response.clone();
-            caches.open(SHELL_CACHE).then(cache => cache.put(request, copy));
-          }
-          return response;
-        });
-      })
-    );
-    return;
+const V = 'tpa-nav-v4';
+const LIBS = ['https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js', 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css', 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js', 'https://cdn.jsdelivr.net/npm/vazirmatn@33.0.3/Vazirmatn-font-face.css'];
+self.addEventListener('install', e => e.waitUntil(caches.open(V).then(c => Promise.allSettled(['./', 'index.html', ...LIBS].map(u => c.add(u)))).then(() => self.skipWaiting())));
+self.addEventListener('activate', e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== V).map(k => caches.delete(k)))).then(() => self.clients.claim())));
+self.addEventListener('fetch', e => {
+  const u = new URL(e.request.url);
+  if (e.request.method !== 'GET') return;
+  if (u.origin === location.origin) { // app files: network first, cache when offline
+    e.respondWith(fetch(e.request).then(r => { if (r.ok) { const c = r.clone(); caches.open(V).then(x => x.put(e.request, c)); } return r; }).catch(() => caches.match(e.request).then(h => h || caches.match('index.html'))));
+  } else if (u.hostname === 'cdnjs.cloudflare.com' || u.hostname === 'cdn.jsdelivr.net') { // libraries and font: cache first
+    e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request).then(r => { if (r.ok) { const c = r.clone(); caches.open(V).then(x => x.put(e.request, c)); } return r; })));
   }
-
-  if ([
-    'cdn.jsdelivr.net',
-    'unpkg.com',
-    'accounts.google.com'
-  ].includes(url.hostname)) {
-    event.respondWith((async () => {
-      const cache = await caches.open(RUNTIME_CACHE);
-      try {
-        const response = await fetch(request);
-        if (response && response.ok) {
-          await cache.put(request, response.clone());
-        }
-        return response;
-      } catch (error) {
-        const cached = await cache.match(request);
-        if (cached) return cached;
-        throw error;
-      }
-    })());
-  }
+  // Google Drive/OAuth and map tiles: always live
 });
