@@ -51,6 +51,15 @@ button.btn,label.btn{cursor:pointer;display:inline-flex;align-items:center;gap:6
 button.btn:active{transform:scale(.97)}
 button.pri{background:var(--pr);color:var(--prt);border-color:var(--pr)}button.dng{color:var(--r);border-color:color-mix(in srgb,var(--r) 35%,var(--bd))}
 button.sm{min-height:34px;padding:4px 12px;font-size:13px;border-radius:10px}button:disabled{opacity:.4}
+.visit-plan-box{border:1px solid var(--bd);border-radius:16px;padding:13px;margin:12px 0;background:var(--card);box-shadow:var(--sh)}
+.visit-plan-box h3{margin:0 0 11px;color:var(--pr);font-size:15px}
+.visit-plan-actions,.store-action-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.visit-plan-actions .btn,.store-action-row .btn{width:100%;min-height:46px}
+button.vp-add{background:#16864a;color:#fff;border-color:#16864a}
+button.vp-remove{background:#c83d4d;color:#fff;border-color:#c83d4d}
+button.vp-remove:disabled{background:var(--bg);color:var(--mu);border-color:var(--bd);opacity:.55}
+button.store-map-action{background:#2876b9;color:#fff;border-color:#2876b9}
+button.store-audit-action{background:#8054b8;color:#fff;border-color:#8054b8}
 .chip{display:inline-block;padding:1px 9px;border-radius:99px;font-size:12px;font-weight:600;border:1px solid var(--bd);color:var(--mu);background:var(--bg)}
 .chip.r{color:#fff;background:var(--r);border-color:var(--r)}.chip.o{background:var(--o);color:#2a1d00;border-color:var(--o)}.chip.g{background:var(--g);color:#fff;border-color:var(--g)}.chip.vp{background:#9333ea;color:#fff;border-color:#9333ea}
 .dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-inline-end:6px;vertical-align:middle}
@@ -175,6 +184,7 @@ input,select,textarea{font-size:16px!important}
       qty: "\u062A\u0639\u062F\u0627\u062F",
       addPlan: "\u0627\u0641\u0632\u0648\u062F\u0646 \u0628\u0647 \u0628\u0631\u0646\u0627\u0645\u0647",
       removePlan: "\u062D\u0630\u0641 \u0627\u0632 \u0628\u0631\u0646\u0627\u0645\u0647 \u0648\u06CC\u0632\u06CC\u062A",
+      visitPlan: "\u0628\u0631\u0646\u0627\u0645\u0647 \u0648\u06CC\u0632\u06CC\u062A",
       navNeshan: "\u0645\u0633\u06CC\u0631\u06CC\u0627\u0628\u06CC \u0646\u0634\u0627\u0646",
       navGoogle: "\u0645\u0633\u06CC\u0631\u06CC\u0627\u0628\u06CC \u06AF\u0648\u06AF\u0644",
       searchDest: "\u062C\u0633\u062A\u062C\u0648\u06CC \u0645\u0642\u0635\u062F \u0628\u0627 \u0622\u062F\u0631\u0633 (\u062F\u0642\u062A \u067E\u0627\u06CC\u06CC\u0646\u200C\u062A\u0631)",
@@ -339,6 +349,7 @@ input,select,textarea{font-size:16px!important}
       qty: "Qty",
       addPlan: "Add to visit plan",
       removePlan: "Remove from visit plan",
+      visitPlan: "Visit plan",
       navNeshan: "Navigate (Neshan)",
       navGoogle: "Navigate (Google)",
       searchDest: "Search destination by address (lower accuracy)",
@@ -1799,7 +1810,7 @@ input,select,textarea{font-size:16px!important}
     const orders = s.orders.map((o) => `<tr><td>${esc(o.order)}<br><span class="mu">${esc(o.status)}</span></td><td>${jd(o.orderDate)}</td><td>${jd(o.target)}</td><td>${jd(o.inv)}</td><td>${o.state === "open" ? `<span class="chip o">${t("open")}</span>` : `<span class="chip g">${t("invoiced")}</span>`}${o.overdue === true ? ` <span class="chip r">${t("overdue")}</span>` : ""}${o.state === "open" && o.overdue === null ? `<br><span class="mu">${t("noTarget")}</span>` : ""}</td></tr><tr><td colspan="5" class="mu">${o.items.map((i) => `${esc(i.product)} \xD7 ${i.qty}`).join(" \xB7 ")}</td></tr>`).join("");
     sheet(`<h2>${badge(s)}${esc(s.storeName || s.name || s.id)}</h2>
   <dl class="kv"><dt>${t("custId")}</dt><dd>${esc(s.id)}</dd><dt>${t("custName")}</dt><dd>${esc(s.name)}</dd><dt>${t("storeName")}</dt><dd>${esc(s.storeName) || "\u2014"}</dd><dt>${t("cls")}</dt><dd>${esc(s.cls) || "\u2014"}</dd><dt>${t("address")}</dt><dd>${esc(s.address)}</dd><dt>${t("route")}</dt><dd>${esc(s.route) || "\u2014"} <span class="mu">(${t("rs_" + (s.routeSource || "Area"))})</span></dd><dt>${t("area")} / ${t("territory")}</dt><dd>${esc(s.area) || "\u2014"} / ${esc(s.territory) || "\u2014"}</dd><dt>${t("salesman")}</dt><dd>${esc(s.salesman) || "\u2014"}</dd><dt>${t("coords")}</dt><dd>${s.lat !== null ? s.lat.toFixed(6) + ", " + s.lng.toFixed(6) : t("noGPS")}</dd><dt>${t("inJP")}</dt><dd>${s.inJP ? t("yes") : t("no")}${s.inJP ? " \xB7 " + DAY_KEYS.filter((d) => s.days[d]).map((d) => t("d_" + d)).join("\u060C ") : ""}</dd><dt>${t("purchase")}</dt><dd>${s.hasSales ? t("yes") : t("no")} \xB7 ${t("lastPurchase")}: ${jd(s.lastPurchase)}</dd></dl>
-  <div class="row" style="margin:10px 0">${navLinks(s)}<button class="btn pri" id="addp">${t("addPlan")}</button><button class="btn" id="remp" ${inVisitPlan ? "" : "disabled"}>${t("removePlan")}</button><button class="btn" id="onm">${ic("map")} ${t("showMap")}</button>${canForm(s) ? `<button class="btn pri" id="fm">${ic("plan")} ${t("auditForm")}</button>` : ""}</div>
+  <div class="row" style="margin:10px 0">${navLinks(s)}</div><section class="visit-plan-box"><h3>${t("visitPlan")}</h3><div class="visit-plan-actions"><button class="btn vp-add" id="addp">${t("addPlan")}</button><button class="btn vp-remove" id="remp" ${inVisitPlan ? "" : "disabled"}>${t("removePlan")}</button></div></section><div class="store-action-row"><button class="btn store-map-action" id="onm">${ic("map")} ${t("showMap")}</button>${canForm(s) ? `<button class="btn store-audit-action" id="fm">${ic("plan")} ${t("auditForm")}</button>` : ""}</div>
   <h3>${t("orders")} (${s.orders.length})</h3>${orders ? `<table class="t"><tr><th>${t("orderNo")}</th><th>${t("orderDate")}</th><th>${t("targetDate")}</th><th>${t("invoiceDate")}</th><th></th></tr>${orders}</table>` : `<div class="mu">${t("noOrders")}</div>`}
   <h3>${t("basket")}</h3>${s.basket.length ? `<table class="t">${s.basket.map((b) => `<tr><td>${esc(b.product)}</td><td>${b.qty}</td></tr>`).join("")}</table>` : `<div class="mu">\u2014</div>`}
   <div class="row" style="margin-top:12px"><button class="btn" id="cl">${t("close")}</button></div>`, (el) => {
