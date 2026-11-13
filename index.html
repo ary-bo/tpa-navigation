@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -95,6 +94,77 @@ body.dark .empty,body.dark .storeinfo small{color:#a9bac8}
 body.dark .notice{background:#44351d;color:#ffe0a3;border-color:#765c2a}
 @media(max-width:520px){.grid2{grid-template-columns:1fr}.appnav button{font-size:11px}}
 
+
+/* ===== Fixed app viewport / native-like navigation ===== */
+:root{--app-header-height:72px;--app-nav-height:66px}
+html,body{width:100%;height:100%;min-height:100%;margin:0;overflow:hidden!important;overscroll-behavior:none}
+body{position:fixed;inset:0;height:100dvh;min-height:0;display:flex;flex-direction:column}
+header{position:fixed;z-index:500;top:0;left:0;right:0;height:calc(var(--app-header-height) + env(safe-area-inset-top));padding:calc(10px + env(safe-area-inset-top)) 15px 10px;display:flex;align-items:center}
+.head{width:100%;min-height:0}
+main{position:fixed;top:calc(var(--app-header-height) + env(safe-area-inset-top));right:0;bottom:calc(var(--app-nav-height) + env(safe-area-inset-bottom));left:0;width:100%;max-width:none;margin:0;padding:10px;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+.page{display:none;width:100%;height:100%;min-height:0;overflow:hidden}
+.page.active{display:flex;flex-direction:column}
+#mapPage{gap:8px}
+.panel{margin:0;min-width:0;min-height:0}
+#dataPanel{flex:0 0 auto;padding:9px 11px}
+#dataPanel.collapsed .data-panel-body{display:none}
+.data-panel-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0}
+#dataToggle{margin:0;padding:7px 9px;white-space:nowrap}
+#dataPanel:not(.collapsed) .data-panel-heading{margin-bottom:8px}
+#dataPanel:not(.collapsed){max-height:42%;overflow:auto}
+#dataPanel .data-panel-body{min-width:0}
+#dataPanel .section-title:not(.data-panel-heading){margin-bottom:8px}
+#dataPanel .full{margin-top:6px}
+#dataPanel .uploads{gap:6px}
+#dataPanel .upload{padding:7px 5px}
+#dataPanel .upload strong{margin-bottom:4px}
+#dataPanel #message{margin-top:5px;max-height:55px;overflow:auto}
+#mapPage > .panel:nth-of-type(2){flex:0 0 auto;padding:8px 10px}
+#mapPage > .panel:nth-of-type(2) .section-title{margin-bottom:7px}
+#mapPage .stats{gap:6px}
+#mapPage .stat{padding:6px 4px}
+#mapPage .stat b{font-size:17px}
+.layout{flex:1 1 auto;min-height:0;height:auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;overflow:hidden}
+.layout>div{min-width:0;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.layout>div:first-child>.panel{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+#map{height:auto!important;flex:1 1 auto;min-height:130px;border-radius:10px}
+.legend{flex:0 0 auto;margin-top:6px;gap:8px}
+.layout>div:last-child>.panel:first-child{flex:0 0 auto}
+.layout>div:last-child>.panel:last-child{flex:1 1 auto;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+#storeList{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-inline-end:2px}
+.appnav{position:fixed;z-index:600;right:0;left:0;bottom:0;height:calc(var(--app-nav-height) + env(safe-area-inset-bottom));padding:7px 8px calc(7px + env(safe-area-inset-bottom));margin:0;display:flex;align-items:center;justify-content:space-around;gap:6px;overflow:hidden;background:var(--bg);border-top:1px solid var(--line);box-shadow:0 -3px 14px #102b4610}
+.appnav button{flex:1 1 0;min-width:0;min-height:42px;margin:0;padding:7px 4px;border-radius:11px;white-space:normal;line-height:1.35;font-size:11px}
+.page>.panel{flex:1 1 auto;width:100%;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:14px}
+#modal{padding-top:env(safe-area-inset-top)}
+#modalbox{max-height:calc(88dvh - env(safe-area-inset-top));padding-bottom:calc(18px + env(safe-area-inset-bottom));overflow-y:auto;overscroll-behavior:contain}
+input,select,textarea,button{touch-action:manipulation}
+@media(max-width:759px){
+ :root{--app-header-height:64px;--app-nav-height:62px}
+ header{padding-left:12px;padding-right:12px}
+ main{padding:8px;gap:8px}
+ #mapPage{gap:7px}
+ .layout{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(145px,38%) minmax(0,1fr)}
+ .layout>div:last-child{gap:7px}
+ .layout>div:last-child>.panel:first-child{padding:8px}
+ .layout>div:last-child>.panel:last-child{padding:8px}
+ .layout>div:last-child>.panel:last-child .section-title{margin-bottom:5px}
+ #map{min-height:110px}
+ .appnav button{font-size:10px}
+}
+@media(min-width:760px){
+ .layout{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
+ .layout>div:last-child{gap:8px}
+ #map{min-height:0}
+}
+@media(max-height:650px){
+ :root{--app-header-height:58px;--app-nav-height:56px}
+ #mapPage>.panel:nth-of-type(2) .section-title{display:none}
+ #mapPage>.panel:nth-of-type(2){padding:6px 8px}
+ #mapPage .stat{padding:4px}
+ #mapPage .stat b{font-size:15px}
+ .appnav button{min-height:38px;padding:5px 3px}
+}
+
 </style>
 </head>
 
@@ -110,8 +180,10 @@ body.dark .notice{background:#44351d;color:#ffe0a3;border-color:#765c2a}
 </header>
 
 <main>
- <section class="panel">
-  <div class="section-title">۱. دریافت اطلاعات</div>
+ <section id="mapPage" class="page active">
+ <section id="dataPanel" class="panel">
+  <div class="section-title data-panel-heading">دریافت اطلاعات<button type="button" id="dataToggle" class="smallbtn secondary" aria-expanded="false">نمایش ابزار بارگذاری</button></div>
+  <div class="data-panel-body">
   <button id="driveBtn" class="full green">اتصال به Google Drive و دریافت آخرین فایل‌ها</button>
   <div style="font-size:11px;color:#718393;margin-top:7px">
    با حساب Google دارای دسترسی به پوشه Navigation وارد شو. پس از کلیک، پنجره مجوز Google باید باز شود.
@@ -134,6 +206,7 @@ body.dark .notice{background:#44351d;color:#ffe0a3;border-color:#765c2a}
   </div>
   <button id="loadBtn" class="full">پردازش فایل‌های انتخاب‌شده</button>
   <div id="message">برای شروع، از Google Drive دریافت کن یا فایل‌ها را دستی انتخاب کن.</div>
+  </div>
  </section>
 
  <section class="panel">
@@ -188,9 +261,8 @@ body.dark .notice{background:#44351d;color:#ffe0a3;border-color:#765c2a}
    </section>
   </div>
  </div>
-
-  </div>
-  <nav class="appnav" aria-label="بخش‌های برنامه">
+ </section>
+ <nav class="appnav" aria-label="بخش‌های برنامه">
    <button class="active" data-page="mapPage">نقشه و فروشگاه‌ها</button>
    <button data-page="planPage">برنامه بازدید من</button>
    <button data-page="analysisPage">تحلیل و خروجی</button>
@@ -1119,9 +1191,12 @@ async function importAuditPlan(){
  }catch(e){$("importReport").textContent="خطا در خواندن فایل: "+e.message;}
 }
 function showPage(id){
- document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));
+ document.querySelectorAll(".page").forEach(p=>{
+  p.classList.toggle("active",p.id===id);
+  if(p.id===id)p.scrollTop=0;
+ });
  document.querySelectorAll(".appnav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
- if(id==="mapPage")setTimeout(()=>map?.invalidateSize(),100);
+ if(id==="mapPage")setTimeout(()=>map?.invalidateSize(),180);
 }
 function renderAnalysis(){
  if(!$("noGpsCount"))return;
@@ -1173,6 +1248,18 @@ $("modal").addEventListener("click",event=>{
 
 /* رویدادهای بخش برنامه بازدید و تحلیل */
 document.querySelectorAll(".appnav button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+const dataPanel=$("dataPanel");
+const dataToggle=$("dataToggle");
+if(dataPanel&&dataToggle){
+ dataPanel.classList.add("collapsed");
+ dataToggle.addEventListener("click",()=>{
+  const expanded=!dataPanel.classList.toggle("collapsed");
+  dataToggle.setAttribute("aria-expanded",String(expanded));
+  dataToggle.textContent=expanded?"بستن ابزار بارگذاری":"نمایش ابزار بارگذاری";
+  setTimeout(()=>map?.invalidateSize(),180);
+ });
+}
+
 $("planSearch").addEventListener("input",()=>{
  const q=norm($("planSearch").value);
  const results=stores.filter(s=>q&&norm([s.code,s.name,s.address].join(" ")).includes(q)).slice(0,12);
