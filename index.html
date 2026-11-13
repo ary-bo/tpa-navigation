@@ -1237,7 +1237,7 @@ input,select,textarea{font-size:16px!important}
   }
 
   // js/app.js
-  var VERSION = "2.2.0";
+  var VERSION = "2.2.1";
   var IC = {
     map: '<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
     stores: '<path d="M3 9l1.5-5h15L21 9"/><path d="M4.5 9v11h15V9"/><path d="M9.5 20v-6h5v6"/><path d="M3 9a3 3 0 006 0 3 3 0 006 0 3 3 0 006 0"/>',
@@ -1627,7 +1627,21 @@ input,select,textarea{font-size:16px!important}
       const fm = el.querySelector("#fm");
       if (fm) fm.onclick = () => {
         closeSheet();
-        openForm({ store: s, db: { dbGet, dbSet, dbDel }, toast, onSaved: () => render() });
+        openForm({ store: s, db: { dbGet, dbSet, dbDel }, toast, onSaved: () => {
+          const td = todayISO();
+          let n = 0;
+          S.plan.forEach((p) => {
+            if (p.customerId === s.id && p.visitDate === td && p.visit !== "done") {
+              p.visit = "done";
+              n++;
+            }
+          });
+          if (n) {
+            savePlan();
+            toast(t("v_done") + " \u2714");
+          }
+          render();
+        } });
       };
     });
   }
