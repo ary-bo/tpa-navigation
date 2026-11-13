@@ -1628,6 +1628,12 @@ input,select,textarea{font-size:16px!important}
   function pageMap(v) {
     if (!S.ds) return needData(v);
     if (S.planMap) return pagePlanMap(v);
+    const previousView = map ? { center: map.getCenter(), zoom: map.getZoom() } : null;
+    if (map) {
+      map.remove();
+      map = null;
+      layer = null;
+    }
     let list = withNearby(filtered());
     const fs = S.focus && byId.get(S.focus);
     if (fs && !list.includes(fs)) list = [...list, fs];
@@ -1644,7 +1650,10 @@ input,select,textarea{font-size:16px!important}
       $("#map").innerHTML = `<div class="pad">Leaflet not loaded (offline first run?). ${t("mapOffline")}</div>`;
       return;
     }
-    map = L.map("map", { preferCanvas: true, zoomControl: false }).setView([35.8, 51], 11);
+    map = L.map("map", { preferCanvas: true, zoomControl: false }).setView(
+      previousView ? previousView.center : [35.8, 51],
+      previousView ? previousView.zoom : 11
+    );
     L.control.zoom({ position: "bottomright" }).addTo(map);
     // Google Maps-style one-finger zoom: double-tap, hold the second tap, then drag vertically.
     const mapTouchTarget = map.getContainer();
@@ -1692,7 +1701,7 @@ input,select,textarea{font-size:16px!important}
     mapTouchTarget.addEventListener("touchcancel", finishOneFingerZoom, { capture: true, passive: false });
     L.tileLayer(S.settings.tile, { maxZoom: 19, attribution: "\xA9 OpenStreetMap" }).addTo(map);
     layer = L.layerGroup().addTo(map);
-    drawMarkers(list, !(fs && fs.lat !== null));
+    drawMarkers(list, !previousView && !(fs && fs.lat !== null));
     if (fs && fs.lat !== null) map.setView([fs.lat, fs.lng], 17);
     requestAnimationFrame(() => map && map.invalidateSize());
     setTimeout(() => map && map.invalidateSize(), 300);
