@@ -185,6 +185,8 @@ input,select,textarea{font-size:16px!important}
       addPlan: "\u0627\u0641\u0632\u0648\u062F\u0646 \u0628\u0647 \u0628\u0631\u0646\u0627\u0645\u0647",
       removePlan: "\u062D\u0630\u0641 \u0627\u0632 \u0628\u0631\u0646\u0627\u0645\u0647 \u0648\u06CC\u0632\u06CC\u062A",
       visitPlan: "\u0628\u0631\u0646\u0627\u0645\u0647 \u0648\u06CC\u0632\u06CC\u062A",
+      addShort: "\u0627\u0641\u0632\u0648\u062F\u0646",
+      removeShort: "\u062D\u0630\u0641",
       navNeshan: "\u0645\u0633\u06CC\u0631\u06CC\u0627\u0628\u06CC \u0646\u0634\u0627\u0646",
       navGoogle: "\u0645\u0633\u06CC\u0631\u06CC\u0627\u0628\u06CC \u06AF\u0648\u06AF\u0644",
       searchDest: "\u062C\u0633\u062A\u062C\u0648\u06CC \u0645\u0642\u0635\u062F \u0628\u0627 \u0622\u062F\u0631\u0633 (\u062F\u0642\u062A \u067E\u0627\u06CC\u06CC\u0646\u200C\u062A\u0631)",
@@ -350,6 +352,8 @@ input,select,textarea{font-size:16px!important}
       addPlan: "Add to visit plan",
       removePlan: "Remove from visit plan",
       visitPlan: "Visit plan",
+      addShort: "Add",
+      removeShort: "Remove",
       navNeshan: "Navigate (Neshan)",
       navGoogle: "Navigate (Google)",
       searchDest: "Search destination by address (lower accuracy)",
@@ -1810,7 +1814,7 @@ input,select,textarea{font-size:16px!important}
     const orders = s.orders.map((o) => `<tr><td>${esc(o.order)}<br><span class="mu">${esc(o.status)}</span></td><td>${jd(o.orderDate)}</td><td>${jd(o.target)}</td><td>${jd(o.inv)}</td><td>${o.state === "open" ? `<span class="chip o">${t("open")}</span>` : `<span class="chip g">${t("invoiced")}</span>`}${o.overdue === true ? ` <span class="chip r">${t("overdue")}</span>` : ""}${o.state === "open" && o.overdue === null ? `<br><span class="mu">${t("noTarget")}</span>` : ""}</td></tr><tr><td colspan="5" class="mu">${o.items.map((i) => `${esc(i.product)} \xD7 ${i.qty}`).join(" \xB7 ")}</td></tr>`).join("");
     sheet(`<h2>${badge(s)}${esc(s.storeName || s.name || s.id)}</h2>
   <dl class="kv"><dt>${t("custId")}</dt><dd>${esc(s.id)}</dd><dt>${t("custName")}</dt><dd>${esc(s.name)}</dd><dt>${t("storeName")}</dt><dd>${esc(s.storeName) || "\u2014"}</dd><dt>${t("cls")}</dt><dd>${esc(s.cls) || "\u2014"}</dd><dt>${t("address")}</dt><dd>${esc(s.address)}</dd><dt>${t("route")}</dt><dd>${esc(s.route) || "\u2014"} <span class="mu">(${t("rs_" + (s.routeSource || "Area"))})</span></dd><dt>${t("area")} / ${t("territory")}</dt><dd>${esc(s.area) || "\u2014"} / ${esc(s.territory) || "\u2014"}</dd><dt>${t("salesman")}</dt><dd>${esc(s.salesman) || "\u2014"}</dd><dt>${t("coords")}</dt><dd>${s.lat !== null ? s.lat.toFixed(6) + ", " + s.lng.toFixed(6) : t("noGPS")}</dd><dt>${t("inJP")}</dt><dd>${s.inJP ? t("yes") : t("no")}${s.inJP ? " \xB7 " + DAY_KEYS.filter((d) => s.days[d]).map((d) => t("d_" + d)).join("\u060C ") : ""}</dd><dt>${t("purchase")}</dt><dd>${s.hasSales ? t("yes") : t("no")} \xB7 ${t("lastPurchase")}: ${jd(s.lastPurchase)}</dd></dl>
-  <div class="row" style="margin:10px 0">${navLinks(s)}</div><section class="visit-plan-box"><h3>${t("visitPlan")}</h3><div class="visit-plan-actions"><button class="btn vp-add" id="addp">${t("addPlan")}</button><button class="btn vp-remove" id="remp" ${inVisitPlan ? "" : "disabled"}>${t("removePlan")}</button></div></section><div class="store-action-row"><button class="btn store-map-action" id="onm">${ic("map")} ${t("showMap")}</button>${canForm(s) ? `<button class="btn store-audit-action" id="fm">${ic("plan")} ${t("auditForm")}</button>` : ""}</div>
+  <div class="row" style="margin:10px 0">${navLinks(s)}</div><section class="visit-plan-box"><h3>${t("visitPlan")}</h3><div class="visit-plan-actions"><button class="btn vp-add" id="addp">${t("addShort")}</button><button class="btn vp-remove" id="remp" ${inVisitPlan ? "" : "disabled"}>${t("removeShort")}</button></div></section><div class="store-action-row"><button class="btn store-map-action" id="onm">${ic("map")} ${t("showMap")}</button>${canForm(s) ? `<button class="btn store-audit-action" id="fm">${ic("plan")} ${t("auditForm")}</button>` : ""}</div>
   <h3>${t("orders")} (${s.orders.length})</h3>${orders ? `<table class="t"><tr><th>${t("orderNo")}</th><th>${t("orderDate")}</th><th>${t("targetDate")}</th><th>${t("invoiceDate")}</th><th></th></tr>${orders}</table>` : `<div class="mu">${t("noOrders")}</div>`}
   <h3>${t("basket")}</h3>${s.basket.length ? `<table class="t">${s.basket.map((b) => `<tr><td>${esc(b.product)}</td><td>${b.qty}</td></tr>`).join("")}</table>` : `<div class="mu">\u2014</div>`}
   <div class="row" style="margin-top:12px"><button class="btn" id="cl">${t("close")}</button></div>`, (el) => {
