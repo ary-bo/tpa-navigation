@@ -72,6 +72,10 @@ main.mapv{position:relative}#map{flex:1;min-height:0;z-index:0}
 .mapbar input{border:0;background:transparent;min-height:38px;flex:1}.mapbar input:focus{outline:0}
 .mapbar .btn{min-height:38px;border-radius:12px}
 .legend{position:absolute;bottom:12px;left:10px;max-width:calc(100% - 84px);z-index:500;font-size:12px;padding:7px 11px;background:var(--card);border-radius:12px;box-shadow:var(--sh);display:flex;gap:10px;flex-wrap:wrap}
+.vp-map-marker{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:#7b2cbf;border:2px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.55);transform:translate(6px,-13px);pointer-events:none}
+.vp-map-marker .ic{width:12px;height:12px;stroke:#fff;stroke-width:2.2;vertical-align:0}
+.vp-map-legend{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.vp-map-legend .vp-map-marker{transform:none;flex:none}
 .leaflet-bottom.leaflet-right{margin-bottom:6px}.leaflet-control-zoom{border:0!important;box-shadow:var(--sh)!important;border-radius:12px!important;overflow:hidden}
 .pin{width:30px;height:30px;border-radius:50% 50% 50% 4px;transform:rotate(-45deg);background:var(--pr);color:#fff;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35);display:grid;place-items:center}
 .pin>span{transform:rotate(45deg);font:700 13px system-ui}.pin.pHigh{background:#dc2626}.pin.pLow{background:#64748b}
@@ -1626,7 +1630,7 @@ input,select,textarea{font-size:16px!important}
     const fs = S.focus && byId.get(S.focus);
     if (fs && !list.includes(fs)) list = [...list, fs];
     v.innerHTML = `<div class="mapbar"><input type="search" id="q" placeholder="${esc(t("search"))}" value="${esc(S.filters.q)}"><button class="btn" id="fb">${ic("filter")}</button><button class="btn" id="loc" title="${t("locate")}">${ic("locate")}</button></div><div id="map"></div>
-  <div class="legend"><span><i class="dot g"></i>${t("legG")}</span><span><i class="dot o"></i>${t("legO")}</span><span><i class="dot r"></i>${t("legR")}</span><span class="mu">${list.length} ${t("results")} \xB7 ${list.filter((s) => s.lat === null).length} ${t("noGPS")}</span></div>`;
+  <div class="legend"><span><i class="dot g"></i>${t("legG")}</span><span><i class="dot o"></i>${t("legO")}</span><span><i class="dot r"></i>${t("legR")}</span><span class="vp-map-legend"><i class="vp-map-marker">${ic("plan")}</i>${t("inVisitPlan")}</span><span class="mu">${list.length} ${t("results")} \xB7 ${list.filter((s) => s.lat === null).length} ${t("noGPS")}</span></div>`;
     $("#q").oninput = (e) => {
       S.filters.q = e.target.value;
       clearTimeout(pageMap.tm);
@@ -1734,10 +1738,19 @@ input,select,textarea{font-size:16px!important}
     if (!map) return;
     layer.clearLayers();
     const pts = [];
+    const plannedCustomerIds = new Set([...S.plan, ...S.pending].map((p) => String(p.customerId)));
     for (const s of list) {
       if (s.lat === null) continue;
       pts.push([s.lat, s.lng]);
       L.circleMarker([s.lat, s.lng], { radius: 7, color: "#fff", weight: 1.5, fillColor: COLOR[s.status], fillOpacity: 0.95 }).on("click", () => detail(s.id)).addTo(layer);
+      if (plannedCustomerIds.has(String(s.id))) {
+        L.marker([s.lat, s.lng], {
+          icon: L.divIcon({ className: "", html: '<span class="vp-map-marker">' + ic("plan") + '</span>', iconSize: [20, 20], iconAnchor: [0, 0] }),
+          interactive: false,
+          keyboard: false,
+          zIndexOffset: 1000
+        }).addTo(layer);
+      }
     }
     const fo = S.focus && byId.get(S.focus);
     if (fo && fo.lat !== null) L.circleMarker([fo.lat, fo.lng], { radius: 15, color: "#dc2626", weight: 3, fill: false }).addTo(layer);
