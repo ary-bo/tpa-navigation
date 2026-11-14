@@ -317,3 +317,38 @@ Verification:
 - Source-level verification is recorded after post-commit fetch.
 - Browser/mobile interaction, saved-draft/export regression and deployment/live
   verification have not been performed by the assistant.
+
+
+2026-11-14 — Auditor form: dynamic sequential numbering from 1
+--------------------------------------------------------------
+User clarification:
+- The first question actually displayed to the auditor was numbered 3.
+- The user requires the first displayed question to be 1 and all subsequent
+  displayed questions to continue sequentially through the end of the form.
+
+Implementation:
+- Updated the form's visibility refresh routine to recalculate displayed
+  question numbers on every update.
+- Numbers only rendered, currently visible questions in configured form order.
+- Excludes section headings and metadata fields skipped from the auditor UI.
+- Conditional questions close numbering gaps dynamically when they appear
+  or disappear. The optional final visit note is included when displayed.
+- Preserves question IDs, data fields, answers, validation, dependencies,
+  map behavior and record/export structure.
+- This supersedes the interim fixed q3a label correction (4A / 4B) from the
+  preceding entry; q3a now receives its sequential runtime number.
+
+Git traceability:
+- Repository: ary-bo/tpa-navigation
+- Branch: main
+- Base commit: 2728d1eb5f02fe18fa47c86fca3e7a83a09154a3
+- Code commit: f69667bc54fa7da0e9230f4f8076ed7c64e584b7
+- index.html blob: 2b9414f3fd4055bf6f3a2737f57c31c46d569e77
+- Safety branch: backup/main-before-dynamic-question-numbering-20261114
+- Technical handover updated to version 4.9.
+
+Verification:
+- Source-level verification is recorded after post-commit fetch.
+- Browser testing across conditional paths, saved-draft reload, export and
+  deployment/live verification have not been performed by the assistant.
+- V06 is not used as a requirements or numbering basis.
