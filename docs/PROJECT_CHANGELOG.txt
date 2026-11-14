@@ -261,3 +261,28 @@ Verification:
   use the Q13A affirmative condition in addition to the prior observation rule.
 - Browser/mobile interaction, saved-draft/export regression and deployment/live
   verification have not yet been performed.
+
+
+2026-11-14 — User confirmed Section 5 oil-availability dependency
+------------------------------------------------------------------
+User verification:
+- After testing the Section 5 behavior in Safari, the user explicitly
+  confirmed: "درست شد" (it worked).
+- This is user-reported manual functional acceptance of the latest change:
+  Q13A = "خیر" hides Section 5 and Q18–Q23; Q13A = "بله" leaves the
+  section subject to the existing observation-block rule.
+
+Evidence boundaries:
+- The test was performed by the user in their Safari session; it was not
+  independently run by the assistant.
+- No detailed test matrix was supplied. Do not infer that every question
+  combination, draft reload, export, or historical-record edge case was tested.
+- This is not independent verification of GitHub Pages deployment.
+
+Traceability:
+- Application source commit: 2349e4a6ee46450a9700417407b16eaef6cec156
+- Application source blob: aad828a0782c29941b36aed8f412059fe877f710
+- No application source code changed for this confirmation.
+- Safety branch for this documentation-only update:
+  backup/main-before-user-confirmed-section5-test-20261114
+- Technical handover updated to version 4.7.
