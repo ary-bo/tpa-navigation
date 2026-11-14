@@ -1054,7 +1054,7 @@ input,select,textarea{font-size:16px!important}
   function openForm({ store: s, db, toast: toast2, onSaved }) {
     if (!canForm(s)) return toast2("\u0641\u0631\u0645 \u0641\u0642\u0637 \u0628\u0631\u0627\u06CC \u0641\u0631\u0648\u0634\u06AF\u0627\u0647\u200C\u0647\u0627\u06CC Journey Plan \u0628\u0627\u0632 \u0645\u06CC\u200C\u0634\u0648\u062F");
     const a = { q1: s.salesman, q2: s.newCode }, other = {}, els = {};
-    let dirty = false;
+    let dirty = false, previousRecord = null;
     const isVis = (q) => !q.show || q.show(a);
     const hasOther = (q) => {
       const v = a[q.id];
@@ -1228,7 +1228,8 @@ input,select,textarea{font-size:16px!important}
       });
     };
     function record() {
-      const r = { id: uid(), timestamp: (/* @__PURE__ */ new Date()).toISOString(), updated: "", storeId: s.id, visitor: s.salesman, q2_code: s.newCode, q2_name: s.name };
+      const now = (/* @__PURE__ */ new Date()).toISOString();
+      const r = { id: previousRecord ? previousRecord.id : uid(), timestamp: previousRecord ? previousRecord.timestamp : now, updated: previousRecord ? now : "", storeId: s.id, visitor: s.salesman, q2_code: s.newCode, q2_name: s.name };
       QS.forEach((q) => {
         if (SKIP.includes(q.id)) return;
         let v;
@@ -1267,7 +1268,9 @@ input,select,textarea{font-size:16px!important}
       }
       const r = record();
       const all = await loadForms(db);
-      all.push(r);
+      const previousIndex = previousRecord ? all.findIndex((x) => x.id === previousRecord.id) : -1;
+      if (previousIndex >= 0) all[previousIndex] = r;
+      else all.push(r);
       try {
         await db.dbSet("forms", all);
         await db.dbDel(draftKey);
@@ -1279,13 +1282,27 @@ input,select,textarea{font-size:16px!important}
       toast2("\u0641\u0631\u0645 \u062B\u0628\u062A \u0634\u062F \u2714");
       if (onSaved) onSaved(r, s);
     };
-    db.dbGet(draftKey).then((d) => {
-      if (d && d.a) {
-        Object.assign(a, d.a, { q1: s.salesman, q2: s.newCode });
-        Object.assign(other, d.other || {});
-        QS.forEach((q) => els[q.id] && control(q, els[q.id].ctl));
-        toast2("\u067E\u06CC\u0634\u200C\u0646\u0648\u06CC\u0633 \u0642\u0628\u0644\u06CC \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0634\u062F");
+    Promise.all([loadForms(db), db.dbGet(draftKey)]).then(([all, d]) => {
+      previousRecord = all.filter((r) => String(r.storeId) === String(s.id))
+        .sort((x, y) => String(y.updated || y.timestamp || "").localeCompare(String(x.updated || x.timestamp || "")))[0] || null;
+      if (previousRecord) {
+        if (previousRecord._a && typeof previousRecord._a === "object") Object.assign(a, previousRecord._a);
+        else QS.forEach((q) => {
+          if (SKIP.includes(q.id)) return;
+          const value = previousRecord[q.id];
+          if (value !== void 0 && value !== null && value !== "") a[q.id] = q.type === "multi" && typeof value === "string" ? value.split(" | ").filter(Boolean) : value;
+        });
+        Object.assign(other, previousRecord._o || {});
+        if (!a.q3a && Number.isFinite(Number(previousRecord.q3_lat)) && Number.isFinite(Number(previousRecord.q3_lng))) a.q3a = { lat: Number(previousRecord.q3_lat), lng: Number(previousRecord.q3_lng) };
       }
+      if (d && d.a) {
+        Object.assign(a, d.a);
+        Object.assign(other, d.other || {});
+      }
+      Object.assign(a, { q1: s.salesman, q2: s.newCode });
+      QS.forEach((q) => els[q.id] && control(q, els[q.id].ctl));
+      if (d && d.a) toast2("\u067E\u06CC\u0634\u200C\u0646\u0648\u06CC\u0633 \u0642\u0628\u0644\u06CC \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0634\u062F");
+      else if (previousRecord) toast2("\u0641\u0631\u0645 \u0642\u0628\u0644\u06CC \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0634\u062F");
       update();
     }).catch(() => update());
     update();
