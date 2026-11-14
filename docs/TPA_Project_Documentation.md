@@ -620,3 +620,5 @@ Verification status:
 - JavaScript parse validation with `new Function` passed after each source change and on the final candidate.
 - Source assertions passed for history entry, new-visit flow, selected-record edit binding, missing-record guard, timestamp preservation, draft UI/autosave removal, legacy-backup acceptance, v2 backup creation, and startup draft purge.
 - Browser/iPhone Safari interaction, multi-visit persistence, editing an older record, date display, backup/restore, full-system restore/rollback, export regression, and GitHub Pages deployment have NOT been tested. Do not merge to `main` or claim release until these tests pass.
+
+- Post-review correction: removed the obsolete `dbDel(null)` call from the finalized-form save path after draft-key removal. The final source commit is `4830696dde9fd6513f8194e667285d2819769834`; final `index.html` blob is `535d5571b89b44fbc9110e94d5be362c7aa55800`. JavaScript parse validation passed again.
