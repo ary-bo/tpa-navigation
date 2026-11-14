@@ -126,6 +126,12 @@ input,select,textarea{font-size:16px!important}
 .order-items>span{min-width:0;overflow-wrap:anywhere}
 @media(max-width:360px){.order-head b{font-size:12px}.order-amount{font-size:12px}.order-dates{gap:2px}.order-dates span{font-size:9px}.order-dates b{font-size:10px}}
 
+
+/* Put the order amount below the order number and status badge. */
+.order-main{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;justify-content:initial;gap:6px}
+.order-head{width:100%;flex:none}
+.order-amount{justify-content:flex-start;white-space:nowrap;flex-wrap:nowrap}
+
 </style>
 </head>
 <body>
