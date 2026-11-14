@@ -2393,11 +2393,10 @@ input,select,textarea{font-size:16px!important}
     v.innerHTML = `<div class="pad wrap"><div class="row"><button class="btn sm" id="pw">\u2039 ${t("prevWeek")}</button><span class="sp mu" style="text-align:center">${t("week")} <span style="direction:ltr;unicode-bidi:isolate;display:inline-block">${jd(days[0])} \u2013 ${jd(days[5])}</span></span><button class="btn sm" id="nw">${t("nextWeek")} \u203A</button></div>
   <div class="tabs" style="margin-top:8px">${days.map((d) => `<button class="btn sm ${d === S.selDay ? "on" : ""}" data-d="${d}">${t("d_" + dayKeyOfISO(d))}<br>${jd(d).slice(5)} (${cnt(d)})</button>`).join("")}</div>
   <div class="row" style="margin:6px 0"><button class="btn sm" id="sg">${t("suggest")}</button><button class="btn sm pri" id="pm">${ic("map")} ${t("planMap")}</button><span class="sp"></span><span class="mu">\u2714 ${items.filter((p) => p.visit === "done").length}/${items.length}</span></div>
-  ${S.plan.length + S.pending.length && lsGet("lastBackup", {}).sig !== sigOf() ? `<div class="card" style="border-color:var(--o)"><div class="mu">\u26A0 ${t("backupDirty")}</div><button class="btn sm pri" id="bk2" style="margin-top:6px">${t("backup")}</button></div>` : ""}
   <div id="pl">${items.map((p, i) => `<div class="card"><div class="row"><span class="num">${i + 1}</span><b>${esc(planStoreLabel(p))}</b><span class="chip">${t(p.source)}</span>${p.visit ? `<span class="chip ${p.visit === "done" ? "g" : "r"}">${t("v_" + p.visit)}</span>` : ""}<span class="sp"></span></div><div class="mu">${esc(p.customerName)} \xB7 ${esc(p.customerId)} \xB7 ${esc(p.route)}</div><div class="mu">${esc(p.address)}</div>${p.reason ? `<div class="mu">${t("reason")}: ${esc(p.reason)}</div>` : ""}${p.comment ? `<div class="mu">${esc(p.comment)}</div>` : ""}<div class="row" style="margin-top:6px"><button class="btn sm" data-up="${p.pid}" ${i === 0 ? "disabled" : ""}>\u2191</button><button class="btn sm" data-dn="${p.pid}" ${i === items.length - 1 ? "disabled" : ""}>\u2193</button><button class="btn sm" data-ed="${p.pid}">${t("edit")}</button><button class="btn sm" data-sd="${p.pid}">${t("details")}</button><button class="btn sm" data-vd="${p.pid}">\u2714</button><button class="btn sm" data-vs="${p.pid}">\u2716</button><button class="btn sm dng" data-rp="${p.pid}" aria-label="${t("removePlan")}" title="${t("removePlan")}">🗑️</button></div></div>`).join("") || `<div class="card mu">${t("noVisits")}</div>`}</div>
   ${S.pending.length ? `<h3>${t("pending")} (${S.pending.length})</h3>${S.pending.map((p) => `<div class="card"><div class="row"><b>${esc(p.storeName || p.customerName)}</b><span class="chip">${jd(p.visitDate)}</span><span class="chip">External</span></div><div class="mu">${esc(p.customerId)} \xB7 ${esc(p.address)}</div>${p.reason ? `<div class="mu">${esc(p.reason)}</div>` : ""}<div class="row" style="margin-top:6px"><button class="btn sm pri" data-ap="${p.pid}">${t("approve")}</button><button class="btn sm" data-mv="${p.pid}">${t("moveDay")}</button><button class="btn sm dng" data-rj="${p.pid}">${t("reject")}</button></div></div>`).join("")}` : ""}
   ${S.importErrors.length ? `<h3 class="err">${t("errorsReport")} (${S.importErrors.length})</h3><table class="t">${S.importErrors.map((e) => `<tr><td>${t("row")} ${e.row}</td><td>${esc(e.id)}</td><td class="err">${t("E_" + e.reason)}</td></tr>`).join("")}</table>` : ""}
-  <div class="row" style="margin-top:14px"><button class="btn pri" id="ex">${t("exportPlan")}</button><label class="btn">${t("importPlan")}<input type="file" id="im" accept=".xlsx" hidden></label><button class="btn" id="bk">${t("backup")}</button><button class="btn" id="rs">${t("restore")}</button></div></div>`;
+  <div class="row" style="margin-top:14px"><button class="btn pri" id="ex">${t("exportPlan")}</button><label class="btn">${t("importPlan")}<input type="file" id="im" accept=".xlsx" hidden></label></div></div>`;
     v.querySelector("#pw").onclick = () => {
       S.weekStart = addDaysISO(S.weekStart, -7);
       render();
@@ -2433,10 +2432,6 @@ input,select,textarea{font-size:16px!important}
       savePlan();
       render();
     });
-    v.querySelector("#bk").onclick = backupPlan;
-    v.querySelector("#rs").onclick = restorePlan;
-    const b2 = v.querySelector("#bk2");
-    if (b2) b2.onclick = backupPlan;
     const mv = (pid, dir) => {
       const l = sortedForDay(S.plan, S.selDay), i = l.findIndex((p) => p.pid === pid), j = i + dir;
       if (j < 0 || j >= l.length) return;
@@ -2857,6 +2852,195 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
       toast(t("errParse") + " " + e.message);
     }
   }
+  // TPA_FULL_SYSTEM_CLOUD_BACKUP_V1
+  var TPA_FULL_BACKUP_FILE = "tpa_full_system_backup_v1.json";
+  async function readFullBackupState() {
+    const idb = await open();
+    const entries = await new Promise((resolve, reject) => {
+      const tx = idb.transaction(ST, "readonly"), store = tx.objectStore(ST);
+      const kr = store.getAllKeys(), vr = store.getAll();
+      tx.oncomplete = () => resolve((kr.result || []).map((key, i) => [key, vr.result[i]]));
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error);
+    });
+    const local = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key !== null) local[key] = localStorage.getItem(key);
+    }
+    return { entries, localStorage: local };
+  }
+  async function replacePrimaryStore(entries) {
+    const idb = await open();
+    await new Promise((resolve, reject) => {
+      const tx = idb.transaction(ST, "readwrite"), store = tx.objectStore(ST);
+      store.clear();
+      for (const entry of entries) {
+        if (!Array.isArray(entry) || entry.length !== 2) throw new Error("Invalid backup entry");
+        store.put(entry[1], entry[0]);
+      }
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error || new Error("Restore transaction aborted"));
+    });
+  }
+  async function replaceLocalStorage(values) {
+    localStorage.clear();
+    for (const [key, value] of Object.entries(values || {})) localStorage.setItem(key, value);
+  }
+  async function listFullSystemBackups() {
+    const query = encodeURIComponent("trashed=false and (name contains 'tpa_full_system_backup_v1_' or name = '" + TPA_FULL_BACKUP_FILE + "')");
+    const files = [];
+    let pageToken = "";
+    do {
+      const page = pageToken ? "&pageToken=" + encodeURIComponent(pageToken) : "";
+      const response = await gfetch("https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=" + query + "&orderBy=createdTime desc&fields=nextPageToken,files(id,name,createdTime,modifiedTime,size,mimeType)&pageSize=100" + page);
+      const data = await response.json();
+      files.push(...(data.files || []));
+      pageToken = data.nextPageToken || "";
+    } while (pageToken);
+    return files.sort((a, b) => new Date(b.createdTime || b.modifiedTime || 0) - new Date(a.createdTime || a.modifiedTime || 0));
+  }
+  function fullBackupDate(file) {
+    const value = file.createdTime || file.modifiedTime;
+    const date = value ? new Date(value) : null;
+    return date && !Number.isNaN(date.getTime())
+      ? date.toLocaleString(getLang() === "fa" ? "fa-IR" : "en-US")
+      : (getLang() === "fa" ? "زمان نامشخص" : "Unknown date");
+  }
+  function fullBackupSize(bytes) {
+    const n = Number(bytes || 0);
+    if (!n) return getLang() === "fa" ? "حجم نامشخص" : "Size unavailable";
+    if (n < 1024) return n + " B";
+    if (n < 1048576) return (n / 1024).toFixed(1) + " KB";
+    return (n / 1048576).toFixed(2) + " MB";
+  }
+  async function refreshFullSystemBackupList() {
+    const box = $("#fullBackupList");
+    if (!box) return;
+    box.innerHTML = '<div class="mu">' + (getLang() === "fa" ? "در حال دریافت فهرست نسخه‌های پشتیبان..." : "Loading backup versions...") + '</div>';
+    try {
+      const files = await listFullSystemBackups();
+      const status = $("#fullBackupStatus");
+      if (status) status.textContent = files.length
+        ? (getLang() === "fa" ? "تعداد نسخه‌های موجود: " : "Available versions: ") + files.length + " · " + (getLang() === "fa" ? "آخرین نسخه: " : "Latest: ") + fullBackupDate(files[0])
+        : (getLang() === "fa" ? "هنوز نسخه پشتیبان ابری ثبت نشده است" : "No cloud backup has been created yet");
+      if (!files.length) {
+        box.innerHTML = '<div class="mu">' + (getLang() === "fa" ? "هیچ نسخه پشتیبانی در Google Drive پیدا نشد." : "No backup versions were found in Google Drive.") + '</div>';
+        return;
+      }
+      box.innerHTML = '<div class="mu" style="margin:8px 0">' +
+        (getLang() === "fa" ? "برای مشاهده جزئیات و بازیابی، یک نسخه را انتخاب کنید. سلامت و سازگاری فایل پس از انتخاب بررسی می‌شود." : "Select a version to inspect and restore. Integrity and compatibility are checked after selection.") +
+        '</div>' + files.map((file, index) =>
+          '<button type="button" class="btn" data-full-restore-id="' + esc(file.id) + '" style="display:block;width:100%;text-align:start;margin-top:7px;padding:10px">' +
+          '<div class="row" style="justify-content:space-between;gap:8px"><b>' +
+          (index === 0 ? (getLang() === "fa" ? "آخرین نسخه" : "Latest version") : (getLang() === "fa" ? "نسخه پشتیبان" : "Backup version")) +
+          '</b><span class="mu">' + esc(fullBackupSize(file.size)) + '</span></div>' +
+          '<div style="margin-top:4px">' + esc(fullBackupDate(file)) + '</div>' +
+          '<div class="mu" style="margin-top:3px">' + (getLang() === "fa" ? "نسخه قالب: ۱ · بررسی پس از انتخاب" : "Archive format: 1 · validation on selection") + '</div></button>'
+        ).join("");
+      box.querySelectorAll("[data-full-restore-id]").forEach(button => {
+        button.onclick = () => {
+          const selected = files.find(file => file.id === button.getAttribute("data-full-restore-id"));
+          if (selected) restoreEntireSystem(selected);
+        };
+      });
+    } catch (e) {
+      box.innerHTML = '<div class="err">' + esc((getLang() === "fa" ? "دریافت فهرست نسخه‌ها ناموفق بود: " : "Could not load backup versions: ") + e.message) + '</div>';
+    }
+  }
+  async function uploadFullSystemBackup(payload) {
+    const body = JSON.stringify(payload), bytes = new TextEncoder().encode(body);
+    const stamp = new Date(payload.createdAt).toISOString().replace(/[-:.]/g, "").replace("T", "_");
+    const fileName = "tpa_full_system_backup_v1_" + stamp + ".json";
+    const metadata = { name: fileName, parents: ["appDataFolder"], mimeType: "application/json" };
+    const session = await gfetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable", {
+      method: "POST",
+      headers: { "Content-Type": "application/json; charset=UTF-8", "X-Upload-Content-Type": "application/json", "X-Upload-Content-Length": String(bytes.length) },
+      body: JSON.stringify(metadata)
+    });
+    const uploadUrl = session.headers.get("Location");
+    if (!uploadUrl) throw new Error("Google Drive did not return a resumable upload URL");
+    await gfetch(uploadUrl, { method: "PUT", headers: { "Content-Type": "application/json" }, body: bytes });
+    return { bytes: bytes.length, fileName };
+  }
+  async function backupEntireSystem() {
+    try {
+      toast(t("syncing"));
+      const state = await readFullBackupState();
+      const payload = {
+        app: "tpa-navigation",
+        type: "tpa-full-system-backup",
+        version: 1,
+        createdAt: new Date().toISOString(),
+        database: { name: DB, store: ST, entries: state.entries },
+        localStorage: state.localStorage,
+        counts: { databaseEntries: state.entries.length, localStorageKeys: Object.keys(state.localStorage).length }
+      };
+      payload.checksum = await sha(JSON.stringify(payload));
+      const result = await uploadFullSystemBackup(payload);
+      const sizeMb = (result.bytes / 1048576).toFixed(2);
+      toast((getLang() === "fa" ? "پشتیبان کامل با موفقیت در Google Drive ذخیره شد" : "Full system backup saved to Google Drive") + " · " + sizeMb + " MB");
+      const status = document.querySelector("#fullBackupStatus");
+      if (status) status.textContent = (getLang() === "fa" ? "آخرین پشتیبان: " : "Last backup: ") + new Date(payload.createdAt).toLocaleString(getLang() === "fa" ? "fa-IR" : "en-US");
+      await refreshFullSystemBackupList();
+    } catch (e) {
+      toast(t("errParse") + " " + e.message);
+    }
+  }
+  async function restoreEntireSystem(file) {
+    try {
+      if (!file || !file.id) throw new Error("A backup version must be selected");
+      const response = await gfetch("https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(file.id) + "?alt=media");
+      const payload = await response.json();
+      if (!payload || payload.app !== "tpa-navigation" || payload.type !== "tpa-full-system-backup" ||
+          payload.version !== 1 || !payload.database || payload.database.name !== DB ||
+          payload.database.store !== ST || !Array.isArray(payload.database.entries) ||
+          !payload.localStorage || typeof payload.localStorage !== "object" || Array.isArray(payload.localStorage)) {
+        throw new Error("Invalid or unsupported full-system backup");
+      }
+      if (payload.database.entries.some(entry => !Array.isArray(entry) || entry.length !== 2 || typeof entry[0] !== "string")) throw new Error("Malformed database entries");
+      if (Object.values(payload.localStorage).some(value => typeof value !== "string")) throw new Error("Malformed local settings");
+      const suppliedChecksum = payload.checksum;
+      const unsigned = { ...payload };
+      delete unsigned.checksum;
+      if (!suppliedChecksum || await sha(JSON.stringify(unsigned)) !== suppliedChecksum) throw new Error("Backup integrity check failed");
+      const backupDate = new Date(payload.createdAt || file.createdTime || file.modifiedTime);
+      if (Number.isNaN(backupDate.getTime())) throw new Error("Backup timestamp is invalid");
+      const when = backupDate.toLocaleString(getLang() === "fa" ? "fa-IR" : "en-US");
+      const confirmText = getLang() === "fa"
+        ? "نسخه انتخاب‌شده از پشتیبان معتبر است. بازیابی کامل انجام شود؟\n\nتاریخ و ساعت: " + when + "\nنام فایل: " + file.name + "\nحجم فایل: " + fullBackupSize(file.size) + "\nنسخه قالب: " + payload.version + "\nرکوردهای پایگاه داده: " + payload.database.entries.length + "\nکلیدهای تنظیمات محلی: " + Object.keys(payload.localStorage).length + "\n\nاطلاعات فعلی با این نسخه جایگزین می‌شود. پیش از جایگزینی، وضعیت فعلی برای بازگشت اضطراری نگهداری می‌شود."
+        : "The selected backup is valid. Restore the entire application?\n\nDate and time: " + when + "\nFile: " + file.name + "\nSize: " + fullBackupSize(file.size) + "\nArchive version: " + payload.version + "\nDatabase records: " + payload.database.entries.length + "\nLocal settings: " + Object.keys(payload.localStorage).length + "\n\nCurrent data will be replaced. A rollback copy will be kept first.";
+      if (!confirm(confirmText)) return;
+      const before = await readFullBackupState();
+      try {
+        await replacePrimaryStore(payload.database.entries);
+        await replaceLocalStorage(payload.localStorage);
+        const forms = payload.database.entries.find(x => Array.isArray(x) && x[0] === "forms");
+        await saveLocalAuditForms(forms && Array.isArray(forms[1]) ? forms[1] : []);
+        await saveLocalAuditDrafts();
+        await writeUnifiedLocalSnapshot();
+      } catch (restoreError) {
+        try {
+          await replacePrimaryStore(before.entries);
+          await replaceLocalStorage(before.localStorage);
+          const oldForms = before.entries.find(x => Array.isArray(x) && x[0] === "forms");
+          await saveLocalAuditForms(oldForms && Array.isArray(oldForms[1]) ? oldForms[1] : []);
+          await saveLocalAuditDrafts();
+          await writeUnifiedLocalSnapshot();
+        } catch (rollbackError) {
+          console.error("Full restore rollback failed:", rollbackError);
+          throw new Error("Restore failed and automatic rollback also failed: " + restoreError.message);
+        }
+        throw restoreError;
+      }
+      toast(getLang() === "fa" ? "بازیابی کامل انجام شد؛ برنامه دوباره بارگذاری می‌شود" : "Full restore completed; the app will reload");
+      setTimeout(() => location.reload(), 700);
+    } catch (e) {
+      toast(t("errParse") + " " + e.message);
+    }
+  }
+
   var sha = async (x) => [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(x)))].map((b) => b.toString(16).padStart(2, "0")).join("");
   var fails = 0;
   var lockedUntil = 0;
@@ -2965,7 +3149,7 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
       return `<label class="f">${t(l)}${((_a2 = r == null ? void 0 : r.names) == null ? void 0 : _a2[k]) ? ` \u2014 <b>${esc(r.names[k])}</b>` : ""}</label><input type="file" data-k="${k}" accept=".xlsx,.xls,.csv">`;
     }).join("")}
   <div class="row" style="margin-top:10px"><button class="btn pri" id="ld">${t("load")}</button></div><div id="msg" class="err" style="margin-top:6px"></div></div>
-  <div class="card"><h2>${t("drive")}</h2><div class="mu">${t("driveNote")}</div><button class="btn pri" id="ds" style="margin-top:8px">${t("driveSync")}</button><div class="row" style="margin-top:6px"><button class="btn sm" id="bk3">${t("backup")}</button><button class="btn sm" id="rs3">${t("restore")}</button></div><div class="mu" style="margin-top:12px">${t("auditBackupNote")}</div><div class="row" style="margin-top:6px"><button class="btn sm" id="afb">${t("auditBackup")}</button><button class="btn sm" id="afr">${t("auditRestore")}</button></div><div id="dmsg" class="mu"></div></div>
+  <div class="card"><h2>${t("drive")}</h2><div class="mu">${t("driveNote")}</div><button class="btn pri" id="ds" style="margin-top:8px">${t("driveSync")}</button><div class="mu" style="margin-top:12px">${getLang() === "fa" ? "پشتیبان‌گیری ابری یکپارچه از کل اطلاعات و تنظیمات برنامه" : "One cloud backup for all application data and settings"}</div><div class="row" style="margin-top:8px"><button class="btn sm pri" id="fullBackup">${getLang() === "fa" ? "پشتیبان‌گیری کامل" : "Back up entire app"}</button><button class="btn sm" id="fullRestore">${getLang() === "fa" ? "انتخاب نسخه برای بازیابی" : "Choose version to restore"}</button></div><div id="fullBackupStatus" class="mu" style="margin-top:8px"></div><div id="fullBackupList" hidden style="margin-top:8px"></div><div id="dmsg" class="mu"></div></div>
     <div class="card"><h2>${t("pinTitle")}</h2><div class="mu">${t("pinNote")}</div><div class="row" style="margin-top:6px"><input type="password" inputmode="numeric" id="pn" maxlength="12" dir="ltr" placeholder="${esc(t("pinFormat"))}" style="flex:1"><button class="btn sm pri" id="pset">${t("save")}</button>${lsGet("pin", null) ? `<button class="btn sm dng" id="prm">${t("pinRemove")}</button>` : ""}</div></div>
   <div class="card"><button class="btn dng" id="c1">${t("clearCache")}</button><br><br><button class="btn dng" id="c2">${t("clearAll")}</button></div><div class="mu" style="text-align:center">${t("version")} ${VERSION}</div></div>`;
     v.querySelector("#ld").onclick = async () => {
@@ -2980,10 +3164,13 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
     };
     v.querySelector("#mapNames").onchange = (e) => { S.settings.showMapNames = e.target.checked; saveSettings(); toast(t("ok")); };
     v.querySelector("#ds").onclick = driveSync;
-    v.querySelector("#bk3").onclick = backupPlan;
-    v.querySelector("#rs3").onclick = restorePlan;
-    v.querySelector("#afb").onclick = backupAuditForms;
-    v.querySelector("#afr").onclick = restoreAuditForms;
+    v.querySelector("#fullBackup").onclick = backupEntireSystem;
+    v.querySelector("#fullRestore").onclick = async () => {
+      const box = $("#fullBackupList");
+      if (!box) return;
+      box.hidden = !box.hidden;
+      if (!box.hidden) await refreshFullSystemBackupList();
+    };
     v.querySelector("#pset").onclick = () => setPin($("#pn").value);
     const pr = v.querySelector("#prm");
     if (pr) pr.onclick = () => {
