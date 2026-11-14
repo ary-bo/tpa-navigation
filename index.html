@@ -718,7 +718,7 @@ input,select,textarea{font-size:16px!important}
     const a = str(address);
     if (!a) return "";
     // Address fields use hyphens, commas and slashes as separators; normalize them before matching.
-    const cleaned = a.replace(/\([^)]*\)/g, " ").replace(/[ـ‐‑‒–—−،,;|/\x2d]+/g, " ");
+    const cleaned = a.replace(/\([^)]*\)/g, " ").replace(new RegExp("[ـ‐‑‒–—−،,;|/\\x2d]+", "g"), " ");
     const n = normText(cleaned).split(" ").filter(Boolean);
     if (!n.length) return "";
     const markers = [
