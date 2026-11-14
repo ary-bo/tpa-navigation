@@ -1,6 +1,6 @@
 # TPA Navigation — Technical Reconstruction & Continuation Specification
 
-**Document version:** 4.1  
+**Document version:** 4.2  
 **Date:** 14 November 2026  
 **Repository:** https://github.com/ary-bo/tpa-navigation  
 **Target branch:** `main`  
@@ -49,6 +49,18 @@ These identifiers describe the inspected change, not necessarily the latest repo
 6. Fetch the committed files again and inspect the resulting content.
 7. Record commit SHA, changed paths, test results, deployment status and rollback reference.
 8. Never claim deployment or live verification merely because a commit exists.
+
+## 2.2 Change record — 14 November 2026
+
+- Change: moved Visit outcome ahead of location correction in the auditor form.
+- Conditional behavior: location correction and its map sub-question are visible only for the first three visit outcomes; selecting **مشتری پیدا نشد** hides the location section and the existing form update path clears its active values.
+- Changed application file: `index.html`.
+- Main commit: `179b54b07a704a76cfdcfa29989bff9e6843bb7b`.
+- Pre-change safety branch: `backup/main-before-visit-result-location-20261114`.
+- Pre-change `index.html` blob: `23867219b32ce5097adbae1cc73d603c1605ccb7`.
+- Post-change `index.html` blob: `6ed50ae0290e43ea1d0dd27d19011138dcc4082b`.
+- Verification: source-level checks only; browser/device and data-flow tests remain outstanding.
+- Deployment: commit recorded on `main`; live deployment not verified.
 
 ## 3. Architecture and file responsibilities
 
@@ -130,6 +142,28 @@ The following items were carried forward from the prior handover's summary of th
 | Q13 | Only when Q12 indicates some/all products returned |
 | Other text | Only while corresponding Other option is selected |
 | Q24 | Must not exist; no replacement follow-up section |
+
+### 6.3 Visit outcome and location-correction dependency (implemented 14 November 2026)
+
+The first questions in Section 1 now appear in this order:
+
+1. Q3 — **نتیجه مراجعه** (Visit outcome), retaining the four existing choices:
+   - شخص مسئول حاضر بود
+   - شخص مسئول حاضر نبود
+   - فروشگاه تعطیل بود
+   - مشتری پیدا نشد
+2. Q4 — **آیا نیاز به اصلاح موقعیت مکانی وجود دارد؟** (Location correction required?), followed by its existing map-coordinate question when the answer is Yes.
+
+Visibility rule: Q4 is displayed only when the selected visit outcome is one of the first three choices. If the fourth choice, **مشتری پیدا نشد**, is selected, Q4 and its dependent map question are hidden.
+
+Data safety: the existing form `update()` routine clears the value and auxiliary state of any question that becomes hidden, then re-renders its control. Therefore, changing an earlier first-three outcome to **مشتری پیدا نشد** clears any previous location-correction answer and map coordinates from the active form state/draft. On record creation, hidden non-optional questions are represented as `N/A`; the visit outcome remains recorded. Existing saved records are not bulk-migrated or rewritten by this UI change.
+
+Implementation locations: `index.html`, question definitions in the `Q` array (existing IDs `q4` and `q3` are retained). Visit outcome is ordered before location correction; its displayed number is 3 and the location question is numbered 4. The location question's `show` predicate excludes the exact fourth visit-outcome option.
+
+Verification status:
+- Source-level inspection confirms the question order, conditional predicate, and existing hidden-question cleanup path.
+- Not yet browser-tested: all four outcome selections, switching from a first-three option to **مشتری پیدا نشد**, draft reload after that switch, and saved-record export/report behavior.
+- No claim is made that the updated source has been deployed to the live site.
 
 ## 7. Audit records and data compatibility
 
