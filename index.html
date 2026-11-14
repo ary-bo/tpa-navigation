@@ -72,7 +72,7 @@ main.mapv{position:relative}#map{flex:1;min-height:0;z-index:0}
 .mapbar input{border:0;background:transparent;min-height:38px;flex:1}.mapbar input:focus{outline:0}
 .mapbar .btn{min-height:38px;border-radius:12px}
 .legend{position:absolute;bottom:12px;left:10px;max-width:calc(100% - 84px);z-index:500;font-size:12px;padding:7px 11px;background:var(--card);border-radius:12px;box-shadow:var(--sh);display:flex;gap:10px;flex-wrap:wrap}
-.vp-map-marker{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:#7b2cbf;border:2px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.55);transform:translate(6px,-13px);pointer-events:none}
+.vp-map-marker{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:#7b2cbf;border:2px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.55);transform:translate(6px,-13px);pointer-events:none}\n.tpa-map-label{display:inline-flex;align-items:center;gap:5px;max-width:210px;padding:3px 8px;border:2px solid #15803d;border-radius:10px;background:#fff;color:#14202b;font:600 12px/1.35 \"Vazirmatn\",Tahoma,sans-serif;white-space:nowrap;box-shadow:0 2px 7px rgba(0,0,0,.28);direction:rtl;transform:translate(9px,-50%);pointer-events:none}\n.tpa-map-label.manager{border-color:#2563eb}\n.tpa-map-label .kind{width:18px;height:18px;flex:none;display:grid;place-items:center;border-radius:50%;background:#15803d;color:#fff;font-size:11px}\n.tpa-map-label.manager .kind{background:#2563eb}\n.tpa-map-label .name{overflow:hidden;text-overflow:ellipsis;max-width:175px}\n:root[data-theme=dark] .tpa-map-label{background:#f8fafc;color:#14202b}
 .vp-map-marker .ic{width:12px;height:12px;stroke:#fff;stroke-width:2.2;vertical-align:0}
 .vp-map-legend{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
 .vp-map-legend .vp-map-marker{transform:none;flex:none}
@@ -302,7 +302,7 @@ input,select,textarea{font-size:16px!important}
       locate: "\u0645\u06A9\u0627\u0646 \u0645\u0646",
       straight: "\u0641\u0627\u0635\u0644\u0647 \u0645\u0633\u062A\u0642\u06CC\u0645",
       locDenied: "\u062F\u0633\u062A\u0631\u0633\u06CC \u0628\u0647 \u0645\u0648\u0642\u0639\u06CC\u062A \u062F\u0627\u062F\u0647 \u0646\u0634\u062F",
-      language: "\u0632\u0628\u0627\u0646",
+      mapLabels: "برچسب نام‌ها روی نقشه", showMapNames: "نمایش نام فروشگاه یا مسئول کنار نقطه", mapNamesHint: "نام فروشگاه در اولویت است؛ در نبود آن نام مسئول نمایش داده می‌شود. برچسب‌ها از بزرگ‌نمایی ۱۵ به بعد ظاهر می‌شوند.",\n      language: "\u0632\u0628\u0627\u0646",
       theme: "\u067E\u0648\u0633\u062A\u0647",
       light: "\u0631\u0648\u0634\u0646",
       dark: "\u062A\u0627\u0631\u06CC\u06A9",
@@ -480,7 +480,7 @@ input,select,textarea{font-size:16px!important}
       locate: "My location",
       straight: "straight-line",
       locDenied: "Location access denied",
-      language: "Language",
+      mapLabels: "Map labels", showMapNames: "Show store or manager names beside map points", mapNamesHint: "Store name takes priority; otherwise the manager name is shown. Labels appear from zoom level 15.",\n      language: "Language",
       theme: "Theme",
       light: "Light",
       dark: "Dark",
@@ -1429,7 +1429,7 @@ input,select,textarea{font-size:16px!important}
   S.settings.clientId = S.settings.clientId || DEF.clientId;
   S.settings.folderId = S.settings.folderId || DEF.folderId;
   var map;
-  var layer;
+  var layer;\n  var labelLayer;
   var byId = /* @__PURE__ */ new Map();
   var toastT;
   var nameDate = (n) => {
@@ -1819,7 +1819,7 @@ input,select,textarea{font-size:16px!important}
     mapTouchTarget.addEventListener("touchend", finishOneFingerZoom, { capture: true, passive: false });
     mapTouchTarget.addEventListener("touchcancel", finishOneFingerZoom, { capture: true, passive: false });
     L.tileLayer(S.settings.tile, { maxZoom: 19, attribution: "\xA9 OpenStreetMap" }).addTo(map);
-    layer = L.layerGroup().addTo(map);
+    layer = L.layerGroup().addTo(map);\n    labelLayer = L.layerGroup();\n    map.on("zoomend", refreshMapLabels);
     drawMarkers(list, !previousView && !(fs && fs.lat !== null));
     if (fs && fs.lat !== null) map.setView([fs.lat, fs.lng], 17);
     requestAnimationFrame(() => map && map.invalidateSize());
@@ -1864,7 +1864,7 @@ input,select,textarea{font-size:16px!important}
     requestAnimationFrame(() => map && map.invalidateSize());
     setTimeout(() => map && map.invalidateSize(), 300);
   }
-  function drawMarkers(list, fit) {
+  function refreshMapLabels() {\n    if (!map || !labelLayer) return;\n    labelLayer.clearLayers();\n    if (S.settings.showMapNames === false || map.getZoom() < 15) {\n      if (map.hasLayer(labelLayer)) map.removeLayer(labelLayer);\n      return;\n    }\n    const stores = withNearby(filtered());\n    for (const s of stores) {\n      if (s.lat === null) continue;\n      const storeName = str(s.storeName).trim();\n      const managerName = str(s.salesman).trim();\n      const isStore = !!storeName;\n      const name = storeName || managerName;\n      if (!name) continue;\n      const kind = isStore ? "store" : "manager";\n      const symbol = isStore ? "🏪" : "👤";\n      const html = `<span class="tpa-map-label ${kind}" title="${esc(name)}"><span class="kind">${symbol}</span><span class="name">${esc(name)}</span></span>`;\n      L.marker([s.lat, s.lng], { icon: L.divIcon({ className: "", html, iconSize: [0, 0], iconAnchor: [0, 0] }), interactive: false, keyboard: false, zIndexOffset: 500 }).addTo(labelLayer);\n    }\n    if (!map.hasLayer(labelLayer)) labelLayer.addTo(map);\n  }\n  function drawMarkers(list, fit) {
     if (!map) return;
     layer.clearLayers();
     const pts = [];
@@ -1884,7 +1884,7 @@ input,select,textarea{font-size:16px!important}
     }
     const fo = S.focus && byId.get(S.focus);
     if (fo && fo.lat !== null) L.circleMarker([fo.lat, fo.lng], { radius: 15, color: "#dc2626", weight: 3, fill: false }).addTo(layer);
-    drawMe();
+    drawMe();\n    refreshMapLabels();
     if (fit && pts.length) map.fitBounds(pts, { padding: [24, 24], maxZoom: 15 });
     const lg = document.querySelector(".legend .mu");
     if (lg) lg.textContent = `${list.length} ${t("results")} \xB7 ${list.filter((s) => s.lat === null).length} ${t("noGPS")}`;
@@ -2597,7 +2597,7 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
     v.innerHTML = `<div class="pad wrap"><div class="card"><label class="f">${t("language")}</label><select id="lg"><option value="fa" ${s.lang === "fa" ? "selected" : ""}>\u0641\u0627\u0631\u0633\u06CC</option><option value="en" ${s.lang === "en" ? "selected" : ""}>English</option></select>
   <label class="f">${t("theme")}</label><select id="th">${["auto", "light", "dark"].map((x) => `<option value="${x}" ${s.theme === x ? "selected" : ""}>${t(x)}</option>`).join("")}</select>
   <div class="row" style="margin-top:12px"><button class="btn pri" id="sv">${t("save")}</button></div></div>
-  <div class="card"><h2>${t("files")}</h2>
+  <div class="card"><h2>${t("mapLabels")}</h2><label class="row" style="gap:10px;align-items:center"><input type="checkbox" id="mapNames" ${s.showMapNames !== false ? "checked" : ""}> <span>${t("showMapNames")}</span></label><div class="mu">${t("mapNamesHint")}</div></div>\n  <div class="card"><h2>${t("files")}</h2>
   ${[["jp", "fJP"], ["sales", "fSales"], ["map", "fMap"]].map(([k, l]) => {
       var _a2;
       return `<label class="f">${t(l)}${((_a2 = r == null ? void 0 : r.names) == null ? void 0 : _a2[k]) ? ` \u2014 <b>${esc(r.names[k])}</b>` : ""}</label><input type="file" data-k="${k}" accept=".xlsx,.xls,.csv">`;
@@ -2616,7 +2616,7 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
         $("#msg").textContent = t("errParse") + " " + e.message;
       }
     };
-    v.querySelector("#ds").onclick = driveSync;
+    v.querySelector("#mapNames").onchange = (e) => { S.settings.showMapNames = e.target.checked; saveSettings(); toast(t("ok")); };\n    v.querySelector("#ds").onclick = driveSync;
     v.querySelector("#bk3").onclick = backupPlan;
     v.querySelector("#rs3").onclick = restorePlan;
     v.querySelector("#afb").onclick = backupAuditForms;
