@@ -121,8 +121,8 @@ Git traceability:
 - Delete-root-file commit: 7fdbfe39d453e84faf925588f4c312af3a793626
 
 Verification:
-- The new file was created in docs and the old root path was deleted through
-  GitHub Contents API. A final fetch verification is pending.
+- Verified on main: docs/CHANGELOG_FA.txt is readable and the old root-level
+  CHANGELOG_FA.txt path returns NOT_FOUND.
 - This was a documentation organization change; no runtime tests apply.
 
 NEXT CHANGE
