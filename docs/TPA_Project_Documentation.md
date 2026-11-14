@@ -1,13 +1,12 @@
 # TPA Navigation — Technical Reconstruction & Continuation Specification
 
-**Document version:** 5.4  
-**Date:** 14 November 2026  
+**Document version:** 5.6  
+**Date:** 15 November 2026  
 **Repository:** https://github.com/ary-bo/tpa-navigation  
 **Target branch:** `main`  
 **Supersedes:** Previous contents of this file and the V3 technical handover  
-**Companion document:** `TPA_Navigation_Technical_Reconstruction_Spec_V4_1_English.docx` (project handover copy)
 
-> **Authority and evidence rule:** Current source code is authoritative for implemented behavior; auditor-form requirements are governed by the user's latest explicit instructions and accepted changes recorded in this repository; the user has explicitly withdrawn V06 as a basis for future decisions; this document records project context, engineering constraints, verified change history, and handover policy. Clearly distinguish implemented, approved, sample-derived, user-confirmed, and unverified information. Never turn a sample workbook or inference into a universal business rule.
+> **Authority and evidence rule:** Current source code is authoritative for implemented behavior; auditor-form requirements are governed by the user's latest explicit instructions and accepted changes recorded in this repository. This document records project context, engineering constraints, verified change history, and handover policy. Clearly distinguish implemented, sample-derived, user-confirmed, and unverified information. Never turn a sample workbook or inference into a universal business rule.
 
 ## 1. Purpose and executive summary
 
@@ -128,41 +127,7 @@ External plan import historically required Visit Date and Customer ID; blank pri
 
 `Targets.xlsx` was not established as part of the inspected application data flow. Treat target-versus-actual reporting as a separate new capability. Before implementation, approve metric definitions, unit, aggregation grain, join key, date/calendar rules, duplicate/missing-target handling, dimensions, actuals source and reconciliation rules.
 
-## 6. Approved Auditor Form V06 requirements
-
-The following items were carried forward from the prior handover's summary of the approved V06 specification. They are requirements, not proof of current implementation. Retrieve and inspect the original approved DOCX before changing exact question text, options or competitor lists.
-
-- Remove the requirement for a customer's previous purchase history from TPA or the visitor.
-- Q11 and Q12 must be displayed for all customers and must not depend on purchase history.
-- Q11A appears only when Q11 is answered “Yes, I have had a problem.”
-- Q13 appears only when Q12 indicates that some or all products were returned.
-- Q15 and its two options remain unchanged as specified in V06.
-- Q16 and Q17 record Facing counts only; do not calculate or display shelf-share percentages.
-- Preserve competitor brand lists for product groups exactly as specified in V06.
-- Remove the summary and follow-up section and Q24 completely; do not add a replacement question.
-- An “Other” text field appears only while its corresponding “Other” option is selected.
-- If automatic GPS is unavailable, the map must still open and allow manual pin placement.
-- No free-text address field; “Get Location” confirms and saves selected latitude and longitude.
-- The approved form ends at Q23.
-
-### 6.1 Decisions requiring explicit approval
-
-| Topic | Known ambiguity / historical behavior | Required action |
-|---|---|---|
-| Form eligibility | Historical guard required Journey Plan membership and New Customer Code | Obtain product-owner decision before changing |
-| Q16/Q17 limits | Historical code capped Q16 at 500 and required Q17 <= Q16; V06 summary does not establish these limits | Confirm whether limits remain |
-| Legacy records/drafts | Existing identifiers and serialization may differ from V06 | Design versioned, backward-compatible migration |
-| Exact question text and competitor lists | Controlled by original approved V06 | Read source DOCX; do not reconstruct from memory |
-
-### 6.2 Conditional visibility test matrix
-
-| Control | Expected display rule |
-|---|---|
-| Q11 and Q12 | Always visible for eligible customers; independent of purchase history |
-| Q11A | Only when Q11 = “Yes, I have had a problem” |
-| Q13 | Only when Q12 indicates some/all products returned |
-| Other text | Only while corresponding Other option is selected |
-| Q24 | Must not exist; no replacement follow-up section |
+## 6. Auditor form implementation history
 
 ### 6.3 Visit outcome and location-correction dependency (implemented 14 November 2026)
 
@@ -278,12 +243,12 @@ Deletion is irreversible from the app. Keep another usable backup if retention m
 
 A new engineer should be able to continue without relying on chat history:
 
-1. Read this document, the project execution instructions, the approved V06 form specification and historical V2/V3 handovers if available.
+1. Read this document, the project execution instructions and relevant historical handovers if available.
 2. Re-fetch repository main and inspect `index.html`, `manifest.webmanifest`, `sw.js`, README and changelog.
 3. Map the live source into persistence, workbook parsing, joins, map/filter UI, Journey Plan, audit form, reporting, Drive integration, settings and PWA shell.
 4. Create a baseline backup branch and record blob SHAs.
 5. Run representative workbooks and record row counts, parser warnings, quality counters, matches, orders and statuses.
-6. Compare the live auditor form against the original approved V06 question by question and conditional rule by conditional rule.
+6. Review the live auditor form against the user's latest explicit instructions and confirmed decisions.
 7. Define compatibility and migration plans before changing form identifiers or serialization.
 8. Implement one bounded change set at a time.
 9. Test parser fixtures, joins, plan import/export, form conditions, GPS fallback, backup create/list/restore/delete and migrations.
@@ -295,7 +260,6 @@ A new engineer should be able to continue without relying on chat history:
 
 | ID | Area | Acceptance criterion |
 |---|---|---|
-| AT-010 | V06 form | Q11/Q12 always shown; Q11A/Q13 conditional; Q24 absent; Q16/Q17 facing only |
 | AT-011 | GPS fallback | Manual map pin works when GPS denied/unavailable; Get Location confirms coordinates |
 | AT-012 | Data migration | Legacy forms/drafts survive migration and remain readable/exportable |
 | AT-013 | Workbook parsing | Header scan, status exclusions, joins, dates and optional mapping match baseline |
@@ -306,7 +270,7 @@ Record environment, test data, expected and actual result, and pass/fail for eve
 
 ## 12. Open gaps and decisions
 
-- Retrieve the original approved V06 DOCX and verify exact question wording, options and competitor lists.
+
 - Confirm form eligibility rule with the product owner.
 - Confirm whether historical Q16/Q17 numeric limits remain.
 - Design and test backward-compatible migration for legacy forms and drafts.
@@ -320,7 +284,7 @@ Record environment, test data, expected and actual result, and pass/fail for eve
 - Preserve existing architecture unless a demonstrated reason requires change.
 - Do not rewrite the application for a narrow feature.
 - Never assume old line numbers, HEAD, dependency versions or deployment state remain current.
-- Use the approved V06 document for form content and live source for implemented behavior.
+- Use the user's latest explicit instructions for form changes and live source for implemented behavior.
 - Back up before meaningful changes; do not overwrite originals without approval.
 - Preserve records/drafts and use explicit backward-compatible migrations.
 - Test syntax, runtime behavior, data compatibility and the relevant user workflow.
@@ -345,7 +309,6 @@ Every completed stage must report:
 | Source | Use | Limitation |
 |---|---|---|
 | Current GitHub `main` source | Implemented behavior | Must be re-fetched for every future change |
-| Approved `TPA Final Form Spec V06 Revised.docx` | Approved form requirements | Exact text/lists must be read from original |
 | Supplied Excel workbooks | Parser fixtures and examples | Samples do not define universal rules |
 | Historical V2/V3 technical handovers | Function maps, persistence, parser and prior context | Revalidate against current source |
 | Project execution instructions TXT | Safe execution and QA workflow | Instructions, not application behavior |
@@ -355,11 +318,11 @@ Every completed stage must report:
 ## Appendix A — Immediate next work
 
 1. Re-fetch main and confirm the backup-deletion commit remains in history.
-2. Read the original approved V06 DOCX and build a complete question/option/visibility specification.
-3. Audit live form implementation against V06 and document every delta.
+2. Review current form questions, options and visibility rules against the latest user instructions.
+3. Audit live form implementation and document each required change.
 4. Decide eligibility and Q16/Q17 validation with the product owner.
 5. Design backward-compatible migration for existing forms and drafts.
-6. Implement and test V06 in a dedicated branch with before/after fixtures.
+6. Implement and test the agreed form changes in a dedicated branch with before/after fixtures.
 7. Scope Targets reporting separately after metric definitions are approved.
 
 ## Appendix B — Data-safety checklist
@@ -393,6 +356,14 @@ Implementation scope: only the displayed Q12 question text (internal ID q12) and
 Verification: post-commit source fetch is required to confirm the exact persisted wording and unchanged Q12 options/visibility logic. Assistant browser/mobile interaction, saved-draft/export regression tests, and deployment/live verification have not been performed. The change is committed on main; do not treat that as evidence of deployment.
 
 ## Document revision history
+
+### Version 5.5 — 15 November 2026
+
+- Retired the legacy auditor-form specification and its requirement/test matrices from active project guidance.
+- Form decisions now follow the user's latest explicit instructions, accepted changes and the current implementation.
+- Removed obsolete references from the continuation procedure, acceptance catalogue, open-gap list, engineering rules and source register.
+- No application code, saved audit records, drafts or uploaded source files were changed.
+
 
 | Version | Date | Scope | Evidence |
 |---|---|---|---|
@@ -510,7 +481,7 @@ The existing numbering elsewhere was inspected and retained:
 - The final optional visit note remains number 24 because it is displayed at the end of the form.
 - Existing subquestion labels Q8A and Q11A remain unchanged.
 
-Requirements authority: the user explicitly instructed that V06 must no longer be used. Future numbering and form decisions must follow the user's current instructions and accepted repository changes, not V06.
+Future numbering and form decisions follow the user's current instructions and accepted repository changes.
 
 Verification: post-commit source fetch should confirm the q3a display number is 4A / 4B and that its internal ID and behavior are unchanged. No browser/mobile interaction, saved-draft/export regression or deployment verification is implied by this source update.
 
@@ -530,7 +501,7 @@ Implementation:
 Verification boundaries:
 - Source-level verification must confirm the dynamic numbering loop is in `update()`, after visibility is recalculated, and before progress is updated.
 - Browser testing across different conditional paths, saved-draft reload, export and deployment/live verification have not been performed by the assistant.
-- V06 remains explicitly excluded as a basis for requirements or numbering decisions.
+
 
 
 ### 6.11 Fixed, stable auditor-question numbering (14 November 2026)
@@ -550,7 +521,7 @@ This fixed-numbering implementation supersedes the temporary dynamic numbering d
 Verification boundaries:
 - Post-commit source verification should confirm the fixed labels and absence of runtime renumbering.
 - Browser testing across conditional paths, saved-draft reload, export and deployment/live verification have not been performed by the assistant.
-- V06 remains excluded as a requirements basis.
+
 
 ## 6.12 Compact two-column layout for competitor-brand questions (implemented 14 November 2026)
 
@@ -602,3 +573,51 @@ Verification boundaries:
 - Failed implementation retained for investigation on safety branch `backup/main-before-emergency-audit-rollback-20261114`. Earlier pre-change safety branch: `backup/main-before-audit-form-history-20261114`.
 - The history-management feature is NOT active on `main`. The original form workflow, including its existing draft behavior, is restored. No user-local data was intentionally deleted by this source rollback.
 - Source restoration was verified by matching the restored file blob to the pre-feature blob. Browser/runtime and Pages deployment recovery still require user verification.
+
+
+## 6.16 Audit-history reimplementation — isolated candidate (14 November 2026)
+
+- User re-approved the complete 6.14 outcome after root-cause review. This reimplementation is intentionally isolated on branch `backup/main-before-audit-history-reimplementation-20261114`; it has NOT been merged to `main` or deployed.
+- Reimplemented the store Audit Form entry as a per-store history list, newest first, with registration and last-edit dates, per-record view, record-specific edit, and a blank independent new visit.
+- New records receive independent IDs and initial timestamps. Editing is bound to the selected record ID; the original timestamp is retained and `updated` is refreshed. If the selected record no longer exists, save is refused rather than creating a replacement record.
+- Preserved the existing post-save effects: audit-store indexing, map-label refresh, audit-store ID refresh, today's matching Journey Plan completion, and return to that store's history.
+- Removed draft autosave, draft recovery and draft-save UI. Legacy `fd_*` entries and the local draft-backup bucket are purged at startup. Audit-form Drive backup now writes format v2 with finalized forms only; restore accepts legacy v1 backups with a `drafts` array but ignores that array. Full-system restore filters `fd_*` entries and purges draft storage only on successful restore; emergency rollback restores the pre-restore database and does not intentionally purge its draft entries.
+- Existing finalized form records, IDs, question fields, `_a`/`_o` snapshots and export structure are retained. No automatic bulk rewrite of finalized records is performed.
+- Implementation commits on candidate branch: form isolation `5ecc12988e82dc752424e6eef717d3ca0fbb4894`; history/new visits `0ea774d1e74233c41426795ec2ec443eb928b2de`; draft retirement and backup compatibility `b4e0271115ef61c540dcc428efcd9116477dc8bf`.
+- Current candidate `index.html` blob: `401553fdcdf8431ec12721237c1ff7b5b9a0ff40`.
+- Safety baseline: `main` HEAD `80162f2a27f28fd12a2b7664b9082e570769ae9c`; safety branch created before edits: `backup/main-before-audit-history-reimplementation-20261114`.
+
+Verification status:
+- JavaScript parse validation with `new Function` passed after each source change and on the final candidate.
+- Source assertions passed for history entry, new-visit flow, selected-record edit binding, missing-record guard, timestamp preservation, draft UI/autosave removal, legacy-backup acceptance, v2 backup creation, and startup draft purge.
+- Browser/iPhone Safari interaction, multi-visit persistence, editing an older record, date display, backup/restore, full-system restore/rollback, export regression, and GitHub Pages deployment have NOT been tested. Do not merge to `main` or claim release until these tests pass.
+
+- Post-review correction: removed the obsolete `dbDel(null)` call from the finalized-form save path after draft-key removal. The final source commit is `4830696dde9fd6513f8194e667285d2819769834`; final `index.html` blob is `535d5571b89b44fbc9110e94d5be362c7aa55800`. JavaScript parse validation passed again.
+
+
+## 6.17 Audit-history language localization (15 November 2026)
+
+- Localized the per-store audit-history list and finalized-record view using the application's active language setting.
+- English mode now displays English headings, action buttons, empty-state text, registration/edit labels, visit numbering and English date formatting. Persian mode retains Persian labels, Persian digits and RTL layout.
+- The record detail view uses the existing English question-title and answer-option dictionaries (EN.t and EN.o) when English is active; original stored values and record data are not modified.
+- Modal direction follows the active language. Date display retains the existing Asia/Tehran time zone.
+- No saved audit records, timestamps, IDs, answers or backup payloads were migrated or rewritten.
+- Candidate repository: ary-bo/tpa-navigation-test; branch: fix/audit-history-language-20261115.
+- Source commit: a026cc2bfb16803057686b22214d258860113c93; index.html blob: 5c122d85f1ed2ea8b219d6297b92ed9bf8539704.
+
+Verification boundaries:
+- Source inspection confirms localized history and detail labels, use of existing EN dictionaries, language-aware date locale and modal direction.
+- JavaScript syntax validation and browser/Safari runtime testing are pending. The test Pages deployment must be rechecked after the commit; the production repository and live site have not been changed.
+
+
+## 6.18 Audit-history Delete Form action (15 November 2026)
+
+Each finalized form in the per-store audit-history list now has a dedicated **Delete Form** action alongside View and Edit. The action requires explicit bilingual confirmation and deletes only the selected record, identified by its unique `rec.id`. It persists the remaining forms through the existing `dbSet('forms', next)` path, updates the local audit-form backup, refreshes audit-store IDs, reopens the history list, and re-renders the application. A missing/stale ID is handled without deleting another record; persistence errors are surfaced to the user.
+
+Verification evidence:
+- Ten structural source checks passed for the history entry point, view/edit/new-visit handlers, bilingual delete confirmation, unique-ID targeting, persistence, local-backup update, audit-status refresh, and history/UI refresh.
+- An isolated Node.js mock lifecycle test passed create, edit-without-duplication, unrelated-record preservation, targeted delete, stale-delete no-op, and local-backup synchronization.
+- The user subsequently confirmed that the practical workflow works correctly in the test application. The exact browser/device matrix was not recorded.
+- No real audit records were deleted during implementation or automated tests.
+- First implemented in `ary-bo/tpa-navigation-test`, `main`, commit `cdc4907bef79986754f8d573833335f5d7c58dd8`; production promotion is recorded in `PROJECT_CHANGELOG.txt`.
+

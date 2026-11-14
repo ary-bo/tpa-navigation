@@ -1172,10 +1172,10 @@ input,select,textarea{font-size:16px!important}
   async function loadForms(db) {
     return await db.dbGet("forms") || [];
   }
-  function openForm({ store: s, db, toast: toast2, onSaved }) {
+  function openForm({ store: s, db, toast: toast2, onSaved, editRecord = null }) {
     if (!canForm(s)) return toast2("\u0641\u0631\u0645 \u0641\u0642\u0637 \u0628\u0631\u0627\u06CC \u0641\u0631\u0648\u0634\u06AF\u0627\u0647\u200C\u0647\u0627\u06CC Journey Plan \u0628\u0627\u0632 \u0645\u06CC\u200C\u0634\u0648\u062F");
     const a = { q1: s.salesman, q2: s.newCode }, other = {}, els = {};
-    let dirty = false, previousRecord = null;
+    let dirty = false, previousRecord = editRecord;
     const isVis = (q) => !q.show || q.show(a);
     const hasOther = (q) => {
       const v = a[q.id];
@@ -1205,10 +1205,9 @@ input,select,textarea{font-size:16px!important}
     root.setAttribute("dir", "rtl");
     root.innerHTML = `<div class="tf-h"><button class="btn sm" id="tf-x">\u2715</button><div class="tf-t"><b>${esc(s.storeName || s.name)}</b><span class="mu">${esc(s.name)} \xB7 <span dir="ltr">${esc(s.newCode)}</span> \xB7 ${esc(s.salesman) || "\u2014"}</span></div></div>
   <div class="tf-p"><div id="tf-bar"></div></div><div class="tf-pt mu" id="tf-pt"></div><div id="tf-b" class="tf-b"></div>
-  <div class="tf-f"><button class="btn pri" id="tf-ok">\u062B\u0628\u062A \u0641\u0631\u0645</button><button class="btn" id="tf-dr">\u0630\u062E\u06CC\u0631\u0647 \u067E\u06CC\u0634\u200C\u0646\u0648\u06CC\u0633</button></div>`;
+  <div class="tf-f"><button class="btn pri" id="tf-ok">\u062B\u0628\u062A \u0641\u0631\u0645</button></div>`;
     document.body.appendChild(root);
     const body = root.querySelector("#tf-b"), $2 = (x) => root.querySelector(x);
-    const draftKey = "fd_" + s.newCode;
     function control(q, c) {
       c.innerHTML = "";
       const set = (v) => {
@@ -1342,17 +1341,8 @@ input,select,textarea{font-size:16px!important}
       const v = QS.filter((q) => !SKIP.includes(q.id) || q.id === "q3a").filter((q) => isVis(q) && !q.optional), d = v.filter(filled).length;
       $2("#tf-pt").textContent = `${FA2(d)} \u0627\u0632 ${FA2(v.length)} \u0633\u0624\u0627\u0644 \u0627\u0644\u0632\u0627\u0645\u06CC`;
       $2("#tf-bar").style.width = (v.length ? d / v.length * 100 : 0) + "%";
-      if (dirty) clearTimeout(update.tm), update.tm = setTimeout(saveDraft, 0);
+      // Draft autosave removed; finalized records are saved explicitly.
     }
-    const saveDraft = async () => {
-      dirty = false;
-      try {
-        await db.dbSet(draftKey, { a, other, t: Date.now() });
-        try { await saveLocalAuditDrafts(); } catch (backupError) { console.warn("Local audit draft backup:", backupError); }
-      } catch (e) {
-        console.warn("Audit draft save:", e);
-      }
-    };
     function record() {
       const now = (/* @__PURE__ */ new Date()).toISOString();
       const r = { id: previousRecord ? previousRecord.id : uid(), timestamp: previousRecord ? previousRecord.timestamp : now, updated: previousRecord ? now : "", storeId: s.id, visitor: s.salesman, q2_code: s.newCode, q2_name: s.name };
@@ -1374,15 +1364,8 @@ input,select,textarea{font-size:16px!important}
       r._o = JSON.parse(JSON.stringify(other));
       return r;
     }
-    const close = async () => {
-      if (dirty) await saveDraft();
-      root.remove();
-    };
+    const close = () => root.remove();
     $2("#tf-x").onclick = close;
-    $2("#tf-dr").onclick = async () => {
-      await saveDraft();
-      toast2("\u067E\u06CC\u0634\u200C\u0646\u0648\u06CC\u0633 \u0630\u062E\u06CC\u0631\u0647 \u0634\u062F");
-    };
     $2("#tf-ok").onclick = async () => {
       let first = null;
       QS.forEach((q) => {
@@ -1394,14 +1377,14 @@ input,select,textarea{font-size:16px!important}
       }
       const r = record();
       const all = await loadForms(db);
-      const previousIndex = previousRecord ? all.findIndex((x) => x.id === previousRecord.id) : -1;
-      if (previousIndex >= 0) all[previousIndex] = r;
+      const previousIndex = previousRecord ? all.findIndex((x) => x && x.id === previousRecord.id) : -1;
+      if (previousRecord && previousIndex < 0) return toast2('Selected form was not found; no changes saved');
+      if (previousRecord) all[previousIndex] = r;
       else all.push(r);
       try {
         await db.dbSet("forms", all);
         try { await saveLocalAuditForms(all); } catch (backupError) { console.warn("Local audit backup:", backupError); }
-        await db.dbDel(draftKey);
-        try { await saveLocalAuditDrafts(); } catch (backupError) { console.warn("Local audit draft backup:", backupError); }
+        // Draft storage has been retired; finalized form backup remains active.
       } catch (e) {
         return toast2("Storage: " + e.message);
       }
@@ -1410,29 +1393,7 @@ input,select,textarea{font-size:16px!important}
       toast2("\u0641\u0631\u0645 \u062B\u0628\u062A \u0634\u062F \u2714");
       if (onSaved) onSaved(r, s);
     };
-    Promise.all([loadForms(db), db.dbGet(draftKey)]).then(([all, d]) => {
-      previousRecord = all.filter((r) => String(r.storeId) === String(s.id))
-        .sort((x, y) => String(y.updated || y.timestamp || "").localeCompare(String(x.updated || x.timestamp || "")))[0] || null;
-      if (previousRecord) {
-        if (previousRecord._a && typeof previousRecord._a === "object") Object.assign(a, previousRecord._a);
-        else QS.forEach((q) => {
-          if (SKIP.includes(q.id)) return;
-          const value = previousRecord[q.id];
-          if (value !== void 0 && value !== null && value !== "") a[q.id] = q.type === "multi" && typeof value === "string" ? value.split(" | ").filter(Boolean) : value;
-        });
-        Object.assign(other, previousRecord._o || {});
-        if (!a.q3a && Number.isFinite(Number(previousRecord.q3_lat)) && Number.isFinite(Number(previousRecord.q3_lng))) a.q3a = { lat: Number(previousRecord.q3_lat), lng: Number(previousRecord.q3_lng) };
-      }
-      if (d && d.a) {
-        Object.assign(a, d.a);
-        Object.assign(other, d.other || {});
-      }
-      Object.assign(a, { q1: s.salesman, q2: s.newCode });
-      QS.forEach((q) => els[q.id] && control(q, els[q.id].ctl));
-      if (d && d.a) toast2("\u067E\u06CC\u0634\u200C\u0646\u0648\u06CC\u0633 \u0642\u0628\u0644\u06CC \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0634\u062F");
-      else if (previousRecord) toast2("\u0641\u0631\u0645 \u0642\u0628\u0644\u06CC \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0634\u062F");
-      update();
-    }).catch(() => update());
+    Promise.resolve().then(() => { if (previousRecord) { if (previousRecord._a && typeof previousRecord._a === 'object') Object.assign(a, previousRecord._a); else QS.forEach((q) => { if (SKIP.includes(q.id)) return; const value=previousRecord[q.id]; if(value!==void 0&&value!==null&&value!=='') a[q.id]=q.type==='multi'&&typeof value==='string'?value.split(' | ').filter(Boolean):value; }); Object.assign(other,previousRecord._o||{}); if(!a.q3a&&Number.isFinite(Number(previousRecord.q3_lat))&&Number.isFinite(Number(previousRecord.q3_lng))) a.q3a={lat:Number(previousRecord.q3_lat),lng:Number(previousRecord.q3_lng)}; } Object.assign(a,{q1:s.salesman,q2:s.newCode}); QS.forEach((q)=>els[q.id]&&control(q,els[q.id].ctl)); update(); }).catch((error)=>{console.error('Audit form initialization:',error);toast2('بارگذاری فرم ناموفق بود');});
     update();
   }
 
@@ -2220,6 +2181,65 @@ input,select,textarea{font-size:16px!important}
     const q = encodeURIComponent(s.storeName || s.name || s.address) + "%20" + encodeURIComponent(s.address);
     return `<a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${q}">${t("searchDest")}</a>`;
   }
+  async function afterAuditSaved(record, store) {
+    if (record) { if (record.storeId != null) auditStoreIds.add(auditKey(record.storeId)); if (record.q2_code != null) auditStoreCodes.add(auditKey(record.q2_code)); if (record.q2_name != null) auditStoreNames.add(auditKey(record.q2_name)); }
+    if (map && labelLayer) refreshMapLabels(); await refreshAuditStoreIds();
+    const td=todayISO(); let n=0; S.plan.forEach(p=>{if(String(p.customerId)===String(store.id)&&p.visitDate===td&&p.visit!=='done'){p.visit='done';n++;}});
+    if(n){savePlan();toast(t('v_done')+' ✓');} render(); openAuditHistory(store);
+  }
+  async function openAuditHistory(store) {
+    const en=getLang()==='en', dir=en?'ltr':'rtl';
+    const label=(fa,english)=>en?english:fa;
+    const all=await dbGet('forms')||[]; const records=all.filter(r=>r&&String(r.storeId)===String(store.id)).sort((a,b)=>String(b.timestamp||'').localeCompare(String(a.timestamp||'')));
+    const date=v=>{if(!v)return '—';const d=new Date(v);return Number.isNaN(d.getTime())?esc(v):new Intl.DateTimeFormat(en?'en-GB':'fa-IR',{dateStyle:'medium',timeZone:'Asia/Tehran'}).format(d);};
+    const overlay=document.createElement('div');overlay.dir=dir;overlay.style.cssText='position:fixed;inset:0;z-index:10020;background:rgba(0,0,0,.75);display:flex;align-items:flex-end;justify-content:center;padding:12px';
+    const panel=document.createElement('div');panel.dir=dir;panel.style.cssText='width:min(100%,680px);max-height:88dvh;overflow:auto;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:20px;padding:18px';
+    panel.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><div><h2 style="margin:0 0 5px">'+label('مدیریت فرم‌های حسابرسی','Audit Form History')+'</h2><div class="mu">'+esc(store.storeName||store.name)+' · '+esc(store.newCode)+'</div></div><button class="btn" data-close>'+label('بستن','Close')+'</button></div><button class="btn pri" data-new style="width:100%;margin:16px 0">＋ '+label('بازدید جدید','New Visit')+'</button><div data-list></div>';
+    overlay.appendChild(panel);document.body.appendChild(overlay);const list=panel.querySelector('[data-list]');
+    if(!records.length)list.innerHTML='<div class="mu" style="padding:18px;text-align:center">'+label('هنوز فرمی ثبت نشده است.','No audit forms have been recorded yet.')+'</div>';
+    records.forEach((rec,index)=>{const card=document.createElement('section');card.style.cssText='border:1px solid var(--bd);border-radius:14px;padding:13px;margin:10px 0';
+      card.innerHTML='<b>'+label('بازدید ','Visit ')+(en?records.length-index:FA2(records.length-index))+'</b><div class="mu" style="margin:8px 0">'+label('تاریخ ثبت: ','Registered: ')+date(rec.timestamp)+'</div><div class="mu" style="margin:8px 0">'+label('آخرین ویرایش: ','Last edited: ')+date(rec.updated)+'</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-view>'+label('مشاهده','View')+'</button><button class="btn pri" data-edit>'+label('ویرایش','Edit')+'</button><button class="btn" data-delete style="border-color:#c44;color:#c44">'+label('حذف فرم','Delete Form')+'</button></div>';
+      card.querySelector('[data-view]').onclick=()=>showAuditRecord(rec,store);
+      card.querySelector('[data-edit]').onclick=()=>{overlay.remove();openForm({store,db:{dbGet,dbSet,dbDel},toast,editRecord:rec,onSaved:saved=>afterAuditSaved(saved,store)});};
+      card.querySelector('[data-delete]').onclick=async()=>{
+        const message=label('این فرم حسابرسی برای همیشه حذف شود؟ این عملیات قابل بازگشت نیست.','Permanently delete this audit form? This cannot be undone.');
+        if(!window.confirm(message)) return;
+        try {
+          const current=await dbGet('forms')||[];
+          const targetIndex=current.findIndex(x=>x&&x.id===rec.id);
+          if(targetIndex<0){toast(label('فرم پیدا نشد؛ فهرست به‌روزرسانی شد.','Form not found; history refreshed.'));overlay.remove();openAuditHistory(store);return;}
+          const next=current.filter(x=>!x||x.id!==rec.id);
+          await dbSet('forms',next);
+          try{await saveLocalAuditForms(next);}catch(backupError){console.warn('Local audit backup:',backupError);}
+          await refreshAuditStoreIds();
+          toast(label('فرم حذف شد.','Audit form deleted.'));
+          overlay.remove();
+          openAuditHistory(store);
+          render();
+        } catch(error) {
+          console.error('Audit form deletion:',error);
+          toast(label('حذف فرم ناموفق بود.','Could not delete audit form: ')+error.message);
+        }
+      };
+      list.appendChild(card);});
+    panel.querySelector('[data-close]').onclick=()=>overlay.remove();
+    panel.querySelector('[data-new]').onclick=()=>{overlay.remove();openForm({store,db:{dbGet,dbSet,dbDel},toast,onSaved:saved=>afterAuditSaved(saved,store)});};
+    overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove();});
+  }
+  function showAuditRecord(rec,store) {
+    const en=getLang()==='en', dir=en?'ltr':'rtl';
+    const label=(fa,english)=>en?english:fa;
+    const rows=QS.filter(q=>!SKIP.includes(q.id)).map(q=>{
+      const title=en?(EN.t[q.id]||q.t):q.t;
+      const raw=rec[q.id];
+      const value=raw==null?'—':Array.isArray(raw)?raw.map(x=>en?(EN.o[x]||x):x).join(', '):(en?(EN.o[raw]||raw):raw);
+      return '<div style="padding:9px 0;border-bottom:1px solid var(--bd)"><b>'+esc(title)+'</b><div class="mu" style="white-space:pre-wrap;margin-top:5px">'+esc(String(value))+'</div></div>';
+    }).join('');
+    const box=document.createElement('div');box.dir=dir;box.style.cssText='position:fixed;inset:0;z-index:10030;background:rgba(0,0,0,.75);display:flex;align-items:flex-end;padding:12px';
+    const stamp=v=>v?new Intl.DateTimeFormat(en?'en-GB':'fa-IR',{dateStyle:'medium',timeZone:'Asia/Tehran'}).format(new Date(v)):'—';
+    box.innerHTML='<div dir="'+dir+'" style="background:var(--card);color:var(--tx);border-radius:18px;padding:18px;width:100%;max-height:88dvh;overflow:auto"><div style="display:flex;justify-content:space-between"><b>'+label('مشاهده فرم','Audit Form')+' · '+esc(store.storeName||store.name)+'</b><button class="btn" data-close>'+label('بستن','Close')+'</button></div><p class="mu">'+label('تاریخ ثبت: ','Registered: ')+stamp(rec.timestamp)+' · '+label('آخرین ویرایش: ','Last edited: ')+stamp(rec.updated)+'</p>'+rows+'</div>';
+    document.body.appendChild(box);box.querySelector('[data-close]').onclick=()=>box.remove();
+  }
   function detail(id) {
     const s = byId.get(id);
     if (!s) return;
@@ -2268,31 +2288,7 @@ input,select,textarea{font-size:16px!important}
         render();
       };
       const fm = el.querySelector("#fm");
-      if (fm) fm.onclick = () => {
-        closeSheet();
-        openForm({ store: s, db: { dbGet, dbSet, dbDel }, toast, onSaved: async (record) => {
-          if (record) {
-            if (record.storeId != null) auditStoreIds.add(auditKey(record.storeId));
-            if (record.q2_code != null) auditStoreCodes.add(auditKey(record.q2_code));
-            if (record.q2_name != null) auditStoreNames.add(auditKey(record.q2_name));
-          }
-          if (map && labelLayer) refreshMapLabels();
-          await refreshAuditStoreIds();
-          const td = todayISO();
-          let n = 0;
-          S.plan.forEach((p) => {
-            if (p.customerId === s.id && p.visitDate === td && p.visit !== "done") {
-              p.visit = "done";
-              n++;
-            }
-          });
-          if (n) {
-            savePlan();
-            toast(t("v_done") + " \u2714");
-          }
-          render();
-        } });
-      };
+      if (fm) fm.onclick = () => { closeSheet(); openAuditHistory(s); };
     });
   }
   function addPlanDialog(s, prefDate) {
@@ -2708,41 +2704,14 @@ input,select,textarea{font-size:16px!important}
       req.onerror = () => reject(req.error);
     });
   }
-  async function saveLocalAuditDrafts() {
-    const idb = await localAuditDb();
-    const source = await open();
-    const keys = await new Promise((resolve, reject) => {
-      const req = source.transaction(ST, "readonly").objectStore(ST).getAllKeys();
-      req.onsuccess = () => resolve(req.result || []);
-      req.onerror = () => reject(req.error);
-    });
-    const draftKeys = keys.filter((k) => typeof k === "string" && k.startsWith("fd_"));
-    const drafts = await Promise.all(draftKeys.map(async (key) => ({ key, value: await dbGet(key) })));
-    return await new Promise((resolve, reject) => {
-      const tx = idb.transaction("backup", "readwrite");
-      tx.objectStore("backup").put({ v: 1, at: Date.now(), drafts }, "drafts");
-      tx.oncomplete = () => resolve(drafts.length);
-      tx.onerror = () => reject(tx.error);
-      tx.onabort = () => reject(tx.error);
-    });
-  }
-  async function restoreLocalAuditDrafts() {
-    const idb = await localAuditDb();
-    const saved = await new Promise((resolve, reject) => {
-      const req = idb.transaction("backup", "readonly").objectStore("backup").get("drafts");
-      req.onsuccess = () => resolve(req.result && Array.isArray(req.result.drafts) ? req.result.drafts : []);
-      req.onerror = () => reject(req.error);
-    });
-    let restored = 0;
-    for (const item of saved) {
-      if (!item || typeof item.key !== "string" || !item.key.startsWith("fd_") || !item.value) continue;
-      const current = await dbGet(item.key);
-      if (!current || Number(item.value.t || 0) > Number(current.t || 0)) {
-        await dbSet(item.key, item.value);
-        restored++;
-      }
-    }
-    return restored;
+  async function purgeAuditDrafts() {
+    const idb=await open();
+    const keys=await new Promise((resolve,reject)=>{const req=idb.transaction(ST,'readonly').objectStore(ST).getAllKeys();req.onsuccess=()=>resolve(req.result||[]);req.onerror=()=>reject(req.error);});
+    const drafts=keys.filter(k=>typeof k==='string'&&k.startsWith('fd_'));
+    if(drafts.length) await new Promise((resolve,reject)=>{const tx=idb.transaction(ST,'readwrite'),store=tx.objectStore(ST);drafts.forEach(k=>store.delete(k));tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);});
+    const backup=await localAuditDb();
+    await new Promise((resolve,reject)=>{const tx=backup.transaction('backup','readwrite');tx.objectStore('backup').delete('drafts');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);});
+    return drafts.length;
   }
   async function restoreLocalAuditForms() {
     const [primary, backup] = await Promise.all([dbGet("forms"), readLocalAuditForms()]);
@@ -2766,22 +2735,12 @@ input,select,textarea{font-size:16px!important}
     const r = await gfetch(`https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=${q}&fields=files(id,name,modifiedTime)&pageSize=10`);
     return (await r.json()).files[0] || null;
   }
-  async function readAuditDrafts() {
-    const idb = await open();
-    const keys = await new Promise((res, rej) => {
-      const req = idb.transaction(ST, "readonly").objectStore(ST).getAllKeys();
-      req.onsuccess = () => res(req.result || []);
-      req.onerror = () => rej(req.error);
-    });
-    const draftKeys = keys.filter((k) => typeof k === "string" && k.startsWith("fd_"));
-    return Promise.all(draftKeys.map(async (key) => ({ key, value: await dbGet(key) })));
-  }
   async function backupAuditForms() {
     try {
       toast(t("syncing"));
-      const [forms, drafts, ex] = await Promise.all([dbGet("forms"), readAuditDrafts(), findAuditBackup()]);
+      const [forms, ex] = await Promise.all([dbGet("forms"), findAuditBackup()]);
       const safeForms = Array.isArray(forms) ? forms : [];
-      const body = JSON.stringify({ v: 1, type: "tpa-audit-forms", at: new Date().toISOString(), forms: safeForms, drafts });
+      const body = JSON.stringify({ v: 2, type: "tpa-audit-forms", at: new Date().toISOString(), forms: safeForms });
       const boundary = "tpaaudit" + Date.now();
       const meta = ex ? {} : { name: FBK, parents: ["appDataFolder"] };
       const multipart = `--${boundary}\r
@@ -2798,7 +2757,7 @@ ${body}\r
         headers: { "Content-Type": `multipart/related; boundary=${boundary}` },
         body: multipart
       });
-      toast(`${t("backupOk")} · ${safeForms.length} · ${drafts.length}`);
+      toast(`${t("backupOk")} · ${safeForms.length}`);
     } catch (e) {
       toast(t("errParse") + " " + e.message);
     }
@@ -2808,24 +2767,16 @@ ${body}\r
       const ex = await findAuditBackup();
       if (!ex) return toast(t("noBackup"));
       const backup = await (await gfetch(`https://www.googleapis.com/drive/v3/files/${ex.id}?alt=media`)).json();
-      if (backup.type !== "tpa-audit-forms" || !Array.isArray(backup.forms) || !Array.isArray(backup.drafts)) throw new Error("Invalid audit backup");
+      if (backup.type !== "tpa-audit-forms" || !Array.isArray(backup.forms)) throw new Error("Invalid audit backup");
       const localForms = await dbGet("forms") || [];
       const incomingIds = new Set(localForms.map((x) => x && x.id).filter(Boolean));
       const additions = backup.forms.filter((x) => x && x.id && !incomingIds.has(x.id));
-      if (!confirm(`${t("auditRestoreConfirm")}\n${new Date(ex.modifiedTime).toLocaleString()} · ${backup.forms.length} · ${backup.drafts.length}`)) return;
+      if (!confirm(`${t("auditRestoreConfirm")}\n${new Date(ex.modifiedTime).toLocaleString()} · ${backup.forms.length}`)) return;
       const mergedForms = localForms.concat(additions);
       await dbSet("forms", mergedForms);
       await saveLocalAuditForms(mergedForms);
-      let restoredDrafts = 0;
-      for (const item of backup.drafts) {
-        if (!item || typeof item.key !== "string" || !item.key.startsWith("fd_") || !item.value) continue;
-        const local = await dbGet(item.key);
-        if (!local || Number(item.value.t || 0) > Number(local.t || 0)) {
-          await dbSet(item.key, item.value);
-          restoredDrafts++;
-        }
-      }
-      toast(`${t("ok")} · +${additions.length} · ${restoredDrafts}`);
+      await purgeAuditDrafts();
+      toast(`${t("ok")} · +${additions.length}`);
     } catch (e) {
       toast(t("errParse") + " " + e.message);
     }
@@ -3064,11 +3015,12 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
       if (!confirm(confirmText)) return;
       const before = await readFullBackupState();
       try {
-        await replacePrimaryStore(payload.database.entries);
+        const cleanEntries = payload.database.entries.filter(entry => !(typeof entry[0] === "string" && entry[0].startsWith("fd_")));
+        await replacePrimaryStore(cleanEntries);
         await replaceLocalStorage(payload.localStorage);
-        const forms = payload.database.entries.find(x => Array.isArray(x) && x[0] === "forms");
+        const forms = cleanEntries.find(x => Array.isArray(x) && x[0] === "forms");
         await saveLocalAuditForms(forms && Array.isArray(forms[1]) ? forms[1] : []);
-        await saveLocalAuditDrafts();
+        await purgeAuditDrafts();
         await writeUnifiedLocalSnapshot();
       } catch (restoreError) {
         try {
@@ -3076,7 +3028,6 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
           await replaceLocalStorage(before.localStorage);
           const oldForms = before.entries.find(x => Array.isArray(x) && x[0] === "forms");
           await saveLocalAuditForms(oldForms && Array.isArray(oldForms[1]) ? oldForms[1] : []);
-          await saveLocalAuditDrafts();
           await writeUnifiedLocalSnapshot();
         } catch (rollbackError) {
           console.error("Full restore rollback failed:", rollbackError);
@@ -3284,7 +3235,7 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
       try { await restoreUnifiedLocalBackup(); }
       catch (backupError) { console.warn("Unified local backup restore:", backupError); }
       await restoreLocalAuditForms();
-      await restoreLocalAuditDrafts();
+      await purgeAuditDrafts();
       await refreshAuditStoreIds();
     } catch (e) {
       console.warn("Local audit restore:", e);

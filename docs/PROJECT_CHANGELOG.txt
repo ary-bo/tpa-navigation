@@ -293,7 +293,6 @@ Traceability:
 User-approved requirement:
 - Correct the question numbering so the map/location subquestion follows
   question 4 rather than retaining the old 3A / 3B label.
-- The user explicitly instructed that V06 must no longer be used as a
   requirements basis.
 
 Implementation:
@@ -351,7 +350,6 @@ Verification:
 - Source-level verification is recorded after post-commit fetch.
 - Browser testing across conditional paths, saved-draft reload, export and
   deployment/live verification have not been performed by the assistant.
-- V06 is not used as a requirements or numbering basis.
 
 
 2026-11-14 — Auditor form: fixed stable question numbering
@@ -389,7 +387,6 @@ Verification:
 - Source-level verification is recorded after post-commit fetch.
 - Browser testing across conditional paths, saved-draft reload, export and
   deployment/live verification have not been performed by the assistant.
-- V06 is not used as a requirements or numbering basis.
 
 
 2026-11-14 — Auditor form: compact two-column competitor-brand options
@@ -486,3 +483,120 @@ Verification:
   intentionally deleted by this source rollback.
 - Source blob match verified; browser/runtime and live deployment recovery
   remain unverified.
+
+
+2026-11-14 — Reimplement per-store audit history and draft retirement (isolated candidate)
+-----------------------------------------------------------------------------------------
+
+User approval:
+- User re-approved the complete agreed outcome after the previous release was
+  root-cause reviewed. This candidate is isolated and has not been merged to
+  main or deployed.
+
+Implementation:
+- Store Audit Form action opens per-store finalized audit history, newest first.
+- Added per-record viewing, editing of the exact selected record, and a blank
+  independent new-visit flow with a new record ID.
+- Existing timestamp is retained on edit; updated is refreshed. Missing record
+  IDs cause the edit save to stop instead of silently creating a new record.
+- Preserved audit indexing, map label refresh, today's Journey Plan completion,
+  and return to history after a successful save.
+- Removed draft save/autosave/recovery and draft UI. Startup purges legacy fd_*
+  keys and the local draft backup bucket.
+- Audit Drive backups use v2 finalized-form payloads. Restore accepts older
+  backups with draft arrays but ignores the draft payload. Full-system restore
+  filters draft keys; rollback does not intentionally purge the pre-restore
+  draft entries.
+
+Git traceability:
+- Repository: ary-bo/tpa-navigation
+- Candidate branch: backup/main-before-audit-history-reimplementation-20261114
+- Baseline main HEAD: 80162f2a27f28fd12a2b7664b9082e570769ae9c
+- Safety branch created before edits: backup/main-before-audit-history-reimplementation-20261114
+- Source commits: 5ecc12988e82dc752424e6eef717d3ca0fbb4894;
+  0ea774d1e74233c41426795ec2ec443eb928b2de;
+  b4e0271115ef61c540dcc428efcd9116477dc8bf
+- Technical documentation commit: 4fe7031a1fd92f6e5d2cd3bbe828edbcaed6ae17
+- index.html blob: 401553fdcdf8431ec12721237c1ff7b5b9a0ff40
+
+Verification:
+- JavaScript syntax parse passed using new Function on the complete script.
+- Source assertions passed for the key history/edit/timestamp/draft-removal and
+  legacy backup compatibility conditions.
+- No browser or iPhone Safari test has been performed. Backup/restore, full
+  restore rollback, exports and Pages deployment remain unverified.
+- Candidate is NOT approved for merge/release until the outstanding tests pass.
+
+- Follow-up correction commit: `4830696dde9fd6513f8194e667285d2819769834` — removed the obsolete `dbDel(null)` call left in the form-save path after draft removal. Final index blob: `535d5571b89b44fbc9110e94d5be362c7aa55800`; JavaScript syntax parse passed again.
+
+
+2026-11-15 — Localize audit history for English and Persian modes
+------------------------------------------------------------------
+
+- Localized the audit-history list and record-view UI according to the app's
+  active language setting. English mode uses English labels, buttons, empty
+  state, visit numbering, dates and LTR modal direction; Persian mode retains
+  Persian labels/digits and RTL direction.
+- Record detail question titles and answer options use existing EN.t / EN.o
+  translation dictionaries in English mode. Stored record values are untouched.
+- Preserved Asia/Tehran date time zone and all record IDs, timestamps, answers,
+  save/edit behavior and backup payloads.
+
+Git traceability:
+- Repository: ary-bo/tpa-navigation-test
+- Branch: fix/audit-history-language-20261115
+- Source commit: a026cc2bfb16803057686b22214d258860113c93
+- index.html blob: 5c122d85f1ed2ea8b219d6297b92ed9bf8539704
+
+Verification:
+- Source inspection confirms language-aware labels, question/answer translation,
+  date locale and modal direction.
+- JavaScript syntax, browser/Safari behavior and Pages redeployment verification
+  are pending. Production repository/site were not changed.
+
+
+2026-11-15 — Auditor-form requirements governance reset
+-------------------------------------------------------
+
+- The user instructed that the previously referenced auditor-form specification
+  is no longer to be used as a basis for future work.
+- Removed its requirements section, conditional-visibility matrix, related
+  acceptance item, source-register entry and future-work references from the
+  active technical handover.
+- Removed obsolete mentions from the chronological project changelog.
+- Future form changes must be based on the user's latest explicit instructions,
+  accepted project changes and the current application source.
+- No application source code, saved audit records, drafts or uploaded original
+  files were changed.
+- Backup branch: backup/docs-before-retiring-form-spec-20261115
+- Technical documentation version: 5.5.
+
+
+2026-11-15 — Audit-history Delete Form action accepted and promoted
+--------------------------------------------------------------------
+User-approved requirement:
+- Add a Delete Form action to each finalized record in per-store audit history.
+- Require bilingual confirmation and delete only the selected record by unique ID.
+
+Implementation:
+- Application file: index.html.
+- Persists remaining records via dbSet('forms', next), updates the local audit-form
+  backup, refreshes audit-store IDs, and refreshes the history/application UI.
+- Stale/missing IDs do not delete another record; persistence errors are surfaced.
+- Technical handover updated to version 5.6.
+
+Verification:
+- Ten structural source checks passed.
+- Isolated Node.js mock lifecycle checks passed: create, edit without duplication,
+  preserve unrelated record, targeted delete, stale-delete no-op, and local backup
+  synchronization.
+- User confirmed the practical workflow works correctly in the test application;
+  exact browser/device matrix was not recorded.
+- No real audit data was deleted in implementation or automated tests.
+
+Promotion:
+- Test source: ary-bo/tpa-navigation-test, main,
+  cdc4907bef79986754f8d573833335f5d7c58dd8.
+- Production repository: ary-bo/tpa-navigation, main.
+- Pre-transfer backup: backup/pre-transfer-audit-history-delete-20261115.
+- Production promotion commit SHA is recorded in the subsequent promotion note.
