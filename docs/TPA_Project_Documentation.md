@@ -585,8 +585,8 @@ Verification boundaries:
 - Existing `timestamp` is preserved on edits; `updated` is refreshed on each subsequent save. New records have their initial timestamp and an empty `updated` value.
 - Removed draft autosave, draft recovery and the draft-save control. On startup, legacy `fd_*` keys and the local draft-backup bucket are purged. Audit Drive backups now contain finalized forms only (format version 2); restore accepts older backups but ignores their draft payloads. Full-system restore filters legacy draft keys and purges the draft bucket.
 - Existing finalized form records, IDs and answer fields are retained. The old single-per-store draft key is no longer used.
-- Code commits: history UI and record-specific editing `c9557213ad339479cd1164e752a2de77985df125`; draft removal and legacy draft purge `d4e5ac8aa8fc6a49282999a9cb0a60408f679c4b`.
-- Current `index.html` blob: `81f3567be479137deadc4c614dd60f899ac3c654`.
+- Code commits: history UI and record-specific editing `c9557213ad339479cd1164e752a2de77985df125`; draft removal and legacy draft purge `d4e5ac8aa8fc6a49282999a9cb0a60408f679c4b`; preservation of existing audit-save side effects `37418e3908ddabe8e000e1a4bb912f6a91f7c099`.
+- Current `index.html` blob: `ef8932220f1545ca8c50913c191b9715f869f562`.
 - Safety branch: `backup/main-before-audit-form-history-20261114`; baseline: `bb2e93e867b3716e70f62e11fbc9b64cca6d1968`.
 
 Verification boundaries:
