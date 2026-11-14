@@ -117,6 +117,7 @@ input,select,textarea{font-size:16px!important}
 .tf-q[hidden],.tf-sec[hidden],.tf-q .er[hidden],.tf-q .warnm[hidden]{display:none}.tf-qt{font-weight:600;line-height:1.7}.tf-n{display:inline-block;min-width:24px;text-align:center;background:var(--prs);color:var(--pr);border-radius:8px;font-size:12px;padding:1px 6px}
 .tf-q .en{display:block;font-weight:400;font-size:12px;color:var(--mu);direction:ltr;text-align:left}.tf-h2{font-size:12px;margin:4px 0}.req{color:#dc2626;font-style:normal}
 .tf-q .opts{display:flex;flex-direction:column;gap:6px;margin-top:8px}.tf-q .opt{display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid var(--bd);border-radius:10px}
+.tf-q .opts-compact{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.tf-q .opts-compact .opt{align-items:center;min-height:42px;padding:7px 8px;gap:7px;font-size:14px;line-height:1.4;overflow-wrap:anywhere}.tf-q .opts-compact .opt input{margin-top:0}
 .tf-q .opt input{margin-top:5px;width:18px;height:18px;flex:none}.tf-q input[type=text],.tf-q input[type=number],.tf-q textarea{width:100%;margin-top:8px;font-size:16px;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx)}
 .tf-q .er{color:#dc2626;font-size:13px;margin-top:6px}.tf-ll{margin-top:8px}
 .tf-f{display:flex;gap:8px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--bd);background:var(--card)}.tf-f .pri{flex:1}
@@ -1216,7 +1217,7 @@ input,select,textarea{font-size:16px!important}
       };
       if (q.type === "single" || q.type === "multi") {
         const g = document.createElement("div");
-        g.className = "opts";
+        g.className = "opts" + (/^q(?:18|19|20|21|22|23)$/.test(q.id) ? " opts-compact" : "");
         q.opts.forEach((o) => {
           const lab = document.createElement("label");
           lab.className = "opt";
