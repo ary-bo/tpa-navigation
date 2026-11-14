@@ -1,6 +1,6 @@
 # TPA Navigation — Technical Reconstruction & Continuation Specification
 
-**Document version:** 4.2  
+**Document version:** 4.3  
 **Date:** 14 November 2026  
 **Repository:** https://github.com/ary-bo/tpa-navigation  
 **Target branch:** `main`  
@@ -164,6 +164,24 @@ Verification status:
 - Source-level inspection confirms the question order, conditional predicate, and existing hidden-question cleanup path.
 - Not yet browser-tested: all four outcome selections, switching from a first-three option to **مشتری پیدا نشد**, draft reload after that switch, and saved-record export/report behavior.
 - No claim is made that the updated source has been deployed to the live site.
+
+### 6.4 Distribution-problem options: remove profit-margin/agreement issue (implemented 14 November 2026)
+
+In auditor question Q11A, **نوع مشکل در توزیع** (Distribution problem type), the option **حاشیه سود یا توافق** (Profit margin or agreement issue) has been removed at the user's request. The remaining options are late delivery, incomplete order, wrong products delivered, damaged products, price discrepancy, and Other (please explain).
+
+Implementation: the option was removed from the Q11A `opts` array in `index.html`. The question identifier (`q11a`), trigger condition (Q11 = the affirmative problem response), the Other option, and the surrounding question flow remain unchanged. The English/Persian translation dictionary entry was retained to avoid unnecessarily breaking display of historical stored responses that may contain the old option.
+
+Compatibility and data safety: this change affects new/edited form selections only. No migration or bulk rewrite of existing saved audit records or drafts was performed. Existing historical values are not intentionally deleted by this change; verify their display/export behavior if legacy records containing the removed option are edited or exported.
+
+Verification status:
+- Source edit was constrained to exactly one matching option sequence in Q11A; the source update operation confirmed one occurrence was removed.
+- A post-commit fetch and syntax/browser regression checks are still required before calling the change fully verified.
+- Deployment/live behavior has not been independently verified.
+
+Git traceability:
+- Code commit: `ef0581e12e0b7bb7f0cc1c08cde53fa9a299e610`
+- Updated `index.html` blob: `18f6f2c3b31eac268524b8b018b49d5519331c86`
+- Rollback branch: `backup/main-before-remove-profit-margin-option-20261114`
 
 ## 7. Audit records and data compatibility
 
@@ -342,6 +360,13 @@ Every completed stage must report:
 - Main source: https://github.com/ary-bo/tpa-navigation/blob/main/index.html
 - Backup deletion commit: https://github.com/ary-bo/tpa-navigation/commit/a88574667f9ef1299e62526ca1eb035df19b94cb
 - Pre-change backup branch: https://github.com/ary-bo/tpa-navigation/tree/backup/main-before-backup-delete
+
+## Document revision history
+
+| Version | Date | Scope | Evidence |
+|---|---|---|---|
+| 4.3 | 14 November 2026 | Removed “حاشیه سود یا توافق” from auditor Q11A distribution-problem options; retained question ID, trigger and legacy translation mapping | Code commit `ef0581e12e0b7bb7f0cc1c08cde53fa9a299e610`; source/browser verification pending |
+| 4.2 | 14 November 2026 | Reordered visit outcome and location correction; hid location/map and clear active values for “مشتری پیدا نشد” | Code commit `179b54b07a704a76cfdcfa29989bff9e6843bb7b`; user confirmed working |
 
 ## Appendix D — Mandatory continuous handover and document update policy
 
