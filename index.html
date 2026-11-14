@@ -270,6 +270,10 @@ input,select,textarea{font-size:16px!important}
       clientId: "OAuth Client ID",
       folderId: "\u0634\u0646\u0627\u0633\u0647 \u067E\u0648\u0634\u0647 Drive",
       driveNote: "\u0648\u0631\u0648\u062F Drive \u0648 \u0646\u0642\u0634\u0647 \u0628\u0647 \u0627\u06CC\u0646\u062A\u0631\u0646\u062A \u0646\u06CC\u0627\u0632 \u062F\u0627\u0631\u0646\u062F\u061B \u0622\u0641\u0644\u0627\u06CC\u0646 \u0646\u06CC\u0633\u062A\u0646\u062F.",
+      auditBackup: "پشتیبان فرم‌های ممیزی",
+      auditRestore: "بازیابی فرم‌های ممیزی",
+      auditBackupNote: "پاسخ‌های ثبت‌شده و پیش‌نویس‌های فرم در یک بکاپ مستقل ذخیره می‌شوند.",
+      auditRestoreConfirm: "فرم‌های فعلی حفظ می‌شوند و فقط مواردی که وجود ندارند اضافه خواهند شد. ادامه می‌دهید؟",
       reports: "\u06AF\u0632\u0627\u0631\u0634\u200C\u0647\u0627",
       salesSummary: "خلاصه فروش فاکتور قطعی",
       salesFrom: "از تاریخ (شمسی)",
@@ -450,6 +454,10 @@ input,select,textarea{font-size:16px!important}
       clientId: "OAuth Client ID",
       folderId: "Drive folder ID",
       driveNote: "Drive sign-in and the base map need internet; they are not offline.",
+      auditBackup: "Back up audit forms",
+      auditRestore: "Restore audit forms",
+      auditBackupNote: "Submitted audit forms and saved drafts are stored in a separate backup.",
+      auditRestoreConfirm: "Existing forms will be kept and only missing records added. Continue?",
       reports: "Reports",
       rNoGPS: "Stores without GPS",
       rNoBuy: "Stores without purchases",
@@ -2365,6 +2373,75 @@ input,select,textarea{font-size:16px!important}
       toast(t("errParse") + " " + e.message);
     }
   }
+  var FBK = "tpa_audit_forms_backup.json";
+  async function findAuditBackup() {
+    const q = encodeURIComponent(\`name='\${FBK}' and trashed=false\`);
+    const r = await gfetch(\`https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=\${q}&fields=files(id,name,modifiedTime)&pageSize=10\`);
+    return (await r.json()).files[0] || null;
+  }
+  async function readAuditDrafts() {
+    const idb = await open();
+    const keys = await new Promise((res, rej) => {
+      const req = idb.transaction(ST, "readonly").objectStore(ST).getAllKeys();
+      req.onsuccess = () => res(req.result || []);
+      req.onerror = () => rej(req.error);
+    });
+    const draftKeys = keys.filter((k) => typeof k === "string" && k.startsWith("fd_"));
+    return Promise.all(draftKeys.map(async (key) => ({ key, value: await dbGet(key) })));
+  }
+  async function backupAuditForms() {
+    try {
+      toast(t("syncing"));
+      const [forms, drafts, ex] = await Promise.all([dbGet("forms"), readAuditDrafts(), findAuditBackup()]);
+      const safeForms = Array.isArray(forms) ? forms : [];
+      const body = JSON.stringify({ v: 1, type: "tpa-audit-forms", at: new Date().toISOString(), forms: safeForms, drafts });
+      const boundary = "tpaaudit" + Date.now();
+      const meta = ex ? {} : { name: FBK, parents: ["appDataFolder"] };
+      const multipart = \`--\${boundary}\r
+Content-Type: application/json; charset=UTF-8\r
+\r
+\${JSON.stringify(meta)}\r
+--\${boundary}\r
+Content-Type: application/json; charset=UTF-8\r
+\r
+\${body}\r
+--\${boundary}--\`;
+      await gfetch(ex ? \`https://www.googleapis.com/upload/drive/v3/files/\${ex.id}?uploadType=multipart\` : "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart", {
+        method: ex ? "PATCH" : "POST",
+        headers: { "Content-Type": \`multipart/related; boundary=\${boundary}\` },
+        body: multipart
+      });
+      toast(\`\${t("backupOk")} · \${safeForms.length} · \${drafts.length}\`);
+    } catch (e) {
+      toast(t("errParse") + " " + e.message);
+    }
+  }
+  async function restoreAuditForms() {
+    try {
+      const ex = await findAuditBackup();
+      if (!ex) return toast(t("noBackup"));
+      const backup = await (await gfetch(\`https://www.googleapis.com/drive/v3/files/\${ex.id}?alt=media\`)).json();
+      if (backup.type !== "tpa-audit-forms" || !Array.isArray(backup.forms) || !Array.isArray(backup.drafts)) throw new Error("Invalid audit backup");
+      const localForms = await dbGet("forms") || [];
+      const incomingIds = new Set(localForms.map((x) => x && x.id).filter(Boolean));
+      const additions = backup.forms.filter((x) => x && x.id && !incomingIds.has(x.id));
+      if (!confirm(\`\${t("auditRestoreConfirm")}\n\${new Date(ex.modifiedTime).toLocaleString()} · \${backup.forms.length} · \${backup.drafts.length}\`)) return;
+      await dbSet("forms", localForms.concat(additions));
+      let restoredDrafts = 0;
+      for (const item of backup.drafts) {
+        if (!item || typeof item.key !== "string" || !item.key.startsWith("fd_") || !item.value) continue;
+        const local = await dbGet(item.key);
+        if (!local || Number(item.value.t || 0) > Number(local.t || 0)) {
+          await dbSet(item.key, item.value);
+          restoredDrafts++;
+        }
+      }
+      toast(\`\${t("ok")} · +\${additions.length} · \${restoredDrafts}\`);
+    } catch (e) {
+      toast(t("errParse") + " " + e.message);
+    }
+  }
+
   var BK = "tpa_plan_backup.json";
   var findBackup = async () => (await (await gfetch(`https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=${encodeURIComponent(`name='${BK}'`)}&fields=files(id,modifiedTime)`)).json()).files[0];
   async function backupPlan() {
@@ -2470,7 +2547,7 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
       return `<label class="f">${t(l)}${((_a2 = r == null ? void 0 : r.names) == null ? void 0 : _a2[k]) ? ` \u2014 <b>${esc(r.names[k])}</b>` : ""}</label><input type="file" data-k="${k}" accept=".xlsx,.xls,.csv">`;
     }).join("")}
   <div class="row" style="margin-top:10px"><button class="btn pri" id="ld">${t("load")}</button></div><div id="msg" class="err" style="margin-top:6px"></div></div>
-  <div class="card"><h2>${t("drive")}</h2><div class="mu">${t("driveNote")}</div><button class="btn pri" id="ds" style="margin-top:8px">${t("driveSync")}</button><div class="row" style="margin-top:6px"><button class="btn sm" id="bk3">${t("backup")}</button><button class="btn sm" id="rs3">${t("restore")}</button></div><div id="dmsg" class="mu"></div></div>
+  <div class="card"><h2>${t("drive")}</h2><div class="mu">${t("driveNote")}</div><button class="btn pri" id="ds" style="margin-top:8px">${t("driveSync")}</button><div class="row" style="margin-top:6px"><button class="btn sm" id="bk3">${t("backup")}</button><button class="btn sm" id="rs3">${t("restore")}</button></div><div class="mu" style="margin-top:12px">${t("auditBackupNote")}</div><div class="row" style="margin-top:6px"><button class="btn sm" id="afb">${t("auditBackup")}</button><button class="btn sm" id="afr">${t("auditRestore")}</button></div><div id="dmsg" class="mu"></div></div>
     <div class="card"><h2>${t("pinTitle")}</h2><div class="mu">${t("pinNote")}</div><div class="row" style="margin-top:6px"><input type="password" inputmode="numeric" id="pn" maxlength="12" dir="ltr" placeholder="${esc(t("pinFormat"))}" style="flex:1"><button class="btn sm pri" id="pset">${t("save")}</button>${lsGet("pin", null) ? `<button class="btn sm dng" id="prm">${t("pinRemove")}</button>` : ""}</div></div>
   <div class="card"><button class="btn dng" id="c1">${t("clearCache")}</button><br><br><button class="btn dng" id="c2">${t("clearAll")}</button></div><div class="mu" style="text-align:center">${t("version")} ${VERSION}</div></div>`;
     v.querySelector("#ld").onclick = async () => {
@@ -2486,6 +2563,8 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
     v.querySelector("#ds").onclick = driveSync;
     v.querySelector("#bk3").onclick = backupPlan;
     v.querySelector("#rs3").onclick = restorePlan;
+    v.querySelector("#afb").onclick = backupAuditForms;
+    v.querySelector("#afr").onclick = restoreAuditForms;
     v.querySelector("#pset").onclick = () => setPin($("#pn").value);
     const pr = v.querySelector("#prm");
     if (pr) pr.onclick = () => {
