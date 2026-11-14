@@ -95,6 +95,36 @@ Current status:
 - Technical handover document updated to version 4.2.
 - This change log initialized with this entry.
 
+
+2026-11-14 — Move Persian legacy changelog into docs
+----------------------------------------------------
+User request:
+- Identify the root-level Changelog_fa file and remove it if unnecessary.
+
+Inspection:
+- The actual root-level filename is CHANGELOG_FA.txt.
+- It contains historical Persian notes about earlier Excel import validation,
+  offline storage, external plan import, Excel export, service worker/cache,
+  map/store details, and Fixed v2/v2.1 UI changes.
+- These historical notes are not fully represented in the current
+  PROJECT_CHANGELOG.txt, so the file was considered useful and retained.
+
+Implementation:
+- Added the unchanged historical content at docs/CHANGELOG_FA.txt.
+- Deleted the original root-level CHANGELOG_FA.txt.
+- No application source code was changed.
+- Canonical ongoing chronological log remains docs/PROJECT_CHANGELOG.txt.
+
+Git traceability:
+- Backup branch: backup/main-before-changelog-fa-move-20261114
+- Add/move commit: 94bf963f3f8eef64286161a6e6928618270afb9f
+- Delete-root-file commit: 7fdbfe39d453e84faf925588f4c312af3a793626
+
+Verification:
+- The new file was created in docs and the old root path was deleted through
+  GitHub Contents API. A final fetch verification is pending.
+- This was a documentation organization change; no runtime tests apply.
+
 NEXT CHANGE
 -----------
 No subsequent change has been requested or implemented yet.
