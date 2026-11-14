@@ -72,7 +72,12 @@ main.mapv{position:relative}#map{flex:1;min-height:0;z-index:0}
 .mapbar input{border:0;background:transparent;min-height:38px;flex:1}.mapbar input:focus{outline:0}
 .mapbar .btn{min-height:38px;border-radius:12px}
 .legend{position:absolute;bottom:12px;left:10px;max-width:calc(100% - 84px);z-index:500;font-size:12px;padding:7px 11px;background:var(--card);border-radius:12px;box-shadow:var(--sh);display:flex;gap:10px;flex-wrap:wrap}
-.vp-map-marker{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:#7b2cbf;border:2px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.55);transform:translate(6px,-13px);pointer-events:none}\n.tpa-map-label{display:inline-flex;align-items:center;gap:5px;max-width:210px;padding:3px 8px;border:2px solid #15803d;border-radius:10px;background:#fff;color:#14202b;font:600 12px/1.35 \"Vazirmatn\",Tahoma,sans-serif;white-space:nowrap;box-shadow:0 2px 7px rgba(0,0,0,.28);direction:rtl;transform:translate(9px,-50%);pointer-events:none}\n.tpa-map-label.manager{border-color:#2563eb}\n.tpa-map-label .kind{width:18px;height:18px;flex:none;display:grid;place-items:center;border-radius:50%;background:#15803d;color:#fff;font-size:11px}\n.tpa-map-label.manager .kind{background:#2563eb}\n.tpa-map-label .name{overflow:hidden;text-overflow:ellipsis;max-width:175px}\n:root[data-theme=dark] .tpa-map-label{background:#f8fafc;color:#14202b}
+.vp-map-marker{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:#7b2cbf;border:2px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.55);transform:translate(6px,-13px);pointer-events:none}
+.tpa-map-label{display:inline-flex;align-items:center;gap:5px;max-width:210px;padding:3px 8px;border:2px solid #15803d;border-radius:10px;background:#fff;color:#14202b;font:600 12px/1.35 "Vazirmatn",Tahoma,sans-serif;white-space:nowrap;box-shadow:0 2px 7px rgba(0,0,0,.28);direction:rtl;transform:translate(9px,-50%);pointer-events:none}
+.tpa-map-label.manager{border-color:#2563eb}
+.tpa-map-label .kind{width:18px;height:18px;flex:none;display:grid;place-items:center;border-radius:50%;background:#15803d;color:#fff;font-size:11px}
+.tpa-map-label.manager .kind{background:#2563eb}
+.tpa-map-label .name{overflow:hidden;text-overflow:ellipsis;max-width:175px}\n:root[data-theme=dark] .tpa-map-label{background:#f8fafc;color:#14202b}
 .vp-map-marker .ic{width:12px;height:12px;stroke:#fff;stroke-width:2.2;vertical-align:0}
 .vp-map-legend{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
 .vp-map-legend .vp-map-marker{transform:none;flex:none}
@@ -1824,7 +1829,7 @@ input,select,textarea{font-size:16px!important}
     L.tileLayer(S.settings.tile, { maxZoom: 19, attribution: "\xA9 OpenStreetMap" }).addTo(map);
     layer = L.layerGroup().addTo(map);
     labelLayer = L.layerGroup();
-    map.on("zoomend", refreshMapLabels);
+    map.on("moveend", refreshMapLabels);
     drawMarkers(list, !previousView && !(fs && fs.lat !== null));
     if (fs && fs.lat !== null) map.setView([fs.lat, fs.lng], 17);
     requestAnimationFrame(() => map && map.invalidateSize());
@@ -1859,7 +1864,7 @@ input,select,textarea{font-size:16px!important}
     L.tileLayer(S.settings.tile, { maxZoom: 19, attribution: "\xA9 OpenStreetMap" }).addTo(map);
     layer = L.layerGroup().addTo(map);
     labelLayer = L.layerGroup();
-    map.on("zoomend", refreshMapLabels);
+    map.on("moveend", refreshMapLabels);
     items.forEach((p, i) => {
       if (has(p)) L.marker([p.lat, p.lng], { icon: L.divIcon({ className: "", html: `<div class="pin p${p.priority}"><span>${i + 1}</span></div>`, iconSize: [30, 30], iconAnchor: [15, 30] }) }).on("click", () => {
         if (byId.get(p.customerId)) detail(p.customerId);
@@ -1879,20 +1884,29 @@ input,select,textarea{font-size:16px!important}
       if (map.hasLayer(labelLayer)) map.removeLayer(labelLayer);
       return;
     }
+    const bounds = map.getBounds(), center = map.getCenter();
     const stores = S.planMap
       ? sortedForDay(S.plan, S.planMap).map((p) => ({ ...p, name: p.customerName || "", storeName: p.storeName || "" }))
       : withNearby(filtered());
+    const visible = [];
     for (const s of stores) {
-      if (s.lat === null || s.lat === "") continue;
+      if (s.lat === null || s.lat === "" || s.lng === null || s.lng === "") continue;
+      const lat = Number(s.lat), lng = Number(s.lng);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng) || !bounds.contains([lat, lng])) continue;
       const storeName = str(s.storeName).trim();
       const managerName = str(s.name).trim();
       const isStore = !!storeName;
       const name = storeName || managerName;
       if (!name) continue;
-      const kind = isStore ? "store" : "manager";
-      const symbol = isStore ? "🏪" : "👤";
-      const html = `<span class="tpa-map-label ${kind}" title="${esc(name)}"><span class="kind">${symbol}</span><span class="name">${esc(name)}</span></span>`;
-      L.marker([s.lat, s.lng], { icon: L.divIcon({ className: "", html, iconSize: [0, 0], iconAnchor: [0, 0] }), interactive: false, keyboard: false, zIndexOffset: 500 }).addTo(labelLayer);
+      visible.push({ lat, lng, name, isStore, distance: map.distance(center, [lat, lng]) });
+    }
+    visible.sort((a, b) => a.distance - b.distance);
+    for (const s of visible.slice(0, 35)) {
+      const kind = s.isStore ? "store" : "manager";
+      const symbol = s.isStore ? "🏪" : "👤";
+      const shortName = s.name.length > 25 ? s.name.slice(0, 24) + "…" : s.name;
+      const html = `<span class="tpa-map-label ${kind}" title="${esc(s.name)}"><span class="kind">${symbol}</span><span class="name">${esc(shortName)}</span></span>`;
+      L.marker([s.lat, s.lng], { icon: L.divIcon({ className: "tpa-map-label-icon", html, iconSize: [190, 32], iconAnchor: [-7, 16] }), interactive: false, keyboard: false, zIndexOffset: 500 }).addTo(labelLayer);
     }
     if (!map.hasLayer(labelLayer)) labelLayer.addTo(map);
   }
