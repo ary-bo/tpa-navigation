@@ -2946,6 +2946,8 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
           !payload.localStorage || typeof payload.localStorage !== "object" || Array.isArray(payload.localStorage)) {
         throw new Error("Invalid or unsupported full-system backup");
       }
+      if (payload.database.entries.some(entry => !Array.isArray(entry) || entry.length !== 2 || typeof entry[0] !== "string")) throw new Error("Malformed database entries");
+      if (Object.values(payload.localStorage).some(value => typeof value !== "string")) throw new Error("Malformed local settings");
       const suppliedChecksum = payload.checksum;
       const unsigned = { ...payload };
       delete unsigned.checksum;
@@ -2960,14 +2962,16 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
         await replacePrimaryStore(payload.database.entries);
         await replaceLocalStorage(payload.localStorage);
         const forms = payload.database.entries.find(x => Array.isArray(x) && x[0] === "forms");
-        if (forms && Array.isArray(forms[1])) await saveLocalAuditForms(forms[1]);
+        await saveLocalAuditForms(forms && Array.isArray(forms[1]) ? forms[1] : []);
+        await saveLocalAuditDrafts();
         await writeUnifiedLocalSnapshot();
       } catch (restoreError) {
         try {
           await replacePrimaryStore(before.entries);
           await replaceLocalStorage(before.localStorage);
           const oldForms = before.entries.find(x => Array.isArray(x) && x[0] === "forms");
-          if (oldForms && Array.isArray(oldForms[1])) await saveLocalAuditForms(oldForms[1]);
+          await saveLocalAuditForms(oldForms && Array.isArray(oldForms[1]) ? oldForms[1] : []);
+          await saveLocalAuditDrafts();
           await writeUnifiedLocalSnapshot();
         } catch (rollbackError) {
           console.error("Full restore rollback failed:", rollbackError);
