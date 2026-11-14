@@ -1,13 +1,13 @@
 # TPA Navigation — Technical Reconstruction & Continuation Specification
 
-**Document version:** 4.7  
+**Document version:** 4.8  
 **Date:** 14 November 2026  
 **Repository:** https://github.com/ary-bo/tpa-navigation  
 **Target branch:** `main`  
 **Supersedes:** Previous contents of this file and the V3 technical handover  
 **Companion document:** `TPA_Navigation_Technical_Reconstruction_Spec_V4_1_English.docx` (project handover copy)
 
-> **Authority and evidence rule:** Current source code is authoritative for implemented behavior; the approved `TPA Final Form Spec V06 Revised.docx` is authoritative for approved auditor-form requirements; this document records project context, engineering constraints, verified change history, and handover policy. Clearly distinguish implemented, approved, sample-derived, user-confirmed, and unverified information. Never turn a sample workbook or inference into a universal business rule.
+> **Authority and evidence rule:** Current source code is authoritative for implemented behavior; auditor-form requirements are governed by the user's latest explicit instructions and accepted changes recorded in this repository; the user has explicitly withdrawn V06 as a basis for future decisions; this document records project context, engineering constraints, verified change history, and handover policy. Clearly distinguish implemented, approved, sample-derived, user-confirmed, and unverified information. Never turn a sample workbook or inference into a universal business rule.
 
 ## 1. Purpose and executive summary
 
@@ -498,3 +498,18 @@ Evidence boundaries:
 - The code remains at commit `2349e4a6ee46450a9700417407b16eaef6cec156`; no application source change was made for this confirmation.
 - The documentation update records user acceptance only. It does not independently verify GitHub Pages deployment or live deployment configuration.
 
+
+
+### 6.9 Auditor-form question numbering alignment (14 November 2026)
+
+The map/location subquestion under question 4 previously displayed the stale number **3A / 3B** after the visit-outcome and location-correction questions were reordered. Its display label is now **4A / 4B**, aligning it with parent question 4. Only the display-number string was changed; internal ID `q3a`, question text, type, visibility predicate, map behavior, stored answer structure and coordinates remain unchanged.
+
+The existing numbering elsewhere was inspected and retained:
+- Q13A is the oil-availability gate before Q14.
+- Q14–Q17 and Q18–Q23 retain their existing numbers and visibility rules.
+- The final optional visit note remains number 24 because it is displayed at the end of the form.
+- Existing subquestion labels Q8A and Q11A remain unchanged.
+
+Requirements authority: the user explicitly instructed that V06 must no longer be used. Future numbering and form decisions must follow the user's current instructions and accepted repository changes, not V06.
+
+Verification: post-commit source fetch should confirm the q3a display number is 4A / 4B and that its internal ID and behavior are unchanged. No browser/mobile interaction, saved-draft/export regression or deployment verification is implied by this source update.
