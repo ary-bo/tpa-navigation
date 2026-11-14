@@ -1,6 +1,6 @@
 # TPA Navigation — Technical Reconstruction & Continuation Specification
 
-**Document version:** 4.3  
+**Document version:** 4.4  
 **Date:** 14 November 2026  
 **Repository:** https://github.com/ary-bo/tpa-navigation  
 **Target branch:** `main`  
@@ -361,10 +361,21 @@ Every completed stage must report:
 - Backup deletion commit: https://github.com/ary-bo/tpa-navigation/commit/a88574667f9ef1299e62526ca1eb035df19b94cb
 - Pre-change backup branch: https://github.com/ary-bo/tpa-navigation/tree/backup/main-before-backup-delete
 
+
+
+### 6.5 Q12 wording: product-return question (implemented 14 November 2026)
+
+At the user's request, auditor question Q12 now asks exactly: **«آیا تا به حال محصولات غنچه را مرجوع کرده‌اید ؟»**. The English translation dictionary label was aligned to “Have you ever returned Ghoncheh products?”.
+
+Implementation scope: only the displayed Q12 question text (internal ID q12) and its English label were changed in index.html. The question identifier, number, single-choice type, three existing response options, visibility condition, and Q13 conditional display rule were preserved. No stored audit records or drafts were migrated or rewritten.
+
+Verification: post-commit source fetch is required to confirm the exact persisted wording and unchanged Q12 options/visibility logic. Assistant browser/mobile interaction, saved-draft/export regression tests, and deployment/live verification have not been performed. The change is committed on main; do not treat that as evidence of deployment.
+
 ## Document revision history
 
 | Version | Date | Scope | Evidence |
 |---|---|---|---|
+| 4.4 | 14 November 2026 | Reworded auditor Q12 to ask whether Ghoncheh products have ever been returned; preserved IDs, options and conditional rules | Code commit `95fcfee509a7e43800e4055a10a6b31a3b4cafe0`; source verification recorded in changelog |
 | 4.3 | 14 November 2026 | Removed “حاشیه سود یا توافق” from auditor Q11A distribution-problem options; retained question ID, trigger and legacy translation mapping | Code commit `ef0581e12e0b7bb7f0cc1c08cde53fa9a299e610`; source/browser verification pending |
 | 4.2 | 14 November 2026 | Reordered visit outcome and location correction; hid location/map and clear active values for “مشتری پیدا نشد” | Code commit `179b54b07a704a76cfdcfa29989bff9e6843bb7b`; user confirmed working |
 
