@@ -1970,16 +1970,25 @@ input,select,textarea{font-size:16px!important}
       const isStore = !!storeName;
       const name = storeName || managerName;
       if (!name) continue;
-      visible.push({ lat, lng, name, isStore, distance: map.distance(center, [lat, lng]) });
+      const sourceStore = S.planMap ? byId.get(String(s.customerId)) : s;
+      visible.push({
+        lat, lng, name, isStore,
+        id: s.id != null ? s.id : sourceStore && sourceStore.id,
+        customerId: s.customerId,
+        newCode: s.newCode || sourceStore && sourceStore.newCode,
+        auditName: s.name || s.customerName || sourceStore && sourceStore.name,
+        distance: map.distance(center, [lat, lng])
+      });
     }
     visible.sort((a, b) => a.distance - b.distance);
     for (const s of visible.slice(0, 35)) {
       const kind = s.isStore ? "store" : "manager";
       const symbol = s.isStore ? "🏪" : "👤";
       const shortName = s.name.length > 25 ? s.name.slice(0, 24) + "…" : s.name;
-      const audited = auditStoreIds.has(auditKey(s.id !== void 0 ? s.id : s.customerId))
+      const audited = auditStoreIds.has(auditKey(s.id != null ? s.id : s.customerId))
+        || auditStoreIds.has(auditKey(s.customerId))
         || auditStoreCodes.has(auditKey(s.newCode))
-        || auditStoreNames.has(auditKey(s.name));
+        || auditStoreNames.has(auditKey(s.auditName));
       const auditBadge = audited
         ? `<span class="tpa-audit-status done" title="${esc(t("auditSubmitted"))}">✓</span>`
         : `<span class="tpa-audit-status missing" title="${esc(t("auditMissing"))}">▤</span>`;
