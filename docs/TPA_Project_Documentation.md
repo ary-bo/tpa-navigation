@@ -1,6 +1,6 @@
 # TPA Navigation — Technical Reconstruction & Continuation Specification
 
-**Document version:** 5.1  
+**Document version:** 5.2  
 **Date:** 14 November 2026  
 **Repository:** https://github.com/ary-bo/tpa-navigation  
 **Target branch:** `main`  
@@ -564,3 +564,15 @@ Verification boundaries:
 Verification boundaries:
 - Source-level verification is required after re-fetch to confirm the compact class is limited to q18–q23 and the original selection handlers remain intact.
 - Actual iPhone/Safari layout, touch interaction, conditional visibility, draft reload, export and live deployment have not been independently tested by the assistant.
+
+## 6.13 Custom other-brand entry for competitor-brand questions (implemented 14 November 2026)
+
+- Added the selectable option «سایر برندها» to each of the six competitor-brand multi-select questions q18–q23.
+- Selecting «سایر برندها» reveals the existing free-text entry control so the auditor can type additional brand names. The value is stored through the existing per-question `other` draft/record mechanism.
+- The option uses a question-specific `otherOption` label, while the shared `OTHER` option and its behavior on unrelated questions remain unchanged.
+- The existing compact two-column option layout, fixed question numbering, multi-select behavior and exclusive `None` behavior are preserved.
+- Initial feature commit: `1558089ce19693c8d7b5548e276fb00177ab9b86`; label correction commit: `0ce34c343e1b3961a043a102f667ea48d5685774`; current `index.html` blob: `df23d7642c72862a6db4d27f7bc6e93be2e17b95`.
+- Safety branch: `backup/main-before-other-products-brand-option-20261114`; base commit: `7d4e82027c6c02154a96d0e393c850352d5b26f0`.
+
+Verification boundaries:
+- Source-level verification follows post-commit fetch. iPhone/Safari interaction, validation, saved-draft reload, export and live deployment have not been independently tested by the assistant.
