@@ -1,6 +1,6 @@
 # TPA Navigation — Technical Reconstruction & Continuation Specification
 
-**Document version:** 4.6  
+**Document version:** 4.7  
 **Date:** 14 November 2026  
 **Repository:** https://github.com/ary-bo/tpa-navigation  
 **Target branch:** `main`  
@@ -486,3 +486,15 @@ Verification: code commit `2349e4a6ee46450a9700417407b16eaef6cec156`; post-commi
 | 4.4 | 14 November 2026 | Reworded auditor Q12 to ask whether Ghoncheh products have ever been returned; preserved IDs, options and conditional rules | Code commit `95fcfee509a7e43800e4055a10a6b31a3b4cafe0` |
 | 4.3 | 14 November 2026 | Removed “حاشیه سود یا توافق” from auditor Q11A distribution-problem options; retained question ID, trigger and legacy translation mapping | Code commit `ef0581e12e0b7bb7f0cc1c08cde53fa9a299e610` |
 | 4.2 | 14 November 2026 | Reordered visit outcome and location correction; hid location/map and clear active values for “مشتری پیدا نشد” | Code commit `179b54b07a704a76cfdcfa29989bff9e6843bb7b` |
+
+
+### 6.8 User-confirmed functional check — Section 5 oil-availability dependency (14 November 2026)
+
+The user manually tested the latest Section 5 dependency in Safari and explicitly confirmed **«درست شد»** (“It worked”). This is user-reported functional acceptance that the Q13A oil-availability gate behaves as requested for the tested flow: when Q13A is answered **خیر**, Section 5 / Q18–Q23 do not appear; when the gate is **بله**, the section remains governed by the existing observation-block rule.
+
+Evidence boundaries:
+- This is a manual test performed by the user in their Safari session, not an assistant-run browser automation or independently reproduced test.
+- The user did not provide a detailed test matrix; do not infer that every Q18–Q23 combination, draft reload, export, or historical-record edge case was separately tested.
+- The code remains at commit `2349e4a6ee46450a9700417407b16eaef6cec156`; no application source change was made for this confirmation.
+- The documentation update records user acceptance only. It does not independently verify GitHub Pages deployment or live deployment configuration.
+
