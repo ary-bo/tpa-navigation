@@ -1500,6 +1500,12 @@ input,select,textarea{font-size:16px!important}
     return h;
   };
   var savedFilters = () => lsGet("savedFilters", []);
+  var filterState = () => ({ filters: { ...S.filters }, savedFilters: savedFilters() });
+  var saveFilterState = () => {
+    lsSet("currentFilters", S.filters);
+    lsSet("savedFilters", savedFilters());
+    dbSet("filters", filterState()).catch((e) => console.warn("Filter state storage:", e));
+  };
   var toast = (m) => {
     const e = $("#toast");
     e.textContent = m;
@@ -1639,6 +1645,7 @@ input,select,textarea{font-size:16px!important}
     sheet(`<h2>${t("filters")}</h2>${filterUI()}`, (el) => {
       el.querySelectorAll("select[data-f]").forEach((s) => s.onchange = () => {
         S.filters[s.dataset.f] = s.value;
+        saveFilterState();
         openFilters();
       });
       const todayJ = isoToJalaliStr(todayISO()).split("/").map(Number);
@@ -1697,14 +1704,17 @@ input,select,textarea{font-size:16px!important}
           if (day) {
             event.preventDefault();
             S.filters[key] = pickerState[id].year + "/" + padJ(pickerState[id].month) + "/" + padJ(Number(day.dataset.day));
+            saveFilterState();
             openFilters();
           } else if (action && action.dataset.action === "today") {
             event.preventDefault();
             S.filters[key] = todayJ[0] + "/" + padJ(todayJ[1]) + "/" + padJ(todayJ[2]);
+            saveFilterState();
             openFilters();
           } else if (action && action.dataset.action === "clear") {
             event.preventDefault();
             S.filters[key] = "";
+            saveFilterState();
             openFilters();
           }
         });
@@ -1720,6 +1730,7 @@ input,select,textarea{font-size:16px!important}
       });
       el.querySelector("#fclr").onclick = () => {
         S.filters = { q: S.filters.q, type: "all", route: "", salesman: "", day: "", fromDate: "", toDate: "" };
+        saveFilterState();
         openFilters();
       };
       el.querySelector("#fok").onclick = () => {
@@ -1730,6 +1741,7 @@ input,select,textarea{font-size:16px!important}
         const x = savedFilters()[+b.dataset.sf];
         if (x) {
           S.filters = { ...x.f, q: S.filters.q };
+          saveFilterState();
           openFilters();
         }
       });
@@ -1737,6 +1749,7 @@ input,select,textarea{font-size:16px!important}
         const a = savedFilters();
         a.splice(+b.dataset.sx, 1);
         lsSet("savedFilters", a);
+        saveFilterState();
         openFilters();
       });
       el.querySelector("#sfs").onclick = () => {
@@ -1746,6 +1759,7 @@ input,select,textarea{font-size:16px!important}
         const { type, route, salesman, day, fromDate, toDate } = S.filters;
         a.push({ name: n, f: { type, route, salesman, day, fromDate, toDate } });
         lsSet("savedFilters", a.slice(-12));
+        saveFilterState();
         openFilters();
       };
     });
@@ -1821,6 +1835,7 @@ input,select,textarea{font-size:16px!important}
   <div class="legend"><span><i class="dot g"></i>${t("legG")}</span><span><i class="dot o"></i>${t("legO")}</span><span><i class="dot r"></i>${t("legR")}</span><span class="vp-map-legend"><i class="vp-map-marker">${ic("plan")}</i>${t("inVisitPlan")}</span><span class="tpa-audit-legend"><i class="tpa-audit-status done">✓</i>${t("auditSubmitted")}</span><span class="tpa-audit-legend"><i class="tpa-audit-status missing">▤</i>${t("auditMissing")}</span><span class="mu">${list.length} ${t("results")} \xB7 ${list.filter((s) => s.lat === null).length} ${t("noGPS")}</span></div>`;
     $("#q").oninput = (e) => {
       S.filters.q = e.target.value;
+      saveFilterState();
       clearTimeout(pageMap.tm);
       pageMap.tm = setTimeout(() => drawMarkers(withNearby(filtered())), 250);
     };
@@ -2050,6 +2065,7 @@ input,select,textarea{font-size:16px!important}
   <div id="lst">${shown.map(storeCard).join("") || `<div class="card">${t("nothing")}</div>`}</div>${list.length > 200 ? `<button class="btn" id="more">+200 \u2026</button>` : ""}</div>`;
     $("#q").oninput = (e) => {
       S.filters.q = e.target.value;
+      saveFilterState();
       clearTimeout(pageStores.tm);
       pageStores.tm = setTimeout(() => {
         const pos = $("#q").selectionStart;
@@ -2652,7 +2668,7 @@ ${body}\r
     try {
       toast(t("syncing"));
       const ex = await findBackup(), bd = "tpa" + Date.now();
-      const body = JSON.stringify({ v: 1, at: (/* @__PURE__ */ new Date()).toISOString(), plan: S.plan, pending: S.pending }), meta = ex ? {} : { name: BK, parents: ["appDataFolder"] };
+      const body = JSON.stringify({ v: 2, at: (/* @__PURE__ */ new Date()).toISOString(), plan: S.plan, pending: S.pending, filters: S.filters, savedFilters: savedFilters() }), meta = ex ? {} : { name: BK, parents: ["appDataFolder"] };
       const mp = `--${bd}\r
 Content-Type: application/json; charset=UTF-8\r
 \r
@@ -2680,6 +2696,9 @@ ${body}\r
 ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
       S.plan = d.plan;
       S.pending = Array.isArray(d.pending) ? d.pending : [];
+      if (d.filters && typeof d.filters === "object") S.filters = { ...S.filters, ...d.filters };
+      if (Array.isArray(d.savedFilters)) lsSet("savedFilters", d.savedFilters);
+      saveFilterState();
       await savePlan();
       lsSet("lastBackup", { at: Date.now(), sig: sigOf() });
       toast(t("ok"));
@@ -2869,6 +2888,12 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
     } catch (e) {
       console.warn("Local audit restore:", e);
     }
+    try {
+      const fs = await dbGet("filters");
+      const localFilters = fs && fs.filters ? fs.filters : lsGet("currentFilters", null);
+      if (localFilters && typeof localFilters === "object") S.filters = { ...S.filters, ...localFilters };
+      if (fs && Array.isArray(fs.savedFilters)) lsSet("savedFilters", fs.savedFilters);
+    } catch (e) { console.warn("Filter state restore:", e); }
     try {
       const p = await dbGet("plan");
       if (p) {
