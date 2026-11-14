@@ -438,3 +438,31 @@ Verification:
 - Source-level verification follows post-commit fetch.
 - iPhone/Safari interaction, validation, draft reload, export and deployment/live
   verification have not been performed by the assistant.
+
+
+2026-11-14 — Per-store audit history, independent visits and draft removal
+----------------------------------------------------------------------------
+
+- The store Audit Form action now opens the store's finalized audit history.
+- Added new-visit creation, record-specific viewing and record-specific editing.
+- Each new visit receives a new record ID. Editing changes only the selected
+  record, preserves its original timestamp and refreshes its updated timestamp.
+- Removed draft save/autosave/recovery. Legacy fd_* entries and local draft
+  backup data are purged; audit Drive backups now contain finalized forms only.
+  Older audit backups remain restorable for their finalized form records; their
+  draft payloads are ignored. Full-system restore filters and purges old drafts.
+- Existing finalized records and answer fields are retained.
+
+Git traceability:
+- Repository: ary-bo/tpa-navigation; branch: main
+- Baseline: bb2e93e867b3716e70f62e11fbc9b64cca6d1968
+- Safety branch: backup/main-before-audit-form-history-20261114
+- History/record editing commit: c9557213ad339479cd1164e752a2de77985df125
+- Draft removal commit: d4e5ac8aa8fc6a49282999a9cb0a60408f679c4b
+- index.html blob: 81f3567be479137deadc4c614dd60f899ac3c654
+- Technical documentation updated to version 5.3.
+
+Verification:
+- Source-level checks only. iPhone/Safari UI, multiple visit records, edit/date
+  behavior, backup/restore, full-system restore, exports and deployment/live
+  behavior require manual verification.
