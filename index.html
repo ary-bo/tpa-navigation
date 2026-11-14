@@ -1438,6 +1438,8 @@ input,select,textarea{font-size:16px!important}
   var map;
   var layer;
   var labelLayer;
+  var locationLayer;
+  var geoWatchId = null;
   var byId = /* @__PURE__ */ new Map();
   var toastT;
   var nameDate = (n) => {
@@ -1738,10 +1740,14 @@ input,select,textarea{font-size:16px!important}
     if (S.page !== "map") {
       S.focus = null;
       S.planMap = null;
+      stopLocationWatch();
     }
     if (map && S.page !== "map") {
       map.remove();
       map = null;
+      layer = null;
+      labelLayer = null;
+      locationLayer = null;
     }
     ({ map: pageMap, stores: pageStores, plan: pagePlan, data: pageData, analytics: pageAnalytics, settings: pageSettings })[S.page](v);
   }
@@ -1829,7 +1835,9 @@ input,select,textarea{font-size:16px!important}
     L.tileLayer(S.settings.tile, { maxZoom: 19, attribution: "\xA9 OpenStreetMap" }).addTo(map);
     layer = L.layerGroup().addTo(map);
     labelLayer = L.layerGroup();
+    locationLayer = L.layerGroup().addTo(map);
     map.on("moveend", refreshMapLabels);
+    startLocationWatch();
     drawMarkers(list, !previousView && !(fs && fs.lat !== null));
     if (fs && fs.lat !== null) map.setView([fs.lat, fs.lng], 17);
     requestAnimationFrame(() => map && map.invalidateSize());
@@ -1842,9 +1850,26 @@ input,select,textarea{font-size:16px!important}
     addEventListener("offline", nav);
   }
   function drawMe() {
-    if (!S.pos || !layer) return;
-    L.circleMarker([S.pos.lat, S.pos.lng], { radius: 18, stroke: false, fillColor: "#1a73e8", fillOpacity: 0.2, interactive: false }).addTo(layer);
-    L.circleMarker([S.pos.lat, S.pos.lng], { radius: 8, color: "#fff", weight: 3, fillColor: "#1a73e8", fillOpacity: 1, interactive: false }).addTo(layer);
+    if (!S.pos || !locationLayer || !map) return;
+    locationLayer.clearLayers();
+    L.circleMarker([S.pos.lat, S.pos.lng], { radius: 22, stroke: false, fillColor: "#1a73e8", fillOpacity: 0.18, interactive: false }).addTo(locationLayer);
+    L.circleMarker([S.pos.lat, S.pos.lng], { radius: 9, color: "#fff", weight: 3, fillColor: "#1a73e8", fillOpacity: 1, interactive: false }).addTo(locationLayer);
+  }
+  function startLocationWatch() {
+    if (!navigator.geolocation || geoWatchId !== null) return;
+    geoWatchId = navigator.geolocation.watchPosition((p) => {
+      S.pos = { lat: p.coords.latitude, lng: p.coords.longitude, accuracy: p.coords.accuracy };
+      drawMe();
+    }, () => {
+      if (geoWatchId !== null) {
+        navigator.geolocation.clearWatch(geoWatchId);
+        geoWatchId = null;
+      }
+    }, { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 });
+  }
+  function stopLocationWatch() {
+    if (geoWatchId !== null && navigator.geolocation) navigator.geolocation.clearWatch(geoWatchId);
+    geoWatchId = null;
   }
   function pagePlanMap(v) {
     const iso2 = S.planMap, items = sortedForDay(S.plan, iso2), has = (p) => p.lat !== null && p.lat !== "" && p.lng !== null && p.lng !== "", withG = items.filter(has), noG = items.length - withG.length;
@@ -1938,13 +1963,16 @@ input,select,textarea{font-size:16px!important}
   }
   function locate(center) {
     if (!navigator.geolocation) return toast(t("locDenied"));
-    navigator.geolocation.getCurrentPosition((p) => {
-      S.pos = { lat: p.coords.latitude, lng: p.coords.longitude };
-      if (center && map && !S.planMap) {
-        map.setView([S.pos.lat, S.pos.lng], 15);
-        drawMarkers(withNearby(filtered()));
-      } else if (S.page === "stores") render();
-    }, () => toast(t("locDenied")), { enableHighAccuracy: true, timeout: 15e3 });
+    const show = (p) => {
+      S.pos = { lat: p.coords.latitude, lng: p.coords.longitude, accuracy: p.coords.accuracy };
+      drawMe();
+      if (center && map) map.setView([S.pos.lat, S.pos.lng], Math.max(map.getZoom(), 15));
+    };
+    if (S.pos) {
+      if (center && map) map.setView([S.pos.lat, S.pos.lng], Math.max(map.getZoom(), 15));
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(show, () => toast(t("locDenied")), { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 });
   }
   var badge = (s) => `<i class="dot ${s.status === "red" ? "r" : s.status === "green" ? "g" : s.status === "orange" ? "o" : "b"}"></i>`;
   function storeCard(s) {
