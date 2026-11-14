@@ -602,3 +602,21 @@ Verification boundaries:
 - Failed implementation retained for investigation on safety branch `backup/main-before-emergency-audit-rollback-20261114`. Earlier pre-change safety branch: `backup/main-before-audit-form-history-20261114`.
 - The history-management feature is NOT active on `main`. The original form workflow, including its existing draft behavior, is restored. No user-local data was intentionally deleted by this source rollback.
 - Source restoration was verified by matching the restored file blob to the pre-feature blob. Browser/runtime and Pages deployment recovery still require user verification.
+
+
+## 6.16 Audit-history reimplementation — isolated candidate (14 November 2026)
+
+- User re-approved the complete 6.14 outcome after root-cause review. This reimplementation is intentionally isolated on branch `backup/main-before-audit-history-reimplementation-20261114`; it has NOT been merged to `main` or deployed.
+- Reimplemented the store Audit Form entry as a per-store history list, newest first, with registration and last-edit dates, per-record view, record-specific edit, and a blank independent new visit.
+- New records receive independent IDs and initial timestamps. Editing is bound to the selected record ID; the original timestamp is retained and `updated` is refreshed. If the selected record no longer exists, save is refused rather than creating a replacement record.
+- Preserved the existing post-save effects: audit-store indexing, map-label refresh, audit-store ID refresh, today's matching Journey Plan completion, and return to that store's history.
+- Removed draft autosave, draft recovery and draft-save UI. Legacy `fd_*` entries and the local draft-backup bucket are purged at startup. Audit-form Drive backup now writes format v2 with finalized forms only; restore accepts legacy v1 backups with a `drafts` array but ignores that array. Full-system restore filters `fd_*` entries and purges draft storage only on successful restore; emergency rollback restores the pre-restore database and does not intentionally purge its draft entries.
+- Existing finalized form records, IDs, question fields, `_a`/`_o` snapshots and export structure are retained. No automatic bulk rewrite of finalized records is performed.
+- Implementation commits on candidate branch: form isolation `5ecc12988e82dc752424e6eef717d3ca0fbb4894`; history/new visits `0ea774d1e74233c41426795ec2ec443eb928b2de`; draft retirement and backup compatibility `b4e0271115ef61c540dcc428efcd9116477dc8bf`.
+- Current candidate `index.html` blob: `401553fdcdf8431ec12721237c1ff7b5b9a0ff40`.
+- Safety baseline: `main` HEAD `80162f2a27f28fd12a2b7664b9082e570769ae9c`; safety branch created before edits: `backup/main-before-audit-history-reimplementation-20261114`.
+
+Verification status:
+- JavaScript parse validation with `new Function` passed after each source change and on the final candidate.
+- Source assertions passed for history entry, new-visit flow, selected-record edit binding, missing-record guard, timestamp preservation, draft UI/autosave removal, legacy-backup acceptance, v2 backup creation, and startup draft purge.
+- Browser/iPhone Safari interaction, multi-visit persistence, editing an older record, date display, backup/restore, full-system restore/rollback, export regression, and GitHub Pages deployment have NOT been tested. Do not merge to `main` or claim release until these tests pass.
