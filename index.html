@@ -1847,7 +1847,7 @@ input,select,textarea{font-size:16px!important}
     const visitEntries = S.plan.filter((p) => String(p.customerId) === String(s.id));
     const inVisitPlan = visitEntries.length > 0;
     const orders = s.orders.map((o) => {
-      const undelivered = /closed\\s*\\/\\s*undelivered/i.test(str(o.status));
+      const undelivered = /closed\s*\/\s*undelivered/i.test(str(o.status));
       const statusChip = undelivered ? `<span class="chip r">${esc(o.status)}</span>` : o.state === "open" ? `<span class="chip o">${t("open")}</span>` : `<span class="chip g">${t("invoiced")}</span>`;
       const amount = o.amountComplete && o.amount > 0 ? new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(Math.round(o.amount)) + " Rial" : "—";
       return `<article class="order-card"><div class="order-main"><div class="order-head"><b>${esc(o.order)}</b>${statusChip}${o.overdue === true ? `<span class="chip r">${t("overdue")}</span>` : ""}</div><div class="order-amount"><span>${amount}</span><small>${t("amount")}</small></div></div><div class="order-dates"><div><span>${t("orderDate")}</span><b>${jd(o.orderDate)}</b></div><div><span>${t("targetDate")}</span><b>${jd(o.target)}</b></div><div><span>${t("invoiceDate")}</span><b>${jd(o.inv)}</b></div></div></article>`;
