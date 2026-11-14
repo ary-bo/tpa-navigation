@@ -738,7 +738,7 @@ input,select,textarea{font-size:16px!important}
     for (let i = n.length - 1; i >= Math.max(0, n.length - 9); i--) {
       const token = n[i];
       // Common joined forms in this workbook: سوپروحدت، سوپریاس، هایپرلوکس، خواربارمحمدی.
-      for (const prefix of ["خواروبارفروشی", "خواربار", "خواروبار", "پروتئینی", "پروتئین", "هایپر", "سوپر"]) {
+      for (const prefix of ["سوپرمارکت", "هایپرمارکت", "خواروبارفروشی", "خواربار", "خواروبار", "پروتئینی", "پروتئین", "هایپر", "سوپر"]) {
         if (token.startsWith(prefix) && token.length > prefix.length) {
           const tail = trimTail([prefix, token.slice(prefix.length), ...n.slice(i + 1)]);
           if (tail.length >= 2 && tail.length <= 6) return tail.join(" ");
