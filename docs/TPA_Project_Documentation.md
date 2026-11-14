@@ -1,6 +1,6 @@
 # TPA Navigation — Technical Reconstruction & Continuation Specification
 
-**Document version:** 4.8  
+**Document version:** 4.9  
 **Date:** 14 November 2026  
 **Repository:** https://github.com/ary-bo/tpa-navigation  
 **Target branch:** `main`  
@@ -513,3 +513,21 @@ The existing numbering elsewhere was inspected and retained:
 Requirements authority: the user explicitly instructed that V06 must no longer be used. Future numbering and form decisions must follow the user's current instructions and accepted repository changes, not V06.
 
 Verification: post-commit source fetch should confirm the q3a display number is 4A / 4B and that its internal ID and behavior are unchanged. No browser/mobile interaction, saved-draft/export regression or deployment verification is implied by this source update.
+
+
+### 6.10 Dynamic sequential numbering of visible auditor questions (14 November 2026)
+
+The user clarified that the numbering problem was broader than the map subquestion: the first question actually displayed in the form could begin with number 3 because the first two configured entries (visitor and customer metadata) are intentionally skipped from the question UI. The requirement is that the first question displayed to the auditor starts at 1 and every subsequent question displayed is numbered consecutively through the end of the form.
+
+Implementation:
+- The form's `update()` routine now recalculates visible question numbers after every visibility update.
+- It traverses the configured form order, excludes section headings and the same skipped metadata entries that are not rendered as auditor questions, and numbers only currently visible rendered questions starting at 1.
+- Conditional questions are renumbered dynamically when they appear or disappear; this prevents gaps caused by hidden questions.
+- The optional final visit note is included in the sequence when visible.
+- Internal question IDs, question data, answer serialization, validation, conditional visibility, map behavior, and saved-record field names are unchanged.
+- The earlier fixed q3a label correction in change 4.8 is superseded: q3a now receives its ordinary sequential number at runtime rather than a fixed 4A / 4B label.
+
+Verification boundaries:
+- Source-level verification must confirm the dynamic numbering loop is in `update()`, after visibility is recalculated, and before progress is updated.
+- Browser testing across different conditional paths, saved-draft reload, export and deployment/live verification have not been performed by the assistant.
+- V06 remains explicitly excluded as a basis for requirements or numbering decisions.
