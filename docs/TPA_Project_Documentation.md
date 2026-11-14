@@ -1,6 +1,6 @@
 # TPA Navigation — Technical Reconstruction & Continuation Specification
 
-**Document version:** 4.4  
+**Document version:** 4.5  
 **Date:** 14 November 2026  
 **Repository:** https://github.com/ary-bo/tpa-navigation  
 **Target branch:** `main`  
@@ -61,6 +61,17 @@ These identifiers describe the inspected change, not necessarily the latest repo
 - Post-change `index.html` blob: `6ed50ae0290e43ea1d0dd27d19011138dcc4082b`.
 - Verification: source-level checks only; browser/device and data-flow tests remain outstanding.
 - Deployment: commit recorded on `main`; live deployment not verified.
+
+## 2.3 Change record — 14 November 2026
+
+- Change: added a required oil-availability/visibility gate as the first question in Section 4, immediately before existing Q14.
+- New question: **آیا محصولات روغن در فروشگاه موجود و قابل مشاهده است ؟** with **بله / خیر** choices; internal ID `q14_gate`, display number `۱۳A`.
+- Existing Q14, Q15, Q16 and Q17 are shown only when `q14_gate` is exactly **بله**. The Section 4 heading remains governed by the existing observation-block rule.
+- When the answer is **خیر**, the existing `update()` visibility cleanup removes active answers for Q14–Q17; serialized non-optional hidden questions are stored as `N/A`. Existing stored records/drafts are not bulk migrated.
+- English label added for the new question. Existing Q14–Q17 identifiers, labels, options and validation rules are preserved.
+- Changed application file: `index.html`; code commit `f0c6fe08f5d4b9813ad7e077f765847337f17285`; post-change blob `6f134e747d96b09828b57d13065e524b65e01e03`.
+- Safety branch: `backup/main-before-section4-oil-availability-gate-20261114`; base commit `505217f2dd882c4190872d48e0941c498b1226bc`.
+- Verification: committed source re-fetched; exact question, answer choices, and Q14–Q17 conditions confirmed. Browser/mobile interaction, saved-draft/export regression tests and deployment/live verification remain outstanding.
 
 ## 3. Architecture and file responsibilities
 
@@ -430,3 +441,21 @@ The update must make it possible for a new engineer, maintainer, auditor or AI a
 A project part is **NOT fully complete for handover purposes** if its implementation is finished but this document has not been updated to reflect the actual final state. The responsible person for that project part owns the update. If the work is later modified, corrected, rolled back or extended, the document must be revised again.
 
 This policy applies to every subsequent project stage and every future version of this document. The next version must retain relevant history while updating all affected sections to the latest verified state.
+
+
+### 6.6 Section 4 oil-availability gate (implemented 14 November 2026)
+
+The first auditor question in Section 4 is now the required gate `q14_gate` (display number `۱۳A`): **«آیا محصولات روغن در فروشگاه موجود و قابل مشاهده است ؟»**. Its two options are **بله** and **خیر**. The English translation dictionary contains “Are cooking-oil products available and visible in the store?”.
+
+Q14 (`q14`), Q15 (`q15`), Q16 (`q16`) and Q17 (`q17`) each have a visibility predicate requiring both the existing observation-block condition and `a.q14_gate === «بله»`. Thus they remain hidden until the gate is answered “بله”; choosing “خیر” hides all four. The existing form `update()` routine clears each newly hidden question's active answer and any associated OTHER text. The record serializer writes hidden mandatory questions as `N/A`. Existing Q14–Q17 IDs, wording, options, numeric constraints and Q17-versus-Q16 validation are unchanged. No bulk rewrite or migration of already-saved records or drafts was performed.
+
+Verification evidence: post-commit fetch of `index.html` confirms the gate definition and all four visibility predicates. Source inspection confirms the existing hidden-answer cleanup and `N/A` serialization paths. Assistant browser/mobile interaction, saved-draft/export regression tests and deployment/live verification were not performed. Commit on `main` is not evidence of deployment.
+
+## Document revision history
+
+| Version | Date | Scope | Evidence |
+|---|---|---|---|
+| 4.5 | 14 November 2026 | Added Section 4 oil-availability gate before Q14; Q14–Q17 require “بله” | Code commit `f0c6fe08f5d4b9813ad7e077f765847337f17285`; source re-fetch verified |
+| 4.4 | 14 November 2026 | Reworded auditor Q12 to ask whether Ghoncheh products have ever been returned; preserved IDs, options and conditional rules | Code commit `95fcfee509a7e43800e4055a10a6b31a3b4cafe0`; source verification recorded in changelog |
+| 4.3 | 14 November 2026 | Removed “حاشیه سود یا توافق” from auditor Q11A distribution-problem options; retained question ID, trigger and legacy translation mapping | Code commit `ef0581e12e0b7bb7f0cc1c08cde53fa9a299e610` |
+| 4.2 | 14 November 2026 | Reordered visit outcome and location correction; hid location/map and clear active values for “مشتری پیدا نشد” | Code commit `179b54b07a704a76cfdcfa29989bff9e6843bb7b`; user confirmed working |
