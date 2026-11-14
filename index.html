@@ -93,6 +93,7 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
 #lock .box{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:22px;width:100%;max-width:320px;display:flex;flex-direction:column;gap:10px;text-align:center;box-shadow:var(--sh)}#lock input{text-align:center;letter-spacing:6px}
 input,select,textarea{font-size:16px!important}
 @media(min-width:900px){.wrap{max-width:900px;margin:0 auto}}
+.analytics-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}.analytics-kpi{border:1px solid var(--bd);border-radius:13px;padding:11px;background:var(--card);min-width:0}.analytics-kpi strong{display:block;font-size:19px;color:var(--pr);overflow-wrap:anywhere}.analytics-person{border:1px solid var(--bd);border-radius:14px;padding:11px;margin:9px 0;background:var(--card)}.analytics-person summary{cursor:pointer;list-style:none}.analytics-person summary::-webkit-details-marker{display:none}.analytics-person .area-row{display:flex;justify-content:space-between;gap:8px;padding:8px 2px;border-top:1px solid var(--bd);font-size:13px}.analytics-bar{height:7px;border-radius:99px;background:var(--bd);overflow:hidden;margin-top:7px}.analytics-bar span{display:block;height:100%;background:var(--pr);border-radius:99px}.analytics-meta{font-size:12px;color:var(--mu)}
 /* Jalali sales date picker */
 .sales-date-wrap{position:relative;flex:1;min-width:145px}.sales-date-wrap input{width:100%;cursor:pointer;background:var(--card)}.jalali-picker{position:fixed;z-index:1200;top:auto;right:auto;width:min(320px,calc(100vw - 48px));padding:12px;background:var(--card);border:1px solid var(--bd);border-radius:14px;box-shadow:var(--sh);direction:rtl}.jalali-picker[hidden]{display:none}.jp-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:10px}.jp-head button,.jp-day,.jp-foot button{border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);min-height:34px;padding:4px 8px;font:inherit}.jp-month{font-weight:700;text-align:center;flex:1}.jp-week,.jp-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;text-align:center}.jp-week{font-size:11px;color:var(--mu);margin-bottom:5px}.jp-day{padding:5px 0;min-width:0}.jp-day:disabled{visibility:hidden}.jp-day.selected{background:var(--pr);color:var(--prt);border-color:var(--pr)}.jp-day.today{outline:1px solid var(--pr)}.jp-foot{display:flex;justify-content:space-between;gap:8px;margin-top:10px}.jp-foot button{flex:1;font-size:13px}
 /* audit form */
@@ -153,6 +154,7 @@ input,select,textarea{font-size:16px!important}
       stores: "\u0641\u0631\u0648\u0634\u06AF\u0627\u0647\u200C\u0647\u0627",
       plan: "\u0628\u0631\u0646\u0627\u0645\u0647",
       data: "\u062F\u0627\u062F\u0647",
+      analytics: "تحلیل فروش",
       settings: "\u062A\u0646\u0638\u06CC\u0645\u0627\u062A",
       search: "\u062C\u0633\u062A\u062C\u0648: \u0646\u0627\u0645 \u0641\u0631\u0648\u0634\u06AF\u0627\u0647\u060C \u0645\u0634\u062A\u0631\u06CC\u060C \u06A9\u062F\u060C \u0622\u062F\u0631\u0633",
       filters: "\u0641\u06CC\u0644\u062A\u0631\u0647\u0627",
@@ -276,6 +278,10 @@ input,select,textarea{font-size:16px!important}
       auditRestoreConfirm: "فرم‌های فعلی حفظ می‌شوند و فقط مواردی که وجود ندارند اضافه خواهند شد. ادامه می‌دهید؟",
       reports: "\u06AF\u0632\u0627\u0631\u0634\u200C\u0647\u0627",
       salesSummary: "خلاصه فروش فاکتور قطعی",
+      analyticsTitle: "تحلیل فروش", analyticsHint: "بر پایه فاکتورهای قطعی ثبت‌شده",
+      salespeople: "فروشندگان", salesAmountMetric: "مبلغ فروش", buyerCustomers: "مشتریان خریدار",
+      areas: "مناطق", unassigned: "بدون منطقه مشخص", noSalespeople: "داده فروشنده‌ای برای نمایش وجود ندارد.",
+      confirmedOnly: "فقط فاکتورهای قطعی", sortSales: "مرتب‌سازی بر اساس مبلغ فروش",
       salesFrom: "از تاریخ (شمسی)",
       salesTo: "تا تاریخ (شمسی)",
       salesTon: "تناژ فروش (تن)",
@@ -326,6 +332,7 @@ input,select,textarea{font-size:16px!important}
       stores: "Stores",
       plan: "Plan",
       data: "Data",
+      analytics: "Analytics",
       settings: "Settings",
       search: "Search: store, customer, code, address",
       filters: "Filters",
@@ -430,6 +437,10 @@ input,select,textarea{font-size:16px!important}
       E_DUPLICATE: "Duplicate",
       imported: "Valid rows queued for approval",
       salesSummary: "Confirmed invoice sales summary",
+      analyticsTitle: "Sales Analytics", analyticsHint: "Based on confirmed invoices only",
+      salespeople: "Salespersons", salesAmountMetric: "Sales amount", buyerCustomers: "Buying customers",
+      areas: "Areas", unassigned: "Unassigned area", noSalespeople: "No salesperson sales data to display.",
+      confirmedOnly: "Confirmed invoices only", sortSales: "Sorted by sales amount",
       salesFrom: "From date (Jalali)",
       salesTo: "To date (Jalali)",
       salesTon: "Sales volume (tons)",
@@ -1700,7 +1711,7 @@ input,select,textarea{font-size:16px!important}
   }
   function nav() {
     var _a;
-    const items = [["map", ic("map")], ["stores", ic("stores")], ["plan", ic("plan")], ["data", ic("data")], ["settings", ic("settings")]];
+    const items = [["map", ic("map")], ["stores", ic("stores")], ["plan", ic("plan")], ["data", ic("data")], ["analytics", ic("stats")], ["settings", ic("settings")]];
     $("#nav").innerHTML = items.map(([k, i]) => `<button data-p="${k}" class="${S.page === k ? "on" : ""}"><span class="i">${i}</span>${t(k)}</button>`).join("");
     $("#nav").querySelectorAll("button").forEach((b) => b.onclick = () => {
       S.page = b.dataset.p;
@@ -1724,7 +1735,7 @@ input,select,textarea{font-size:16px!important}
       map.remove();
       map = null;
     }
-    ({ map: pageMap, stores: pageStores, plan: pagePlan, data: pageData, settings: pageSettings })[S.page](v);
+    ({ map: pageMap, stores: pageStores, plan: pagePlan, data: pageData, analytics: pageAnalytics, settings: pageSettings })[S.page](v);
   }
   var needData = (v) => {
     v.innerHTML = `<div class="pad wrap"><div class="card">${t("needData")}</div><button class="btn pri" id="go">${t("data")}</button></div>`;
@@ -2536,6 +2547,51 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
   document.addEventListener("touchmove", (e) => {
     if (e.touches.length > 1 && !(e.target.closest && e.target.closest("#map"))) e.preventDefault();
   }, { passive: false });
+
+  function pageAnalytics(v) {
+    if (!S.ds || !Array.isArray(S.ds.stores)) return needData(v);
+    const people = new Map(), buyers = new Set();
+    let totalAmount = 0;
+    for (const store of S.ds.stores) {
+      for (const order of (store.orders || [])) {
+        if (!order.inv) continue;
+        if (order.amountComplete !== false) totalAmount += Number(order.amount || 0);
+        buyers.add(store.id);
+        const person = str(store.salesman).trim() || t("unassigned");
+        if (!people.has(person)) people.set(person, { name: person, amount: 0, customers: new Set(), areas: new Map() });
+        const p = people.get(person);
+        if (order.amountComplete !== false) p.amount += Number(order.amount || 0);
+        p.customers.add(store.id);
+        const area = [store.territory, store.area || store.route].filter(Boolean).join(" · ") || t("unassigned");
+        if (!p.areas.has(area)) p.areas.set(area, { name: area, amount: 0, customers: new Set() });
+        const ar = p.areas.get(area);
+        if (order.amountComplete !== false) ar.amount += Number(order.amount || 0);
+        ar.customers.add(store.id);
+      }
+    }
+    const rows = [...people.values()].sort((a,b) => b.amount - a.amount);
+    const max = Math.max(1, ...rows.map(x => x.amount));
+    const locale = getLang() === "fa" ? "fa-IR" : "en-US";
+    const fmt = n => new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(n);
+    const money = n => fmt(n) + " " + (getLang() === "fa" ? "ریال" : "Rial");
+    const activeAreas = new Set(S.ds.stores.filter(x => x.orders && x.orders.some(o => o.inv)).map(x => [x.territory,x.area || x.route].filter(Boolean).join(" · ") || t("unassigned")));
+    v.innerHTML = `<div class="pad wrap">
+      <div class="card"><h2>${t("analyticsTitle")}</h2><div class="mu">${t("analyticsHint")}</div>
+        <div class="analytics-kpis">
+          <div class="analytics-kpi"><span class="analytics-meta">${t("salesAmountMetric")}</span><strong>${money(totalAmount)}</strong></div>
+          <div class="analytics-kpi"><span class="analytics-meta">${t("buyerCustomers")}</span><strong>${fmt(buyers.size)}</strong></div>
+          <div class="analytics-kpi"><span class="analytics-meta">${t("salespeople")}</span><strong>${fmt(rows.length)}</strong></div>
+          <div class="analytics-kpi"><span class="analytics-meta">${t("areas")}</span><strong>${fmt(activeAreas.size)}</strong></div>
+        </div><div class="analytics-meta">${t("confirmedOnly")}</div>
+      </div>
+      <div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">${t("salespeople")}</h2><span class="analytics-meta">${t("sortSales")}</span></div>
+      ${rows.length ? rows.map((p,i) => `<details class="analytics-person" ${i===0?"open":""}><summary><div class="row"><b>${esc(p.name)}</b><span class="sp"></span><b>${money(p.amount)}</b></div><div class="analytics-meta">${t("buyerCustomers")}: ${fmt(p.customers.size)} · ${t("areas")}: ${fmt(p.areas.size)}</div><div class="analytics-bar"><span style="width:${Math.round(p.amount/max*100)}%"></span></div></summary>
+        <div style="margin-top:9px">${[...p.areas.values()].sort((a,b)=>b.amount-a.amount).map(a=>`<div class="area-row"><span>${esc(a.name)}</span><span><b>${money(a.amount)}</b><br><span class="analytics-meta">${t("buyerCustomers")}: ${fmt(a.customers.size)}</span></span></div>`).join("")}</div></details>`).join("") : `<div class="mu">${t("noSalespeople")}</div>`}
+      </div>
+    </div>`;
+    v.setAttribute("dir", getLang() === "fa" ? "rtl" : "ltr");
+  }
+
   function pageSettings(v) {
     const s = S.settings, r = S.raw;
     v.innerHTML = `<div class="pad wrap"><div class="card"><label class="f">${t("language")}</label><select id="lg"><option value="fa" ${s.lang === "fa" ? "selected" : ""}>\u0641\u0627\u0631\u0633\u06CC</option><option value="en" ${s.lang === "en" ? "selected" : ""}>English</option></select>
