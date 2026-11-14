@@ -1711,7 +1711,7 @@ input,select,textarea{font-size:16px!important}
   }
   function nav() {
     var _a;
-    const items = [["map", ic("map")], ["stores", ic("stores")], ["plan", ic("plan")], ["data", ic("data")], ["analytics", ic("stats")], ["settings", ic("settings")]];
+    const items = [["map", ic("map")], ["stores", ic("stores")], ["plan", ic("plan")], ["data", ic("data")], ["analytics", ic("data")], ["settings", ic("settings")]];
     $("#nav").innerHTML = items.map(([k, i]) => `<button data-p="${k}" class="${S.page === k ? "on" : ""}"><span class="i">${i}</span>${t(k)}</button>`).join("");
     $("#nav").querySelectorAll("button").forEach((b) => b.onclick = () => {
       S.page = b.dataset.p;
