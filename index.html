@@ -1208,7 +1208,6 @@ input,select,textarea{font-size:16px!important}
   <div class="tf-f"><button class="btn pri" id="tf-ok">\u062B\u0628\u062A \u0641\u0631\u0645</button></div>`;
     document.body.appendChild(root);
     const body = root.querySelector("#tf-b"), $2 = (x) => root.querySelector(x);
-    const draftKey = null;
     function control(q, c) {
       c.innerHTML = "";
       const set = (v) => {
@@ -1385,7 +1384,6 @@ input,select,textarea{font-size:16px!important}
       try {
         await db.dbSet("forms", all);
         try { await saveLocalAuditForms(all); } catch (backupError) { console.warn("Local audit backup:", backupError); }
-        await db.dbDel(draftKey);
         // Draft storage has been retired; finalized form backup remains active.
       } catch (e) {
         return toast2("Storage: " + e.message);
