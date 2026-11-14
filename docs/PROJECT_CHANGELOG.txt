@@ -599,4 +599,4 @@ Promotion:
   cdc4907bef79986754f8d573833335f5d7c58dd8.
 - Production repository: ary-bo/tpa-navigation, main.
 - Pre-transfer backup: backup/pre-transfer-audit-history-delete-20261115.
-- Production promotion commit SHA is recorded in the subsequent promotion note.
+- Production promotion commit: bd37fcb22b045db62d58d03799e2fb42447ab23c.
