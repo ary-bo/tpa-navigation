@@ -286,3 +286,34 @@ Traceability:
 - Safety branch for this documentation-only update:
   backup/main-before-user-confirmed-section5-test-20261114
 - Technical handover updated to version 4.7.
+
+
+2026-11-14 — Auditor form: correct map subquestion numbering
+------------------------------------------------------------
+User-approved requirement:
+- Correct the question numbering so the map/location subquestion follows
+  question 4 rather than retaining the old 3A / 3B label.
+- The user explicitly instructed that V06 must no longer be used as a
+  requirements basis.
+
+Implementation:
+- Changed only the displayed number of internal question q3a from
+  3A / 3B to 4A / 4B.
+- Preserved q3a ID, wording, type, visibility condition, map behavior,
+  stored answer structure and coordinates.
+- Reviewed the surrounding numbering and retained Q13A, Q14–Q23,
+  Q8A, Q11A, and the final optional visit note as question 24.
+
+Git traceability:
+- Repository: ary-bo/tpa-navigation
+- Branch: main
+- Base commit: c0f2564699eca76ec9e42058f69db6c947b1796a
+- Code commit: f6ff0ab71a11ca09d394634ffd37efbe3ef5e02c
+- index.html blob: 8eb89d1c72516eb769ba03b8f6ef038afeef2cb4
+- Safety branch: backup/main-before-question-numbering-fix-20261114
+- Technical handover updated to version 4.8.
+
+Verification:
+- Source-level verification is recorded after post-commit fetch.
+- Browser/mobile interaction, saved-draft/export regression and deployment/live
+  verification have not been performed by the assistant.
