@@ -390,3 +390,28 @@ Verification:
 - Browser testing across conditional paths, saved-draft reload, export and
   deployment/live verification have not been performed by the assistant.
 - V06 is not used as a requirements or numbering basis.
+
+
+2026-11-14 — Auditor form: compact two-column competitor-brand options
+------------------------------------------------------------------------
+
+- Applied a two-column compact card grid to competitor-brand questions q18–q23.
+- Reduced option-card padding and height to reduce scrolling on mobile.
+- Other questions retain the original vertical option layout.
+- Preserved question IDs/numbers, option order and text, checkbox multi-select,
+  None exclusivity, visibility rules, and stored answer format.
+- No saved records or drafts were migrated.
+
+Git traceability:
+- Repository: ary-bo/tpa-navigation
+- Branch: main
+- Base commit: ae7c5813f0ef3640efacc32489e8e8bb97d3259f
+- Code commit: 7f210c206b769ef4d56cfecbb8dc5d9895ff8ebb
+- index.html blob: 4141ba1abd5d3ac5da2b4f33e22e993b073efdfa
+- Safety branch: backup/main-before-compact-brand-options-20261114
+- Technical documentation updated to version 5.1.
+
+Verification:
+- Source-level verification follows post-commit fetch.
+- iPhone/Safari visual and touch testing, conditional-flow testing, draft reload,
+  export and deployment/live verification have not been performed by the assistant.
