@@ -1,6 +1,6 @@
 # TPA Navigation — Technical Reconstruction & Continuation Specification
 
-**Document version:** 4.5  
+**Document version:** 4.6  
 **Date:** 14 November 2026  
 **Repository:** https://github.com/ary-bo/tpa-navigation  
 **Target branch:** `main`  
@@ -72,6 +72,16 @@ These identifiers describe the inspected change, not necessarily the latest repo
 - Changed application file: `index.html`; code commit `f0c6fe08f5d4b9813ad7e077f765847337f17285`; post-change blob `6f134e747d96b09828b57d13065e524b65e01e03`.
 - Safety branch: `backup/main-before-section4-oil-availability-gate-20261114`; base commit `505217f2dd882c4190872d48e0941c498b1226bc`.
 - Verification: committed source re-fetched; exact question, answer choices, and Q14–Q17 conditions confirmed. Browser/mobile interaction, saved-draft/export regression tests and deployment/live verification remain outstanding.
+
+## 2.4 Change record — 14 November 2026
+
+- Change: extended the Section 4 oil-availability gate to Section 5.
+- The Section 5 heading and generated competitor-brand questions Q18–Q23 are visible only when the existing observation block is active and `q14_gate` equals **بله**.
+- When Q13A (`q14_gate`) is **خیر**, Section 5 and Q18–Q23 are hidden. Existing `update()` cleanup clears active answers in hidden questions; serialization records hidden mandatory questions as `N/A`.
+- Q18–Q23 IDs, brand options, multi-select behavior and `None` handling are unchanged. Existing records/drafts are not bulk migrated.
+- Code commit: `2349e4a6ee46450a9700417407b16eaef6cec156`; `index.html` blob: `aad828a0782c29941b36aed8f412059fe877f710`.
+- Safety branch: `backup/main-before-section5-oil-gate-20261114`; base commit: `f86f99c8463cfd890ffb7e516fc30cf53e6302d1`.
+- Verification: source re-fetch and predicate inspection pending in this change phase; browser/device and deployment verification not yet performed.
 
 ## 3. Architecture and file responsibilities
 
@@ -459,3 +469,20 @@ Verification evidence: post-commit fetch of `index.html` confirms the gate defin
 | 4.4 | 14 November 2026 | Reworded auditor Q12 to ask whether Ghoncheh products have ever been returned; preserved IDs, options and conditional rules | Code commit `95fcfee509a7e43800e4055a10a6b31a3b4cafe0`; source verification recorded in changelog |
 | 4.3 | 14 November 2026 | Removed “حاشیه سود یا توافق” from auditor Q11A distribution-problem options; retained question ID, trigger and legacy translation mapping | Code commit `ef0581e12e0b7bb7f0cc1c08cde53fa9a299e610` |
 | 4.2 | 14 November 2026 | Reordered visit outcome and location correction; hid location/map and clear active values for “مشتری پیدا نشد” | Code commit `179b54b07a704a76cfdcfa29989bff9e6843bb7b`; user confirmed working |
+
+
+### 6.7 Section 5 dependency on oil availability (implemented 14 November 2026)
+
+Section 5's heading and all generated competitor-brand questions Q18–Q23 now require the existing observation-block condition plus `a.q14_gate === «بله»`. Therefore, if Q13A / `q14_gate` is answered **خیر**, the Section 5 heading and Q18–Q23 are hidden. If answered **بله**, Section 5 remains subject to the pre-existing observation-block visibility rule. The questions are generated from the Q18–Q23 configuration array; the shared predicate is applied to every generated item. Existing `update()` cleanup removes active answers from newly hidden questions, and record serialization stores hidden mandatory questions as `N/A`. IDs, competitor brand option lists, multi-select and `None` behavior remain unchanged. No bulk migration of saved records or drafts was performed.
+
+Verification: code commit `2349e4a6ee46450a9700417407b16eaef6cec156`; post-commit source verification recorded in `PROJECT_CHANGELOG.txt`. Browser/mobile interaction, saved-draft/export regression and deployment/live checks remain outstanding.
+
+## Document revision history
+
+| Version | Date | Scope | Evidence |
+|---|---|---|---|
+| 4.6 | 14 November 2026 | Section 5 heading and Q18–Q23 additionally gated on Q13A = بله | Code commit `2349e4a6ee46450a9700417407b16eaef6cec156` |
+| 4.5 | 14 November 2026 | Added Section 4 oil-availability gate before Q14; Q14–Q17 require “بله” | Code commit `f0c6fe08f5d4b9813ad7e077f765847337f17285` |
+| 4.4 | 14 November 2026 | Reworded auditor Q12 to ask whether Ghoncheh products have ever been returned; preserved IDs, options and conditional rules | Code commit `95fcfee509a7e43800e4055a10a6b31a3b4cafe0` |
+| 4.3 | 14 November 2026 | Removed “حاشیه سود یا توافق” from auditor Q11A distribution-problem options; retained question ID, trigger and legacy translation mapping | Code commit `ef0581e12e0b7bb7f0cc1c08cde53fa9a299e610` |
+| 4.2 | 14 November 2026 | Reordered visit outcome and location correction; hid location/map and clear active values for “مشتری پیدا نشد” | Code commit `179b54b07a704a76cfdcfa29989bff9e6843bb7b` |
