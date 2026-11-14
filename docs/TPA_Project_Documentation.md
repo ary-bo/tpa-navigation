@@ -1,6 +1,6 @@
 # TPA Navigation — Technical Reconstruction & Continuation Specification
 
-**Document version:** 4.9  
+**Document version:** 5.0  
 **Date:** 14 November 2026  
 **Repository:** https://github.com/ary-bo/tpa-navigation  
 **Target branch:** `main`  
@@ -531,3 +531,23 @@ Verification boundaries:
 - Source-level verification must confirm the dynamic numbering loop is in `update()`, after visibility is recalculated, and before progress is updated.
 - Browser testing across different conditional paths, saved-draft reload, export and deployment/live verification have not been performed by the assistant.
 - V06 remains explicitly excluded as a basis for requirements or numbering decisions.
+
+
+### 6.11 Fixed, stable auditor-question numbering (14 November 2026)
+
+The user clarified that numbering must not be dynamic. Every question must have its own fixed number and retain that number regardless of whether conditional visibility hides it.
+
+Implementation:
+- Removed the runtime renumbering loop from the form update routine.
+- Assigned explicit fixed Persian display numbers in configured form order to all auditor-facing questions:
+  Q4 → 1; Q3 → 2; Q3a map → 3; Q5a → 4; Q6 → 5; Q7 → 6; Q8 → 7; Q8a → 8; Q9 → 9; Q10 → 10; Q11 → 11; Q11a → 12; Q12 → 13; Q13 → 14; oil-availability gate → 15; Q14 → 16; Q15 → 17; Q16 → 18; Q17 → 19; Q18 → 20; Q19 → 21; Q20 → 22; Q21 → 23; Q22 → 24; Q23 → 25; final optional visit note → 26.
+- The first auditor-facing question is therefore always 1. Conditional questions retain their assigned number when hidden; later questions do not shift.
+- Metadata fields q1 and q2 remain skipped from the auditor-facing question list and are not part of this numbering sequence.
+- Question IDs, data fields, answer serialization, validation, visibility conditions, map behavior and progress calculation are unchanged.
+
+This fixed-numbering implementation supersedes the temporary dynamic numbering described in change 4.9 and the intermediate fixed-label correction in 4.8.
+
+Verification boundaries:
+- Post-commit source verification should confirm the fixed labels and absence of runtime renumbering.
+- Browser testing across conditional paths, saved-draft reload, export and deployment/live verification have not been performed by the assistant.
+- V06 remains excluded as a requirements basis.
