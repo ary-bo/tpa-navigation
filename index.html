@@ -1469,10 +1469,21 @@ input,select,textarea{font-size:16px!important}
   var locationLayer;
   var geoWatchId = null;
   var auditStoreIds = new Set();
+  var auditStoreCodes = new Set();
+  var auditStoreNames = new Set();
+  var auditKey = (v) => String(v == null ? "" : v).trim().replace(/\\.0+$/, "").toLowerCase();
   async function refreshAuditStoreIds() {
     try {
       const forms = await dbGet("forms") || [];
-      auditStoreIds = new Set(forms.filter((f) => f && f.storeId !== void 0 && f.storeId !== null).map((f) => String(f.storeId)));
+      auditStoreIds = new Set();
+      auditStoreCodes = new Set();
+      auditStoreNames = new Set();
+      for (const f of forms) {
+        if (!f) continue;
+        if (f.storeId != null && auditKey(f.storeId)) auditStoreIds.add(auditKey(f.storeId));
+        if (f.q2_code != null && auditKey(f.q2_code)) auditStoreCodes.add(auditKey(f.q2_code));
+        if (f.q2_name != null && auditKey(f.q2_name)) auditStoreNames.add(auditKey(f.q2_name));
+      }
       if (map && labelLayer) refreshMapLabels();
     } catch (e) { console.warn("Audit status load:", e); }
   }
@@ -1966,7 +1977,9 @@ input,select,textarea{font-size:16px!important}
       const kind = s.isStore ? "store" : "manager";
       const symbol = s.isStore ? "🏪" : "👤";
       const shortName = s.name.length > 25 ? s.name.slice(0, 24) + "…" : s.name;
-      const audited = auditStoreIds.has(String(s.id !== void 0 ? s.id : s.customerId));
+      const audited = auditStoreIds.has(auditKey(s.id !== void 0 ? s.id : s.customerId))
+        || auditStoreCodes.has(auditKey(s.newCode))
+        || auditStoreNames.has(auditKey(s.name));
       const auditBadge = audited
         ? `<span class="tpa-audit-status done" title="${esc(t("auditSubmitted"))}">✓</span>`
         : `<span class="tpa-audit-status missing" title="${esc(t("auditMissing"))}">▤</span>`;
