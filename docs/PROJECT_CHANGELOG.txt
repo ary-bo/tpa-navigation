@@ -125,6 +125,37 @@ Verification:
   CHANGELOG_FA.txt path returns NOT_FOUND.
 - This was a documentation organization change; no runtime tests apply.
 
+
+2026-11-14 — Auditor form: remove profit-margin/agreement option
+-----------------------------------------------------------------
+User-approved requirement:
+- Remove “حاشیه سود یا توافق” (Profit margin or agreement issue) from the
+  distribution-problem type options in auditor question Q11A.
+
+Implementation:
+- Changed only the Q11A options array in index.html.
+- Removed the selected option; retained Late delivery, Incomplete order,
+  Wrong products delivered, Damaged products, Price discrepancy, and Other.
+- Kept Q11A identifier, question visibility trigger, and Other handling intact.
+- Retained the translation dictionary mapping so historical stored values can
+  still be translated/displayed where that mapping is used.
+- No bulk migration or rewrite of saved audit records/drafts was performed.
+
+Git traceability:
+- Branch: main
+- Code commit: ef0581e12e0b7bb7f0cc1c08cde53fa9a299e610
+- index.html blob: 18f6f2c3b31eac268524b8b018b49d5519331c86
+- Rollback branch: backup/main-before-remove-profit-margin-option-20261114
+- Technical handover updated to version 4.3.
+- Documentation commit: 7840ba19cdf4cab3244f317ffc0300a0029880ed
+
+Verification:
+- Post-commit fetch confirms Q11A no longer contains the removed option and
+  the remaining options and trigger condition are intact.
+- Browser/mobile interaction and saved-draft/export regression tests have not
+  been performed by the assistant.
+- Deployment/live state has not been independently verified.
+
 NEXT CHANGE
 -----------
-No subsequent change has been requested or implemented yet.
+Await the next user-requested auditor-form change.
