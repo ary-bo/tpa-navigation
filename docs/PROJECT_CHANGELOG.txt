@@ -529,3 +529,5 @@ Verification:
 - No browser or iPhone Safari test has been performed. Backup/restore, full
   restore rollback, exports and Pages deployment remain unverified.
 - Candidate is NOT approved for merge/release until the outstanding tests pass.
+
+- Follow-up correction commit: `4830696dde9fd6513f8194e667285d2819769834` — removed the obsolete `dbDel(null)` call left in the form-save path after draft removal. Final index blob: `535d5571b89b44fbc9110e94d5be362c7aa55800`; JavaScript syntax parse passed again.
