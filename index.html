@@ -1337,6 +1337,15 @@ input,select,textarea{font-size:16px!important}
       Q.forEach((q) => {
         if (q.sec) q._el.hidden = q.show ? !q.show(a) : false;
       });
+      let displayNumber = 0;
+      Q.forEach((q) => {
+        if (q.sec || (SKIP.includes(q.id) && q.id !== "q3a")) return;
+        const e = els[q.id];
+        if (!e || !isVis(q)) return;
+        displayNumber++;
+        const numberEl = e.box.querySelector(".tf-n");
+        if (numberEl) numberEl.textContent = FA2(displayNumber);
+      });
       const v = QS.filter((q) => !SKIP.includes(q.id) || q.id === "q3a").filter((q) => isVis(q) && !q.optional), d = v.filter(filled).length;
       $2("#tf-pt").textContent = `${FA2(d)} \u0627\u0632 ${FA2(v.length)} \u0633\u0624\u0627\u0644 \u0627\u0644\u0632\u0627\u0645\u06CC`;
       $2("#tf-bar").style.width = (v.length ? d / v.length * 100 : 0) + "%";
