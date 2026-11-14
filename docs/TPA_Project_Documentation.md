@@ -1,6 +1,6 @@
 # TPA Navigation — Technical Reconstruction & Continuation Specification
 
-**Document version:** 5.2  
+**Document version:** 5.3  
 **Date:** 14 November 2026  
 **Repository:** https://github.com/ary-bo/tpa-navigation  
 **Target branch:** `main`  
@@ -576,3 +576,19 @@ Verification boundaries:
 
 Verification boundaries:
 - Source-level verification follows post-commit fetch. iPhone/Safari interaction, validation, saved-draft reload, export and live deployment have not been independently tested by the assistant.
+
+## 6.14 Per-store audit history, independent visits and draft removal (implemented 14 November 2026)
+
+- The store-detail **Audit Form** action now opens a per-store history view rather than immediately opening the form.
+- The history lists finalized audit records for the selected store, newest first, with separate initial registration date (`timestamp`) and last-edited date (`updated`). It provides a new-visit action and per-record view/edit actions.
+- A new visit starts with a blank response set and receives a new unique record ID. Editing is explicitly bound to the selected record ID; it never silently selects or overwrites the latest store record. A missing selected record causes the save to stop rather than create a duplicate.
+- Existing `timestamp` is preserved on edits; `updated` is refreshed on each subsequent save. New records have their initial timestamp and an empty `updated` value.
+- Removed draft autosave, draft recovery and the draft-save control. On startup, legacy `fd_*` keys and the local draft-backup bucket are purged. Audit Drive backups now contain finalized forms only (format version 2); restore accepts older backups but ignores their draft payloads. Full-system restore filters legacy draft keys and purges the draft bucket.
+- Existing finalized form records, IDs and answer fields are retained. The old single-per-store draft key is no longer used.
+- Code commits: history UI and record-specific editing `c9557213ad339479cd1164e752a2de77985df125`; draft removal and legacy draft purge `d4e5ac8aa8fc6a49282999a9cb0a60408f679c4b`.
+- Current `index.html` blob: `81f3567be479137deadc4c614dd60f899ac3c654`.
+- Safety branch: `backup/main-before-audit-form-history-20261114`; baseline: `bb2e93e867b3716e70f62e11fbc9b64cca6d1968`.
+
+Verification boundaries:
+- Source checks confirm the history entry point, explicit record editing, independent new-record creation, initial timestamp preservation, draft UI/autosave removal, and legacy draft purge hooks.
+- iPhone/Safari interaction, multi-visit persistence, view/edit flows, date rendering, Drive backup/restore, full-system restore, Excel exports and live deployment have not been independently tested by the assistant.
