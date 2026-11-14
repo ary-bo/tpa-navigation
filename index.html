@@ -2676,41 +2676,14 @@ input,select,textarea{font-size:16px!important}
       req.onerror = () => reject(req.error);
     });
   }
-  async function saveLocalAuditDrafts() {
-    const idb = await localAuditDb();
-    const source = await open();
-    const keys = await new Promise((resolve, reject) => {
-      const req = source.transaction(ST, "readonly").objectStore(ST).getAllKeys();
-      req.onsuccess = () => resolve(req.result || []);
-      req.onerror = () => reject(req.error);
-    });
-    const draftKeys = keys.filter((k) => typeof k === "string" && k.startsWith("fd_"));
-    const drafts = await Promise.all(draftKeys.map(async (key) => ({ key, value: await dbGet(key) })));
-    return await new Promise((resolve, reject) => {
-      const tx = idb.transaction("backup", "readwrite");
-      tx.objectStore("backup").put({ v: 1, at: Date.now(), drafts }, "drafts");
-      tx.oncomplete = () => resolve(drafts.length);
-      tx.onerror = () => reject(tx.error);
-      tx.onabort = () => reject(tx.error);
-    });
-  }
-  async function restoreLocalAuditDrafts() {
-    const idb = await localAuditDb();
-    const saved = await new Promise((resolve, reject) => {
-      const req = idb.transaction("backup", "readonly").objectStore("backup").get("drafts");
-      req.onsuccess = () => resolve(req.result && Array.isArray(req.result.drafts) ? req.result.drafts : []);
-      req.onerror = () => reject(req.error);
-    });
-    let restored = 0;
-    for (const item of saved) {
-      if (!item || typeof item.key !== "string" || !item.key.startsWith("fd_") || !item.value) continue;
-      const current = await dbGet(item.key);
-      if (!current || Number(item.value.t || 0) > Number(current.t || 0)) {
-        await dbSet(item.key, item.value);
-        restored++;
-      }
-    }
-    return restored;
+  async function purgeAuditDrafts() {
+    const idb=await open();
+    const keys=await new Promise((resolve,reject)=>{const req=idb.transaction(ST,'readonly').objectStore(ST).getAllKeys();req.onsuccess=()=>resolve(req.result||[]);req.onerror=()=>reject(req.error);});
+    const drafts=keys.filter(k=>typeof k==='string'&&k.startsWith('fd_'));
+    if(drafts.length) await new Promise((resolve,reject)=>{const tx=idb.transaction(ST,'readwrite'),store=tx.objectStore(ST);drafts.forEach(k=>store.delete(k));tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);});
+    const backup=await localAuditDb();
+    await new Promise((resolve,reject)=>{const tx=backup.transaction('backup','readwrite');tx.objectStore('backup').delete('drafts');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);});
+    return drafts.length;
   }
   async function restoreLocalAuditForms() {
     const [primary, backup] = await Promise.all([dbGet("forms"), readLocalAuditForms()]);
@@ -2734,22 +2707,12 @@ input,select,textarea{font-size:16px!important}
     const r = await gfetch(`https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=${q}&fields=files(id,name,modifiedTime)&pageSize=10`);
     return (await r.json()).files[0] || null;
   }
-  async function readAuditDrafts() {
-    const idb = await open();
-    const keys = await new Promise((res, rej) => {
-      const req = idb.transaction(ST, "readonly").objectStore(ST).getAllKeys();
-      req.onsuccess = () => res(req.result || []);
-      req.onerror = () => rej(req.error);
-    });
-    const draftKeys = keys.filter((k) => typeof k === "string" && k.startsWith("fd_"));
-    return Promise.all(draftKeys.map(async (key) => ({ key, value: await dbGet(key) })));
-  }
   async function backupAuditForms() {
     try {
       toast(t("syncing"));
-      const [forms, drafts, ex] = await Promise.all([dbGet("forms"), readAuditDrafts(), findAuditBackup()]);
+      const [forms, ex] = await Promise.all([dbGet("forms"), findAuditBackup()]);
       const safeForms = Array.isArray(forms) ? forms : [];
-      const body = JSON.stringify({ v: 1, type: "tpa-audit-forms", at: new Date().toISOString(), forms: safeForms, drafts });
+      const body = JSON.stringify({ v: 2, type: "tpa-audit-forms", at: new Date().toISOString(), forms: safeForms });
       const boundary = "tpaaudit" + Date.now();
       const meta = ex ? {} : { name: FBK, parents: ["appDataFolder"] };
       const multipart = `--${boundary}\r
@@ -2766,7 +2729,7 @@ ${body}\r
         headers: { "Content-Type": `multipart/related; boundary=${boundary}` },
         body: multipart
       });
-      toast(`${t("backupOk")} · ${safeForms.length} · ${drafts.length}`);
+      toast(`${t("backupOk")} · ${safeForms.length}`);
     } catch (e) {
       toast(t("errParse") + " " + e.message);
     }
@@ -2776,24 +2739,16 @@ ${body}\r
       const ex = await findAuditBackup();
       if (!ex) return toast(t("noBackup"));
       const backup = await (await gfetch(`https://www.googleapis.com/drive/v3/files/${ex.id}?alt=media`)).json();
-      if (backup.type !== "tpa-audit-forms" || !Array.isArray(backup.forms) || !Array.isArray(backup.drafts)) throw new Error("Invalid audit backup");
+      if (backup.type !== "tpa-audit-forms" || !Array.isArray(backup.forms)) throw new Error("Invalid audit backup");
       const localForms = await dbGet("forms") || [];
       const incomingIds = new Set(localForms.map((x) => x && x.id).filter(Boolean));
       const additions = backup.forms.filter((x) => x && x.id && !incomingIds.has(x.id));
-      if (!confirm(`${t("auditRestoreConfirm")}\n${new Date(ex.modifiedTime).toLocaleString()} · ${backup.forms.length} · ${backup.drafts.length}`)) return;
+      if (!confirm(`${t("auditRestoreConfirm")}\n${new Date(ex.modifiedTime).toLocaleString()} · ${backup.forms.length}`)) return;
       const mergedForms = localForms.concat(additions);
       await dbSet("forms", mergedForms);
       await saveLocalAuditForms(mergedForms);
-      let restoredDrafts = 0;
-      for (const item of backup.drafts) {
-        if (!item || typeof item.key !== "string" || !item.key.startsWith("fd_") || !item.value) continue;
-        const local = await dbGet(item.key);
-        if (!local || Number(item.value.t || 0) > Number(local.t || 0)) {
-          await dbSet(item.key, item.value);
-          restoredDrafts++;
-        }
-      }
-      toast(`${t("ok")} · +${additions.length} · ${restoredDrafts}`);
+      await purgeAuditDrafts();
+      toast(`${t("ok")} · +${additions.length}`);
     } catch (e) {
       toast(t("errParse") + " " + e.message);
     }
@@ -3032,11 +2987,12 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
       if (!confirm(confirmText)) return;
       const before = await readFullBackupState();
       try {
-        await replacePrimaryStore(payload.database.entries);
+        const cleanEntries = payload.database.entries.filter(entry => !(typeof entry[0] === "string" && entry[0].startsWith("fd_")));
+        await replacePrimaryStore(cleanEntries);
         await replaceLocalStorage(payload.localStorage);
-        const forms = payload.database.entries.find(x => Array.isArray(x) && x[0] === "forms");
+        const forms = cleanEntries.find(x => Array.isArray(x) && x[0] === "forms");
         await saveLocalAuditForms(forms && Array.isArray(forms[1]) ? forms[1] : []);
-        await saveLocalAuditDrafts();
+        await purgeAuditDrafts();
         await writeUnifiedLocalSnapshot();
       } catch (restoreError) {
         try {
@@ -3044,7 +3000,6 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
           await replaceLocalStorage(before.localStorage);
           const oldForms = before.entries.find(x => Array.isArray(x) && x[0] === "forms");
           await saveLocalAuditForms(oldForms && Array.isArray(oldForms[1]) ? oldForms[1] : []);
-          await saveLocalAuditDrafts();
           await writeUnifiedLocalSnapshot();
         } catch (rollbackError) {
           console.error("Full restore rollback failed:", rollbackError);
@@ -3252,7 +3207,7 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
       try { await restoreUnifiedLocalBackup(); }
       catch (backupError) { console.warn("Unified local backup restore:", backupError); }
       await restoreLocalAuditForms();
-      await restoreLocalAuditDrafts();
+      await purgeAuditDrafts();
       await refreshAuditStoreIds();
     } catch (e) {
       console.warn("Local audit restore:", e);
