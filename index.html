@@ -2128,8 +2128,14 @@ input,select,textarea{font-size:16px!important}
       const fm = el.querySelector("#fm");
       if (fm) fm.onclick = () => {
         closeSheet();
-        openForm({ store: s, db: { dbGet, dbSet, dbDel }, toast, onSaved: () => {
-          refreshAuditStoreIds();
+        openForm({ store: s, db: { dbGet, dbSet, dbDel }, toast, onSaved: async (record) => {
+          if (record) {
+            if (record.storeId != null) auditStoreIds.add(auditKey(record.storeId));
+            if (record.q2_code != null) auditStoreCodes.add(auditKey(record.q2_code));
+            if (record.q2_name != null) auditStoreNames.add(auditKey(record.q2_name));
+          }
+          if (map && labelLayer) refreshMapLabels();
+          await refreshAuditStoreIds();
           const td = todayISO();
           let n = 0;
           S.plan.forEach((p) => {
