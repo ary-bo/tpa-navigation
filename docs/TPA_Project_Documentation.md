@@ -1,313 +1,362 @@
-# مستندات جامع سامانه TPA Navigation
+# TPA Navigation — Technical Reconstruction & Continuation Specification
 
-**نسخه مستندات:** ۱.۰  
-**تاریخ تهیه:** ۱۳ نوامبر ۲۰۲۶  
-**مبنای مستندسازی:** شاخه `ary-bo-Claud` از مخزن `ary-bo/tpa-navigation`  
-**شاخه مقصد تغییرات:** `main`
+**Document version:** 4.1  
+**Date:** 14 November 2026  
+**Repository:** https://github.com/ary-bo/tpa-navigation  
+**Target branch:** `main`  
+**Supersedes:** Previous contents of this file and the V3 technical handover  
+**Companion document:** `TPA_Navigation_Technical_Reconstruction_Spec_V4_1_English.docx` (project handover copy)
 
-> قاعده کنترل نسخه: شاخه `ary-bo-Claud` فقط مرجع مطالعه و رفتار فعلی است. هر تغییر بعدی فقط در `main` انجام می‌شود و شاخه مرجع نباید ویرایش، commit یا merge شود.
+> **Authority and evidence rule:** Current source code is authoritative for implemented behavior; the approved `TPA Final Form Spec V06 Revised.docx` is authoritative for approved auditor-form requirements; this document records project context, engineering constraints, verified change history, and handover policy. Clearly distinguish implemented, approved, sample-derived, user-confirmed, and unverified information. Never turn a sample workbook or inference into a universal business rule.
 
-این مستند دو بخش مستقل دارد: راهنمای کاربری و مستندات فنی. مطالب، پیاده‌سازی مشاهده‌شده در سورس را شرح می‌دهند؛ مواردی که سورس درباره آن‌ها قطعیت ندارد به‌عنوان واقعیت فرض نشده‌اند.
+## 1. Purpose and executive summary
 
----
+TPA Navigation is a browser-based application for customer/store mapping, Journey Plan management, sales-data ingestion, auditor visits and forms, reporting, settings, and Google Drive integration. The project is an incremental evolution of an existing application. Preserve working architecture and user data; implement bounded changes; test them; and document the exact resulting state.
 
-# بخش اول — راهنمای کاربری
+The primary application entry point is `index.html`. The application uses IndexedDB and LocalStorage for local persistence, Leaflet/OpenStreetMap for maps, SheetJS for Excel processing, and Google Drive APIs for cloud synchronization and backup operations. Local application data may remain available offline, but Drive operations, OAuth, and fresh map tiles require connectivity.
 
-## ۱. معرفی و نمای کلی
+### 1.1 Product areas
 
-TPA Navigation یک وب‌اپلیکیشن واکنش‌گرا با رابط فارسی راست‌به‌چپ و امکان تغییر زبان به انگلیسی است. قابلیت‌های اصلی آن شامل مشاهده و جست‌وجوی فروشگاه‌ها، نمایش موقعیت روی نقشه، برنامه‌ریزی بازدید، مشاهده سفارش‌ها، گزارش‌گیری و ثبت فرم ممیزی فروشگاهی است.
-
-ناوبری اصلی شامل پنج بخش است:
-
-| بخش | کاربرد |
+| Area | Responsibility |
 |---|---|
-| نقشه (Map) | نمایش فروشگاه‌ها، جست‌وجو، فیلتر و مکان‌یابی |
-| فروشگاه‌ها (Stores) | فهرست و جزئیات فروشگاه و دسترسی به فرم ممیزی |
-| برنامه (Plan) | تقویم هفتگی شش‌روزه و مدیریت بازدیدها |
-| داده‌ها (Data) | بارگذاری فایل‌ها، همگام‌سازی Drive و کنترل کیفیت داده |
-| تنظیمات (Settings) | زبان، پوسته، اتصال Drive، Tile URL و قفل PIN |
+| Map and stores | Customer map, store search/filtering, store details and location context |
+| Journey Plan | Weekly visit planning, ordering, editing, import/export and pending approval |
+| Data import | Journey Plan, sales workbook and optional Product Mapping ingestion |
+| Auditor form | Visit questions, conditional visibility, GPS/manual map pin, drafts and saved records |
+| Reports | Sales and operational summaries and data-quality reporting |
+| Settings | Language, theme, Drive configuration, PIN and data maintenance |
+| Cloud integration | Google Drive sync and multiple distinct backup/restore workflows |
 
-## ۲. آماده‌سازی و ورود داده‌ها
+## 2. Repository and verified state
 
-### ۲.۱ فایل‌های ورودی
+- Repository: `ary-bo/tpa-navigation`
+- Primary branch for changes: `main`
+- The repository tree inspected for this handover contained: `CHANGELOG_FA.txt`, `README.md`, `docs/TPA_Project_Documentation.md`, `index.html`, `manifest.webmanifest`, and `sw.js`.
+- Inspected main commit for the backup-deletion change: `a88574667f9ef1299e62526ca1eb035df19b94cb`.
+- `index.html` pre-change blob: `db2570fd2c863b6ec3baff52a7db1b32ff23550d`.
+- `index.html` post-change blob: `23867219b32ce5097adbae1cc73d603c1605ccb7`.
+- Pre-change safety branch recorded: `backup/main-before-backup-delete`.
 
-| نوع | نام‌گذاری/کاربرد | وضعیت |
+These identifiers describe the inspected change, not necessarily the latest repository state at the time a future engineer reads this file. Re-fetch main and record its current HEAD and blob SHAs before every change.
+
+### 2.1 Repository safety procedure
+
+1. Fetch current `main`, HEAD, and exact blobs of files to be changed.
+2. Inspect the actual source and any commits added since this document.
+3. Create a purpose-named backup branch before editing.
+4. Make one coherent, bounded change set.
+5. Run relevant syntax, automated, browser and data-compatibility tests.
+6. Fetch the committed files again and inspect the resulting content.
+7. Record commit SHA, changed paths, test results, deployment status and rollback reference.
+8. Never claim deployment or live verification merely because a commit exists.
+
+## 3. Architecture and file responsibilities
+
+| Component | Observed role | Guidance |
 |---|---|---|
-| Journey Plan | فایل با پیشوند `JP_`؛ اطلاعات مشتری، کدها، مختصات، مسیر و روزهای ویزیت | ضروری |
-| گزارش فروش | فایل با پیشوند `TPA_Alborz`؛ سفارش‌ها و اطلاعات فروش | ضروری |
-| Product Mapping | نگاشت Item Code به Product Name | اختیاری |
+| `index.html` | Main application UI, styles and most core JavaScript | Re-inspect before each edit; avoid unnecessary rewrites |
+| IndexedDB | Structured local persistence; historical database name `tpa-nav`, store `kv` | Preserve keys and values; use backward-compatible migrations |
+| LocalStorage | Settings, PIN, saved filters, backup metadata and per-customer drafts | Avoid broad clearing except for explicitly requested actions |
+| Leaflet / OpenStreetMap | Interactive maps and map tiles | Preserve manual pin workflow if GPS is unavailable |
+| SheetJS | Excel parsing/export | Preserve header handling and formula-injection protection |
+| Google Drive API | Sync and cloud backups | Scope every operation to the intended file family |
+| `manifest.webmanifest`, `sw.js` | PWA metadata and service worker | Inspect cache/version behavior before release changes |
 
-در صفحه «داده‌ها» فایل‌های Excel یا CSV را انتخاب و گزینه «بارگذاری و اعتبارسنجی» را اجرا کنید. برای ساخت مجموعه داده قابل استفاده، وجود هر دو فایل Journey Plan و گزارش فروش لازم است. Product Mapping اختیاری است.
+Historical inspection recorded IndexedDB keys `raw`, `plan`, and `forms`; LocalStorage items included `settings`, `pin`, `savedFilters`, `lastBackup`, and per-customer draft keys `fd_<New Customer Code>`. Helper names previously observed include `open`, `dbGet`, `dbSet`, `dbDel`, `lsGet`, and `lsSet`. Verify all names and exact semantics in live source before relying on them.
 
-در صورت خطای تجزیه یا نبود ستون‌های ضروری، برنامه داده قبلی را حفظ می‌کند و خطا نشان می‌دهد.
+## 4. Source workbooks and data ingestion
 
-### ۲.۲ همگام‌سازی Google Drive
+Project sample files include:
 
-گزینه «همگام‌سازی از Drive» به اینترنت، OAuth Client ID و شناسه پوشه Drive نیاز دارد. برنامه در پوشه تنظیم‌شده فایل‌های JP_، TPA_Alborz و Product Mapping را جست‌وجو می‌کند و فایل‌های جدیدتر را با توجه به تاریخ نام فایل و زمان ویرایش انتخاب می‌کند.
+- `JP_V06_14050811.xlsx` — Journey Plan sample.
+- `TPA_Alborz_14050816.xlsx` — sales workbook sample.
+- `Product Mapping.xlsx` — Item Code to Product Name sample mapping.
+- `Targets.xlsx` — sample Volume Target and Coverage Target worksheets.
 
-اتصال Drive و دریافت کاشی‌های نقشه در حالت آفلاین در دسترس نیست.
+Samples are fixtures, not proof of complete business rules or master data.
 
-### ۲.۳ کنترل کیفیت
+### 4.1 Historical parser observations
 
-پس از بارگذاری موفق، شاخص‌هایی مانند تعداد فروشگاه‌های Journey Plan، فاقد GPS، فاقد مسیر، JP بدون سابقه فروش، فروشگاه‌های فقط در گزارش فروش، تعداد سفارش‌ها، سفارش‌های باز فاقد تاریخ تحویل، سفارش‌های بدون تاریخ و ردیف‌های حذف‌شده نمایش داده می‌شود.
+- Header discovery (`findHeader`) was recorded as scanning the first 15 rows by default; header matching trims whitespace and duplicate names retain the first index.
+- Journey Plan parser (`parseJP`) historically required `CustomerI`, `Latitude`, `Longitude`, and `Salesman Name`. Other possible fields include New Customer Code, Oracle Code, Customer Name, Address, Salesman Code, TerritoryNo, Area Name, Route Name/DescriptionE, Outlet Class and Customer Class.
+- GPS was treated as valid only if both coordinates parse, are within legal ranges, and both absolute values exceed 0.0001; otherwise coordinates become null.
+- Product mapping parser (`parseMapping`) searches for `Item Code` and `Product Name`; mapping is optional.
+- Sales parser (`parseSales`) historically required Persian headers `کد مشتری` and `شماره سفارش`. Target delivery date may have multiple source header spellings.
+- Historical customer matching precedence: sales customer code to Journey Plan CustomerI; then Account Number to Oracle Code; then final segment of sales customer code to New Customer Code.
+- Historical normalization includes Persian/Arabic digit conversion, whitespace cleanup, code normalization, selected Arabic/Persian character normalization and supported date conversion.
 
-## ۳. نقشه و فروشگاه‌ها
+**Mandatory caution:** Re-check live parser code, especially status exclusions (including `isExcluded()`), date handling, joins, and fallback behavior. Do not infer global rules from one workbook.
 
-نقشه فروشگاه‌ها را با Leaflet نمایش می‌دهد. جست‌وجو و فیلتر برای محدودکردن نتایج و گزینه مکان‌یابی برای نمایش موقعیت دستگاه استفاده می‌شود.
+## 5. Journey Plan and reporting
 
-- فروشگاه فاقد مختصات معتبر روی نقشه مکان‌یابی نمی‌شود.
-- با انتخاب فروشگاه می‌توان جزئیات، برنامه بازدید و فرم ممیزی را باز کرد.
-- نقشه پایه به کاشی آنلاین وابسته است؛ در حالت آفلاین ممکن است داده محلی باقی بماند، اما کاشی‌ها نمایش داده نمی‌شوند.
+Historical Journey Plan records included: `pid`, `visitDate` (YYYY-MM-DD), `customerId`, `storeName`, `customerName`, `address`, `route`, `lat`, `lng`, `priority` (High/Medium/Low), `reason`, `comment`, `source` (Internal/External), and `order`. Visit state values recorded were `empty`, `done`, and `skip`. Revalidate current schemas.
 
-جزئیات فروشگاه می‌تواند شامل شناسه و نام مشتری، نام فروشگاه استخراج‌شده، کلاس، نشانی، مسیر، ویزیتور، مختصات، روزهای JP، سابقه خرید، سفارش‌ها و اقلام سفارش باشد.
+External plan import historically required Visit Date and Customer ID; blank priority defaulted to Medium. Possible row errors included `EMPTY_ID`, `BAD_DATE`, `UNKNOWN_ID`, `BAD_PRIORITY`, and `DUPLICATE`. Valid external imports enter a pending approval flow. Preserve current duplicate detection, official export columns, sheet name, instruction sheet, and formula-injection protection.
 
-## ۴. فرم ممیزی Auditor
+`Targets.xlsx` was not established as part of the inspected application data flow. Treat target-versus-actual reporting as a separate new capability. Before implementation, approve metric definitions, unit, aggregation grain, join key, date/calendar rules, duplicate/missing-target handling, dimensions, actuals source and reconciliation rules.
 
-### ۴.۱ شرط دسترسی
+## 6. Approved Auditor Form V06 requirements
 
-فرم فقط برای فروشگاهی باز می‌شود که هم در Journey Plan باشد و هم New Customer Code داشته باشد.
+The following items were carried forward from the prior handover's summary of the approved V06 specification. They are requirements, not proof of current implementation. Retrieve and inspect the original approved DOCX before changing exact question text, options or competitor lists.
 
-### ۴.۲ روش تکمیل
+- Remove the requirement for a customer's previous purchase history from TPA or the visitor.
+- Q11 and Q12 must be displayed for all customers and must not depend on purchase history.
+- Q11A appears only when Q11 is answered “Yes, I have had a problem.”
+- Q13 appears only when Q12 indicates that some or all products were returned.
+- Q15 and its two options remain unchanged as specified in V06.
+- Q16 and Q17 record Facing counts only; do not calculate or display shelf-share percentages.
+- Preserve competitor brand lists for product groups exactly as specified in V06.
+- Remove the summary and follow-up section and Q24 completely; do not add a replacement question.
+- An “Other” text field appears only while its corresponding “Other” option is selected.
+- If automatic GPS is unavailable, the map must still open and allow manual pin placement.
+- No free-text address field; “Get Location” confirms and saves selected latitude and longitude.
+- The approved form ends at Q23.
 
-1. از جزئیات فروشگاه گزینه «فرم ممیزی» را انتخاب کنید.
-2. پرسش‌ها را به ترتیب پاسخ دهید؛ بعضی پرسش‌ها با توجه به پاسخ‌های قبلی نمایش داده یا پنهان می‌شوند.
-3. برای اصلاح مکان، در صورت پاسخ مثبت به پرسش مربوط، پین را روی محل دقیق فروشگاه بکشید و Get Location را بزنید تا Latitude و Longitude ثبت شود.
-4. در پرسش‌های چندانتخابی همه گزینه‌های مرتبط را انتخاب کنید.
-5. تعداد Facing را به‌صورت عدد صحیح و مطابق قواعد q16 و q17 وارد کنید.
-6. یادداشت بازدید را در فیلد مربوط وارد و فرم را ذخیره کنید.
+### 6.1 Decisions requiring explicit approval
 
-آدرس متنی در مرحله اصلاح مکان ذخیره نمی‌شود؛ این مرحله مختصات جغرافیایی را ثبت می‌کند.
+| Topic | Known ambiguity / historical behavior | Required action |
+|---|---|---|
+| Form eligibility | Historical guard required Journey Plan membership and New Customer Code | Obtain product-owner decision before changing |
+| Q16/Q17 limits | Historical code capped Q16 at 500 and required Q17 <= Q16; V06 summary does not establish these limits | Confirm whether limits remain |
+| Legacy records/drafts | Existing identifiers and serialization may differ from V06 | Design versioned, backward-compatible migration |
+| Exact question text and competitor lists | Controlled by original approved V06 | Read source DOCX; do not reconstruct from memory |
 
-### ۴.۳ فهرست پرسش‌ها
+### 6.2 Conditional visibility test matrix
 
-| شناسه | عنوان |
+| Control | Expected display rule |
 |---|---|
-| q1 | نماینده فروش (ویزیتور) |
-| q2 | کد مشتری |
-| q3 | آیا نیاز به اصلاح موقعیت مکانی وجود دارد؟ |
-| q3a | اصلاح موقعیت مکانی روی نقشه و ثبت مختصات |
-| q4 | نتیجه مراجعه |
-| q5a | آیا فروشگاه مسئول سفارشات غنچه را می‌شناسد؟ |
-| q6 | آیا فروشگاه اطلاعات تماس ویزیتور را دارد؟ |
-| q7 | آخرین بازدید ویزیتور چه زمانی بوده است؟ |
-| q8 | وضعیت کسب‌وکار غنچه |
-| q8a | علت عدم تمایل به خرید غنچه |
-| q9 | آیا در آخرین مراجعه ویزیتور فروشگاه سفارشی ثبت کرده؟ |
-| q10 | دلایل عدم سفارش |
-| q11 | آیا در ارتباط با پخش غنچه مشکلی داشته‌اید؟ |
-| q11a | نوع مشکل در توزیع |
-| q12 | وضعیت مرجوعی محصولات |
-| q13 | دلایل مرجوعی محصولات |
-| q14 | دسترسی مشتری به محصولات |
-| q15 | وضعیت چیدمان و کیفیت قفسه روغن خوراکی |
-| q16 | تعداد کل Facing روغن خوراکی در قفسه |
-| q17 | تعداد Facing محصولات غنچه در قفسه |
-| q18 تا q23 | برندهای رقیب مشاهده‌شده در گروه‌های روغن |
-| q5 | یادداشت بازدید؛ شماره نمایشی ۲۴ در سورس |
+| Q11 and Q12 | Always visible for eligible customers; independent of purchase history |
+| Q11A | Only when Q11 = “Yes, I have had a problem” |
+| Q13 | Only when Q12 indicates some/all products returned |
+| Other text | Only while corresponding Other option is selected |
+| Q24 | Must not exist; no replacement follow-up section |
+
+## 7. Audit records and data compatibility
 
-نکته: شناسه داخلی یادداشت بازدید `q5` است، اما شماره نمایشی آن ۲۴ است. این دو مفهوم نباید با یکدیگر اشتباه شوند.
+Historical form storage used IndexedDB key `forms`; per-customer drafts used LocalStorage keys `fd_<New Customer Code>`. Historical record serialization included question fields, GPS fields `q3_lat` and `q3_lng`, JSON snapshots `_a` and `_o`, and identity/timestamp fields such as `id`, `timestamp`, `updated`, `storeId`, `visitor`, `q2_code`, and `q2_name`. Multi-select arrays were historically joined with `|`; some “Other” text was appended in bracketed form. Re-check live code before using these details as current contracts.
 
-### ۴.۴ قواعد مهم ورود
+**Migration rule:** Never clear or silently rewrite existing forms or drafts. Define a versioned migration, retain a pre-migration backup, test old records and drafts, and provide rollback.
 
-- q16 عدد صحیح بین ۰ تا ۵۰۰ است.
-- q17 عدد صحیح نامنفی است و نباید از q16 بیشتر باشد.
-- برای پرسش‌های چندانتخابی حداقل یک گزینه لازم است، مگر پرسش اختیاری باشد.
-- پرسش‌های شرطی فقط در صورت برقرار بودن تابع نمایش خود اعتبارسنجی می‌شوند.
-- در بعضی پرسش‌ها گزینه «سایر» ورودی توضیحی تکمیلی دارد.
-
-## ۵. برنامه‌ریزی بازدید
-
-صفحه Plan برنامه را در نمای هفتگی شش‌روزه نشان می‌دهد. امکان حرکت بین هفته‌ها، انتخاب روز، مرتب‌سازی، ویرایش و مشاهده جزئیات بازدید وجود دارد.
-
-- وضعیت بازدید می‌تواند «انجام شد» یا «انجام نشد» ثبت شود.
-- هر رکورد می‌تواند اولویت، دلیل، توضیح ممیز و منبع داشته باشد.
-- پیشنهاد ترتیب بازدید با فاصله خط مستقیم انجام می‌شود، نه زمان رانندگی.
-- بازدیدهای واردشده از فایل خارجی ابتدا در صف انتظار تأیید قرار می‌گیرند.
-
-ورود Excel بر اساس ستون‌های Customer ID و Visit Date انجام می‌شود. Priority در صورت خالی‌بودن Medium می‌شود. خطاهای ممکن شامل شناسه خالی، تاریخ نامعتبر، شناسه ناشناخته، اولویت نامعتبر و ردیف تکراری است. خروجی برنامه با نام `Audit_Visit_Plan.xlsx` تولید می‌شود.
-
-## ۶. گزارش‌ها، پشتیبان‌گیری و تنظیمات
-
-گزارش‌های آماده عبارت‌اند از:
-- فروشگاه‌های بدون GPS
-- فروشگاه‌های بدون خرید
-- سفارش‌های باز
-- سفارش‌های معوق
-
-گزارش‌ها به Excel صادر می‌شوند.
-
-پشتیبان‌گیری Drive برای برنامه بازدید و صف موارد در انتظار تأیید است و در فضای appDataFolder ذخیره می‌شود. بازیابی، برنامه فعلی را جایگزین نسخه پشتیبان می‌کند و قبل از جایگزینی تأیید می‌گیرد. این قابلیت را نباید پشتیبان‌گیری کامل از همه داده‌های خام یا تمام فرم‌های ممیزی تلقی کرد.
-
-تنظیمات شامل زبان فارسی/انگلیسی، پوسته خودکار/روشن/تیره، OAuth Client ID، Folder ID، Tile URL و قفل PIN است. PIN باید ۴ تا ۱۲ رقم باشد. متن برنامه تصریح می‌کند PIN صرفاً مانع مشاهده اتفاقی است و داده‌ها را رمزنگاری نمی‌کند.
-
-گزینه پاک‌سازی فایل داده خام، داده ورودی را حذف و برنامه بازدید را حفظ می‌کند. گزینه پاک‌سازی همه‌چیز، داده خام و برنامه بازدید را حذف می‌کند.
-
-## ۷. رفع اشکال سریع
-
-| مشکل | بررسی |
-|---|---|
-| فرم باز نمی‌شود | حضور فروشگاه در JP و وجود New Customer Code |
-| نقشه بدون کاشی است | اینترنت و Tile URL؛ کاشی نقشه آنلاین است |
-| Drive Sync خطا می‌دهد | اینترنت، OAuth Client ID، Folder ID و مجوز حساب |
-| فایل رد می‌شود | نام فایل، ردیف عنوان و ستون‌های ضروری |
-| فروشگاه روی نقشه نیست | احتمال نبود GPS یا نامعتبر بودن مختصات |
-| PIN فراموش شده | متن برنامه پاک‌سازی داده سایت مرورگر را پیشنهاد می‌کند؛ ممکن است داده محلی نیز از بین برود |
-
----
-
-# بخش دوم — مستندات فنی
-
-## ۸. معماری و ساختار سورس
-
-در شاخه مرجع، منطق برنامه عمدتاً در فایل یکپارچه `index.html` قرار دارد و شامل HTML، CSS و JavaScript است. درون کد، بخش‌ها با کامنت‌هایی مانند `js/util.js`، `js/db.js`، `js/data.js` و `js/form.js` از نظر مفهومی تفکیک شده‌اند؛ این برچسب‌ها به معنی وجود فایل‌های جداگانه در درخت فعلی نیستند.
-
-| فایل | نقش |
-|---|---|
-| index.html | رابط، سبک‌ها، منطق داده، فرم، نقشه، برنامه بازدید، تنظیمات و راه‌اندازی |
-| manifest.webmanifest | فراداده نصب‌پذیری وب‌اپ |
-| sw.js | Service Worker |
-| README.md | راهنمای مختصر مخزن |
-
-## ۹. پردازش داده‌ها
-
-### ۹.۱ زنجیره پردازش
-
-1. دریافت فایل از انتخاب محلی یا Google Drive.
-2. تبدیل Excel/CSV به آرایه سطر و ستون.
-3. شناسایی ردیف عنوان و استخراج ستون‌ها بر اساس نام.
-4. تبدیل Journey Plan به رکوردهای مشتری و اعتبارسنجی مختصات.
-5. تبدیل گزارش فروش به سفارش‌ها و مدیریت موارد تکراری/بسته/منقضی.
-6. نگاشت Item Code به Product Name در صورت وجود Product Mapping.
-7. ساخت مجموعه داده فروشگاه‌ها برای نقشه، فهرست و جزئیات.
-
-### ۹.۲ Journey Plan
-
-ستون‌های ضروری شناسایی ساختار در parser شامل `CustomerI`، `Latitude`، `Longitude` و `Salesman Name` هستند. فیلدهای دیگری که در صورت وجود خوانده می‌شوند شامل New Customer Code، Oracle Code، Customer Name، Address، Salesman Code، TerritoryNo، Area Name، Route Name یا DescriptionE و Outlet Class یا Customer Class هستند. روزهای هفته نیز از ستون‌های مربوط استخراج می‌شوند.
-
-### ۹.۳ گزارش فروش و Product Mapping
-
-گزارش فروش با عناوین فارسی «کد مشتری» و «شماره سفارش» شناسایی می‌شود. Product Mapping با ستون `Item Code` شناسایی شده و در صورت وجود `Product Name` برای نگاشت نام محصول استفاده می‌شود.
-
-### ۹.۴ نرمال‌سازی
-
-- تبدیل ارقام فارسی و عربی به ارقام استاندارد
-- حذف فاصله‌های زائد و پسوند اعشاری `.0` از کدها
-- یکسان‌سازی برخی حروف عربی/فارسی و فاصله‌ها
-- تبدیل تاریخ‌های پشتیبانی‌شده شمسی/میلادی به تاریخ ISO داخلی
-
-## ۱۰. فرم Auditor
-
-### ۱۰.۱ تعریف پرسش‌ها
-
-پرسش‌ها در آرایه `Q` تعریف و مجموعه `QS` از آن ساخته می‌شود. هر پرسش می‌تواند شناسه، شماره نمایشی، عنوان، نوع ورودی، گزینه‌ها، hint، optional و تابع `show` داشته باشد. انواع مشاهده‌شده: `visitor`، `customer`، `single`، `multi`، `map`، `num` و `text`.
-
-مقادیر اولیه q1 و q2 از ویزیتور و New Customer Code فروشگاه مقداردهی می‌شوند. شناسه‌های q1، q2 و q3a در آرایه SKIP قرار دارند و از مسیر ورودی عادی پاسخ‌گیری/اعتبارسنجی فرم مستثنا هستند.
-
-### ۱۰.۲ شرط دسترسی
-
-تابع `canForm(s)` زمانی true است که رکورد فروشگاه موجود باشد، `inJP` درست باشد و `newCode` مقدار داشته باشد.
-
-### ۱۰.۳ منطق نمایش شرطی
-
-| قاعده | رفتار |
-|---|---|
-| hideAll | اگر q4 «فروشگاه تعطیل بود» یا «مشتری پیدا نشد» باشد، بلوک‌های بازدید و مشاهده پنهان می‌شوند. |
-| absent | اگر q4 «شخص مسئول حاضر نبود» باشد، بلوک بازدید پنهان می‌شود. |
-| visitBlock | وقتی فروشگاه تعطیل/مشتری پیدا نشده و مسئول حاضر نبوده نباشد، فعال است. |
-| obsBlock | وقتی فروشگاه تعطیل نبوده و مشتری پیدا نشده نباشد، فعال است. |
-| q3a | فقط در صورت پاسخ بله به q3 نمایش داده می‌شود. |
-| q8a | وقتی q8 بیانگر عرضه قبلی ولی نه فعلی یا عدم عرضه هیچ‌وقت باشد، نمایش داده می‌شود. |
-| q9 | وقتی visitBlock فعال، q8 وضعیت عرضه فعلی و q7 در بازه‌های اخیر تعریف‌شده باشد نمایش داده می‌شود. |
-| q10 | وقتی q9show برقرار و پاسخ q9 خیر باشد نمایش داده می‌شود. |
-| q11a | وقتی visitBlock فعال و q11 پاسخ مثبتِ دارای مشکل باشد نمایش داده می‌شود. |
-| q12 | وقتی visitBlock فعال، q8 نامشخص یا عرضه فعلی باشد و q11 پاسخ «خیر، همه‌چیز خوب بوده است» نباشد نمایش داده می‌شود. |
-| q13 | وقتی q12 نشان دهد بخشی یا تمام محصولات مرجوع شده‌اند، نمایش داده می‌شود. |
-
-توابع نمایش با تغییر پاسخ‌ها ارزیابی می‌شوند؛ آزمون فرم باید مسیرهای نمایش و پنهان‌سازی را پوشش دهد.
-
-### ۱۰.۴ اعتبارسنجی
-
-- پرسش قابل مشاهده و غیر اختیاری باید تکمیل شود.
-- پرسش چندانتخابی باید حداقل یک گزینه داشته باشد.
-- ورودی نقشه باید با عملیات تأیید موقعیت تکمیل شود.
-- ورودی عددی باید عدد صحیح نامنفی باشد.
-- q16 حداکثر ۵۰۰ است.
-- q17 نباید از q16 بیشتر باشد.
-- گزینه «سایر» می‌تواند ورودی توضیحی تکمیلی داشته باشد.
-
-راهنمای q16 می‌گوید تعداد کل Facing تمام ردیف‌های روغن خوراکی ثبت شود. راهنمای q17 می‌گوید فقط Facing غنچه وارد شود و سهم قفسه محاسبه نمی‌شود.
-
-### ۱۰.۵ ذخیره فرم
-
-فرم‌ها از طریق `dbGet("forms")` از IndexedDB خوانده می‌شوند و با کلید `forms` در مخزن کلید-مقدار نگهداری می‌شوند. ساختار رکورد ذخیره‌شده شامل شناسه/زمان، شناسه فروشگاه، اطلاعات بازدیدکننده و مشتری و مجموعه پاسخ‌ها است. هر تغییر آینده در این ساختار باید با آزمون سازگاری داده‌های ذخیره‌شده قبلی همراه باشد.
-
-## ۱۱. ذخیره‌سازی و امنیت
-
-پایگاه IndexedDB با نام `tpa-nav`، نسخه ۱ و object store با نام `kv` باز می‌شود.
-
-| مخزن/کلید | کاربرد |
-|---|---|
-| IndexedDB / raw | داده‌های خام ورودی و فراداده فایل‌ها |
-| IndexedDB / plan | برنامه بازدید و موارد منتظر تأیید |
-| IndexedDB / forms | فرم‌های ممیزی |
-| Local Storage / settings | تنظیمات کاربر |
-| Local Storage / pin | salt و هش PIN |
-| Local Storage / lastBackup | امضا/زمان آخرین پشتیبان برنامه |
-
-برای Drive از Google Identity Services و OAuth استفاده شده است. Scopeها: `drive.readonly` و `drive.appdata`. فایل‌های ورودی از پوشه تنظیم‌شده خوانده می‌شوند و نسخه پشتیبان برنامه بازدید در appDataFolder ذخیره می‌شود.
-
-PIN با SHA-256 و salt نگهداری می‌شود. پس از پنج تلاش ناموفق، قفل موقت ۳۰ ثانیه‌ای فعال می‌شود. با وجود این، خود برنامه هشدار می‌دهد که داده‌ها رمزنگاری نشده‌اند؛ PIN نباید معادل رمزنگاری داده تلقی شود.
-
-Service Worker ثبت می‌شود و برنامه داده‌های محلی را از IndexedDB بازیابی می‌کند، اما همگام‌سازی Drive و کاشی‌های نقشه به اینترنت وابسته‌اند؛ این برنامه را نباید کاملاً آفلاین دانست.
-
-## ۱۲. نقشه، برنامه و گزارش‌ها
-
-نقشه با Leaflet ساخته شده و از Tile URL قابل تنظیم استفاده می‌کند. موقعیت کاربر از API مکان‌یابی مرورگر دریافت می‌شود.
-
-برنامه بازدید در ساختارهای `S.plan` و `S.pending` نگهداری می‌شود. پیشنهاد ترتیب بازدید با الگوریتم نزدیک‌ترین همسایه و فاصله خط مستقیم انجام می‌شود؛ این الگوریتم مسیر جاده‌ای یا زمان تردد را محاسبه نمی‌کند.
-
-گزارش‌ها از مجموعه داده پردازش‌شده ساخته و به Excel صادر می‌شوند. پیش از تحلیل مدیریتی، پوشش و کیفیت فایل‌های ورودی باید بررسی شود.
-
-## ۱۳. استقرار و آزمون
-
-### ۱۳.۱ فایل‌های استقرار
-
-- `index.html`، `manifest.webmanifest` و `sw.js` باید در مسیر قابل دسترس وب سرو شوند.
-- برای OAuth و مکان‌یابی، محیط HTTPS و پیکربندی معتبر سرویس‌های بیرونی لازم است.
-- OAuth Client ID و پوشه Drive باید از قبل آماده شده باشند.
-
-### ۱۳.۲ چک‌لیست آزمون رگرسیون
-
-| حوزه | سناریو |
-|---|---|
-| ورود داده | فایل معتبر/ناقص، ستون مفقود، Product Mapping اختیاری، حفظ داده قبلی پس از خطا |
-| دسترسی فرم | فروشگاه JP با New Code، خارج از JP، فاقد New Code |
-| شروط فرم | حالت‌های q4، q3، q8، q9/q10، q11/q11a، q12/q13 |
-| اعتبارسنجی | فیلد اجباری، multi خالی، q16 منفی/اعشاری/بیش از ۵۰۰، q17 بیشتر از q16 |
-| ذخیره‌سازی | بستن/بازکردن برنامه، بارگذاری مجدد، بازیابی forms، پاک‌سازی |
-| برنامه | افزودن، ویرایش، مرتب‌سازی، وضعیت بازدید، ورود Excel، backup/restore |
-| نقشه | GPS معتبر/نامعتبر، مجوز ردشده، حالت آفلاین، Tile URL سفارشی |
-| امنیت | PIN معتبر/نامعتبر، پنج تلاش اشتباه، قفل موقت، زبان و پوسته |
-
-### ۱۳.۳ سیاست تغییر شاخه
-
-برای هر تغییر، ابتدا رفتار موجود از شاخه `ary-bo-Claud` مطالعه شود؛ سپس تغییر فقط در `main` پیاده‌سازی و آزمون شود. از هر عملیات تغییر‌دهنده روی شاخه مرجع خودداری شود. پس از هر تغییر رفتاری مهم، این مستندات در `main` به‌روزرسانی شوند.
-
-## ۱۴. محدودیت‌ها و موارد نیازمند تصمیم
-
-- این سند رفتار کد فعلی را شرح می‌دهد و جایگزین قرارداد رسمی داده یا مشخصات کسب‌وکار تأییدشده نیست.
-- تغییر قالب فایل‌های ورودی نیازمند بازبینی parser و آزمون است.
-- نقشه پایه و OAuth در حالت آفلاین کامل نیستند.
-- PIN داده‌ها را رمزنگاری نمی‌کند.
-- پیشنهاد ترتیب بازدید مبتنی بر فاصله مستقیم است.
-- نیاز به نسخه‌بندی ساختار رکورد فرم‌ها و مهاجرت داده‌های قبلی باید در تغییرات آینده بررسی شود.
-- معنای تجاری گزینه‌های پرسش‌ها و KPIهای مدیریتی باید از مالک کسب‌وکار تأیید شود و نباید از روی نام فیلدها حدس زده شود.
-
----
-
-## مرجع سورس
-
-- مخزن: https://github.com/ary-bo/tpa-navigation
-- شاخه مرجع مطالعه: https://github.com/ary-bo/tpa-navigation/tree/ary-bo-Claud
-- فایل اصلی بررسی‌شده: `index.html` در شاخه مرجع
-- شاخه مقصد تغییرات: `main`
+## 8. Backup, restore and deletion — distinct backup families
+
+Do not conflate the following pathways:
+
+| Backup family | Historical filename | Scope |
+|---|---|---|
+| Plan backup | `tpa_plan_backup.json` | Plan and pending data, filters and saved filters |
+| Audit-form backup | `tpa_audit_forms_backup.json` | Saved audit forms and per-customer drafts |
+| Full-system backup | `tpa_full_system_backup_v1_<timestamp>.json`; legacy `tpa_full_system_backup_v1.json` | Primary IndexedDB store entries plus LocalStorage values, counts, version, timestamp and checksum |
+
+### 8.1 Full-system payload and restore
+
+Historical payload fields: `app = tpa-navigation`, `type = tpa-full-system-backup`, `version = 1`, `createdAt`, `database { name, store, entries }`, `localStorage`, `counts { databaseEntries, localStorageKeys }`, and `checksum`.
+
+The full-system list is scoped to Google Drive `appDataFolder`, filters the versioned and legacy full-system filename patterns, sorts newest first and paginates. Restore validates app/type/version, database name/store, entries, LocalStorage shape, checksum and timestamp before replacing data. Verify the exact current rollback behavior in source before modifying restore.
+
+### 8.2 Confirmed V4 backup deletion feature
+
+The main-branch change recorded in commit `a88574667f9ef1299e62526ca1eb035df19b94cb` added a per-item Delete Backup action to the full-system backup list while preserving Restore.
+
+The inspected implementation:
+1. Requires a selected backup object with a Drive file ID.
+2. Shows a confirmation dialog identifying the selected file by date/name and warning that deletion is permanent.
+3. Sends an HTTP DELETE request to Google Drive for that selected file ID only.
+4. Reports success/failure and refreshes the list after successful deletion.
+5. Does not clear current IndexedDB, LocalStorage, plan data, audit data or other backup files.
+
+Code inspection verified the deletion function, per-item control, Drive DELETE request, preserved restore handler, list refresh, and preserved backup-creation function. The user explicitly confirmed in the target environment: “درسته، کار میکنه” (“It works”). This is a user-reported manual acceptance result, not a substitute for broader automated testing.
+
+### 8.3 Operational deletion workflow
+
+1. Open Settings → Backup & Restore.
+2. Load the full-system backup list using Restore Backup.
+3. Identify the intended version by timestamp, filename and size.
+4. Select Delete Backup on that item.
+5. Read the confirmation and confirm only if the selected backup is correct.
+6. Verify the item disappears after list refresh.
+
+Deletion is irreversible from the app. Keep another usable backup if retention matters. Never broaden deletion to all Drive files or other backup families. On OAuth/network/Drive failure, show an error and do not report success.
+
+### 8.4 Backup acceptance tests
+
+| ID | Expected behavior | Recorded status |
+|---|---|---|
+| AT-001 | Baseline branch, HEAD and blobs recorded before edits | Applied for V4 deletion change |
+| AT-002 | Full-system list scope, pagination and newest-first order | Source inspection; no automated pagination test |
+| AT-003 | Backup payload fields and checksum correct | Existing source retained; not live-retested in V4 task |
+| AT-004 | Invalid restore payload rejected before replacement | Source inspected; full device test not performed |
+| AT-005 | Delete only selected backup after confirmation and refresh | Code verified; user confirmed operation |
+| AT-006 | Cancel confirmation without deleting | Expected from code path; automated test not run |
+| AT-007 | Drive/OAuth/network failure surfaced without false success | Error handling inspected; failure injection not tested |
+| AT-008 | Plan backup unaffected | Scope reviewed; integration test not run |
+| AT-009 | Audit backup unaffected | Scope reviewed; integration test not run |
+
+## 9. Security and privacy
+
+- The app PIN is a casual-access barrier, not encryption.
+- IndexedDB and LocalStorage may contain customer, sales, plan and audit information; treat exports/backups as sensitive business data.
+- Do not expose OAuth tokens, customer identifiers or backup contents in logs or public issues.
+- Scope Drive list/restore/delete to the intended appDataFolder file family.
+- Back up before destructive changes and document rollback.
+- Do not overwrite original workbooks or project files without explicit approval.
+- Do not add cloud collection or broader permissions without an explicit product decision.
+
+## 10. End-to-end reconstruction and continuation procedure
+
+A new engineer should be able to continue without relying on chat history:
+
+1. Read this document, the project execution instructions, the approved V06 form specification and historical V2/V3 handovers if available.
+2. Re-fetch repository main and inspect `index.html`, `manifest.webmanifest`, `sw.js`, README and changelog.
+3. Map the live source into persistence, workbook parsing, joins, map/filter UI, Journey Plan, audit form, reporting, Drive integration, settings and PWA shell.
+4. Create a baseline backup branch and record blob SHAs.
+5. Run representative workbooks and record row counts, parser warnings, quality counters, matches, orders and statuses.
+6. Compare the live auditor form against the original approved V06 question by question and conditional rule by conditional rule.
+7. Define compatibility and migration plans before changing form identifiers or serialization.
+8. Implement one bounded change set at a time.
+9. Test parser fixtures, joins, plan import/export, form conditions, GPS fallback, backup create/list/restore/delete and migrations.
+10. Run syntax, browser, relevant mobile and stored-data regression checks.
+11. Fetch committed files again and verify the actual commit content.
+12. Publish a handover with commit, changed files, tests, untested areas, risks, rollback and user action.
+
+## 11. Acceptance test catalogue
+
+| ID | Area | Acceptance criterion |
+|---|---|---|
+| AT-010 | V06 form | Q11/Q12 always shown; Q11A/Q13 conditional; Q24 absent; Q16/Q17 facing only |
+| AT-011 | GPS fallback | Manual map pin works when GPS denied/unavailable; Get Location confirms coordinates |
+| AT-012 | Data migration | Legacy forms/drafts survive migration and remain readable/exportable |
+| AT-013 | Workbook parsing | Header scan, status exclusions, joins, dates and optional mapping match baseline |
+| AT-014 | Journey Plan | Import validation, duplicate logic, approval flow and export remain compatible |
+| AT-015 | PWA/offline | Local shell/data behavior documented accurately; Drive and fresh tiles require internet |
+
+Record environment, test data, expected and actual result, and pass/fail for every test. Clearly identify tests not performed.
+
+## 12. Open gaps and decisions
+
+- Retrieve the original approved V06 DOCX and verify exact question wording, options and competitor lists.
+- Confirm form eligibility rule with the product owner.
+- Confirm whether historical Q16/Q17 numeric limits remain.
+- Design and test backward-compatible migration for legacy forms and drafts.
+- Define Targets metrics, grain, keys, dates, joins, missingness and reconciliation before implementation.
+- Re-inspect exact sales status exclusions in live source.
+- Re-check current application version and deployment state; older version numbers in previous handovers are historical only.
+- A screenshot previously showed `popup_failed_to_open`; its root cause was not established and it must not be assumed related to backup deletion.
+
+## 13. Engineering rules
+
+- Preserve existing architecture unless a demonstrated reason requires change.
+- Do not rewrite the application for a narrow feature.
+- Never assume old line numbers, HEAD, dependency versions or deployment state remain current.
+- Use the approved V06 document for form content and live source for implemented behavior.
+- Back up before meaningful changes; do not overwrite originals without approval.
+- Preserve records/drafts and use explicit backward-compatible migrations.
+- Test syntax, runtime behavior, data compatibility and the relevant user workflow.
+- Distinguish code inspection, automated tests, manual tests and user confirmation.
+- Never claim full testing based only on compilation or one successful user scenario.
+
+## 14. Required handover report after every stage
+
+Every completed stage must report:
+- Exact behavior added/changed and business reason.
+- Changed file paths and whether each was new, replaced or edited; include blob SHAs.
+- Branch, base HEAD, resulting commit and rollback branch.
+- Test IDs, environment, results and failures.
+- Untested scenarios and known limitations.
+- Backup/migration and rollback details.
+- Deployment status, distinguishing committed, deployed and live-verified.
+- Required user action, if any.
+- Remaining work, risks and decisions requiring approval.
+
+## 15. Sources and evidence register
+
+| Source | Use | Limitation |
+|---|---|---|
+| Current GitHub `main` source | Implemented behavior | Must be re-fetched for every future change |
+| Approved `TPA Final Form Spec V06 Revised.docx` | Approved form requirements | Exact text/lists must be read from original |
+| Supplied Excel workbooks | Parser fixtures and examples | Samples do not define universal rules |
+| Historical V2/V3 technical handovers | Function maps, persistence, parser and prior context | Revalidate against current source |
+| Project execution instructions TXT | Safe execution and QA workflow | Instructions, not application behavior |
+| Commit `a88574667f9ef1299e62526ca1eb035df19b94cb` | Backup deletion traceability | Commit is not deployment evidence |
+| User's explicit confirmation | Manual acceptance of backup deletion | Does not replace broader regression tests |
+
+## Appendix A — Immediate next work
+
+1. Re-fetch main and confirm the backup-deletion commit remains in history.
+2. Read the original approved V06 DOCX and build a complete question/option/visibility specification.
+3. Audit live form implementation against V06 and document every delta.
+4. Decide eligibility and Q16/Q17 validation with the product owner.
+5. Design backward-compatible migration for existing forms and drafts.
+6. Implement and test V06 in a dedicated branch with before/after fixtures.
+7. Scope Targets reporting separately after metric definitions are approved.
+
+## Appendix B — Data-safety checklist
+
+- [ ] Current branch and HEAD verified.
+- [ ] Pre-change backup branch created.
+- [ ] Original uploaded workbooks preserved.
+- [ ] Existing IndexedDB and LocalStorage data preserved or explicitly migrated.
+- [ ] Cloud backup families kept separate.
+- [ ] Destructive operations target one selected object only.
+- [ ] Confirmation shown before irreversible deletion/replacement.
+- [ ] Rollback path documented and available.
+- [ ] Syntax and acceptance tests run.
+- [ ] Untested areas and deployment state reported honestly.
+
+## Appendix C — Repository links
+
+- Repository: https://github.com/ary-bo/tpa-navigation
+- Main source: https://github.com/ary-bo/tpa-navigation/blob/main/index.html
+- Backup deletion commit: https://github.com/ary-bo/tpa-navigation/commit/a88574667f9ef1299e62526ca1eb035df19b94cb
+- Pre-change backup branch: https://github.com/ary-bo/tpa-navigation/tree/backup/main-before-backup-delete
+
+## Appendix D — Mandatory continuous handover and document update policy
+
+**This is a mandatory project requirement, not an optional administrative task.**
+
+At the completion of every project phase, feature, module, milestone or separately deliverable work package, this Technical Reconstruction & Continuation Specification MUST be updated in full before that work package is considered closed or handed over.
+
+The update must make it possible for a new engineer, maintainer, auditor or AI agent—with no access to prior chat conversations, undocumented verbal explanations or the previous responsible person's memory—to understand the current project state and reproduce, maintain, test and continue the completed work.
+
+### D.1 Minimum information to record after every completed part
+
+1. Exact scope: objective, business reason, included behavior, exclusions and acceptance criteria.
+2. Final implementation design, architecture, important decisions, alternatives and rationale.
+3. Every file, module, database/object store, storage key, API endpoint, integration, configuration and UI area added, changed or removed; record exact paths and identifiers.
+4. Final data structures, schemas, field names, types, validation, transformations, dependencies and compatibility constraints.
+5. Exact implementation and operational steps, commands, configuration, environment assumptions and permissions; never document secrets or credentials.
+6. Business rules and conditional behavior, edge cases, error handling, fallback behavior and user-visible messages.
+7. Migration details: source/destination formats, migration logic, versioning, preservation, backup, rollback and evidence that existing data remains usable.
+8. Tests performed: IDs, setup, test data, browser/device/environment, expected and actual results, pass/fail; explicitly list tests not performed.
+9. Repository traceability: branch, base commit, resulting commit SHA, changed paths and rollback reference.
+10. Deployment/release status, distinguishing code committed, deployed and behavior verified in target environment.
+11. Defects, unresolved questions, risks, technical debt, dependencies and decisions requiring product-owner approval.
+12. Next recommended tasks in priority order, with enough context to begin without repeating discovery.
+
+### D.2 Required update procedure
+
+1. Re-inspect current repository and runtime state; never assume old commit IDs, file contents or deployment state are current.
+2. Update the relevant existing sections so the document describes the actual current state, not merely append a short change note.
+3. Update Document Control and Revision History with document version, date, completed scope and evidence.
+4. Revise architecture, file maps, data contracts, workflows, diagrams where useful, acceptance tests, open issues and references wherever affected.
+5. Mark each requirement and test accurately: implemented, verified, partially verified, not tested, deferred or blocked.
+6. Preserve useful history, clearly mark superseded information and identify the new source of truth.
+7. Verify internal consistency, links and commit identifiers, and confirm a new person can follow the handover without chat history.
+8. Save and deliver the updated document with a concise change summary. The work package is not fully handed over until this update is complete.
+
+### D.3 Mandatory close-out checklist
+
+- [ ] Current source and repository state re-verified.
+- [ ] All changed files and exact identifiers documented.
+- [ ] Final behavior and business rules documented.
+- [ ] Data structures, migrations, backup and rollback documented where relevant.
+- [ ] Tests and actual outcomes recorded; untested cases disclosed.
+- [ ] Commit, branch, deployment and release status recorded.
+- [ ] Open risks, unresolved decisions and next steps recorded.
+- [ ] Document Control and Revision History updated.
+- [ ] A new responsible person can reproduce and continue the work using this document alone, without prior chat history.
+
+### D.4 Definition of done for documentation
+
+A project part is **NOT fully complete for handover purposes** if its implementation is finished but this document has not been updated to reflect the actual final state. The responsible person for that project part owns the update. If the work is later modified, corrected, rolled back or extended, the document must be revised again.
+
+This policy applies to every subsequent project stage and every future version of this document. The next version must retain relevant history while updating all affected sections to the latest verified state.
