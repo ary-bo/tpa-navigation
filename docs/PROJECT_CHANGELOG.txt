@@ -1,0 +1,100 @@
+TPA NAVIGATION — PROJECT CHANGE LOG
+===================================
+Purpose
+-------
+This file is the chronological, conversation-independent record of implemented
+project changes. Keep it concise enough to transfer into a new conversation,
+but detailed enough to identify the exact code, behavior, verification status,
+and next steps.
+
+Repository
+----------
+https://github.com/ary-bo/tpa-navigation
+Primary branch: main
+Companion technical handover:
+docs/TPA_Project_Documentation.md
+
+Operating rules
+---------------
+1. After every implemented project change, append a dated entry here.
+2. Record the user-approved requirement, actual behavior implemented, files,
+   branch, commit SHA, backup/rollback reference, and verification status.
+3. Clearly distinguish source inspection, automated tests, user/browser
+   confirmation, and deployment status. Never claim a test or deployment that
+   was not performed.
+4. Update docs/TPA_Project_Documentation.md whenever a project phase or feature
+   is completed. This change log supplements, and does not replace, that
+   technical handover document.
+5. At the start of a new conversation, read this file and the technical
+   handover document, then inspect current GitHub main before making changes.
+6. If a change is made but not committed, record it as pending/uncommitted.
+7. Preserve previous entries. Correct mistakes with a dated clarification;
+   do not silently erase history.
+
+How to use this file in a new conversation
+------------------------------------------
+Ask the assistant to read:
+- docs/PROJECT_CHANGELOG.txt
+- docs/TPA_Project_Documentation.md
+Then continue from the latest entry after verifying current repository state.
+
+CHANGE HISTORY
+==============
+
+2026-11-14 — Auditor form: visit outcome before location correction
+--------------------------------------------------------------------
+User-approved requirement:
+- Show "Visit outcome" before asking whether the store location needs correction.
+- If one of the first three visit outcomes is selected, show the location
+  correction question.
+- If the fourth outcome, "Customer not found" (مشتری پیدا نشد), is selected,
+  do not show the location correction question or its dependent map question.
+
+Implementation:
+- Repository: ary-bo/tpa-navigation
+- Branch: main
+- Changed file: index.html
+- Existing internal question IDs q3 and q4 were retained for compatibility.
+- Visit outcome is displayed as question 3.
+- Location correction is displayed as question 4.
+- The location question's visibility condition excludes the exact fourth
+  visit-outcome option.
+- The existing form update routine clears values and auxiliary state for
+  questions that become hidden. Therefore, switching from one of the first
+  three outcomes to "Customer not found" clears the previous location answer
+  and map coordinates from the active form state/draft.
+- Existing saved records were not bulk-migrated or rewritten by this change.
+
+Git traceability:
+- Pre-change index.html blob:
+  23867219b32ce5097adbae1cc73d603c1605ccb7
+- Post-change index.html blob:
+  6ed50ae0290e43ea1d0dd27d19011138dcc4082b
+- Code commit:
+  179b54b07a704a76cfdcfa29989bff9e6843bb7b
+- Safety branch:
+  backup/main-before-visit-result-location-20261114
+- Technical documentation commit:
+  7c531e871dbf6dc69d3d921a717ec9b366290893
+- Technical document version: 4.2
+
+Verification:
+- Source-level checks passed for question order, question numbering, conditional
+  visibility, and hidden-answer cleanup path.
+- Browser testing was not performed by the assistant.
+- User subsequently tested the change in the application and explicitly
+  confirmed: "درست شد" (it worked).
+- Treat the user confirmation as manual acceptance of the requested behavior.
+- Do not infer that every related export/report/draft edge case was separately
+  tested.
+- Deployment was not independently verified by the assistant.
+
+Current status:
+- Implemented on main.
+- User-confirmed working.
+- Technical handover document updated to version 4.2.
+- This change log initialized with this entry.
+
+NEXT CHANGE
+-----------
+No subsequent change has been requested or implemented yet.
