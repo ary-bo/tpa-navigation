@@ -2183,6 +2183,35 @@ input,select,textarea{font-size:16px!important}
     const q = encodeURIComponent(s.storeName || s.name || s.address) + "%20" + encodeURIComponent(s.address);
     return `<a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${q}">${t("searchDest")}</a>`;
   }
+  async function afterAuditSaved(record, store) {
+    if (record) { if (record.storeId != null) auditStoreIds.add(auditKey(record.storeId)); if (record.q2_code != null) auditStoreCodes.add(auditKey(record.q2_code)); if (record.q2_name != null) auditStoreNames.add(auditKey(record.q2_name)); }
+    if (map && labelLayer) refreshMapLabels(); await refreshAuditStoreIds();
+    const td=todayISO(); let n=0; S.plan.forEach(p=>{if(String(p.customerId)===String(store.id)&&p.visitDate===td&&p.visit!=='done'){p.visit='done';n++;}});
+    if(n){savePlan();toast(t('v_done')+' ✓');} render(); openAuditHistory(store);
+  }
+  async function openAuditHistory(store) {
+    const all=await dbGet('forms')||[]; const records=all.filter(r=>r&&String(r.storeId)===String(store.id)).sort((a,b)=>String(b.timestamp||'').localeCompare(String(a.timestamp||'')));
+    const date=v=>{if(!v)return '—';const d=new Date(v);return Number.isNaN(d.getTime())?esc(v):new Intl.DateTimeFormat('fa-IR',{dateStyle:'medium',timeZone:'Asia/Tehran'}).format(d);};
+    const overlay=document.createElement('div');overlay.dir='rtl';overlay.style.cssText='position:fixed;inset:0;z-index:10020;background:rgba(0,0,0,.75);display:flex;align-items:flex-end;justify-content:center;padding:12px';
+    const panel=document.createElement('div');panel.style.cssText='width:min(100%,680px);max-height:88dvh;overflow:auto;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:20px;padding:18px';
+    panel.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><div><h2 style="margin:0 0 5px">مدیریت فرم‌های حسابرسی</h2><div class="mu">'+esc(store.storeName||store.name)+' · '+esc(store.newCode)+'</div></div><button class="btn" data-close>بستن</button></div><button class="btn pri" data-new style="width:100%;margin:16px 0">＋ بازدید جدید</button><div data-list></div>';
+    overlay.appendChild(panel);document.body.appendChild(overlay);const list=panel.querySelector('[data-list]');
+    if(!records.length)list.innerHTML='<div class="mu" style="padding:18px;text-align:center">هنوز فرمی ثبت نشده است.</div>';
+    records.forEach((rec,index)=>{const card=document.createElement('section');card.style.cssText='border:1px solid var(--bd);border-radius:14px;padding:13px;margin:10px 0';
+      card.innerHTML='<b>بازدید '+FA2(records.length-index)+'</b><div class="mu" style="margin:8px 0">تاریخ ثبت: '+date(rec.timestamp)+'</div><div class="mu" style="margin:8px 0">آخرین ویرایش: '+date(rec.updated)+'</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-view>مشاهده</button><button class="btn pri" data-edit>ویرایش</button></div>';
+      card.querySelector('[data-view]').onclick=()=>showAuditRecord(rec,store);
+      card.querySelector('[data-edit]').onclick=()=>{overlay.remove();openForm({store,db:{dbGet,dbSet,dbDel},toast,editRecord:rec,onSaved:saved=>afterAuditSaved(saved,store)});};list.appendChild(card);});
+    panel.querySelector('[data-close]').onclick=()=>overlay.remove();
+    panel.querySelector('[data-new]').onclick=()=>{overlay.remove();openForm({store,db:{dbGet,dbSet,dbDel},toast,onSaved:saved=>afterAuditSaved(saved,store)});};
+    overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove();});
+  }
+  function showAuditRecord(rec,store) {
+    const rows=QS.filter(q=>!SKIP.includes(q.id)).map(q=>'<div style="padding:9px 0;border-bottom:1px solid var(--bd)"><b>'+esc(q.t)+'</b><div class="mu" style="white-space:pre-wrap;margin-top:5px">'+esc(rec[q.id]==null?'—':String(rec[q.id]))+'</div></div>').join('');
+    const box=document.createElement('div');box.dir='rtl';box.style.cssText='position:fixed;inset:0;z-index:10030;background:rgba(0,0,0,.75);display:flex;align-items:flex-end;padding:12px';
+    const stamp=v=>v?new Intl.DateTimeFormat('fa-IR',{dateStyle:'medium',timeZone:'Asia/Tehran'}).format(new Date(v)):'—';
+    box.innerHTML='<div style="background:var(--card);color:var(--tx);border-radius:18px;padding:18px;width:100%;max-height:88dvh;overflow:auto"><div style="display:flex;justify-content:space-between"><b>مشاهده فرم · '+esc(store.storeName||store.name)+'</b><button class="btn" data-close>بستن</button></div><p class="mu">تاریخ ثبت: '+stamp(rec.timestamp)+' · آخرین ویرایش: '+stamp(rec.updated)+'</p>'+rows+'</div>';
+    document.body.appendChild(box);box.querySelector('[data-close]').onclick=()=>box.remove();
+  }
   function detail(id) {
     const s = byId.get(id);
     if (!s) return;
@@ -2231,31 +2260,7 @@ input,select,textarea{font-size:16px!important}
         render();
       };
       const fm = el.querySelector("#fm");
-      if (fm) fm.onclick = () => {
-        closeSheet();
-        openForm({ store: s, db: { dbGet, dbSet, dbDel }, toast, onSaved: async (record) => {
-          if (record) {
-            if (record.storeId != null) auditStoreIds.add(auditKey(record.storeId));
-            if (record.q2_code != null) auditStoreCodes.add(auditKey(record.q2_code));
-            if (record.q2_name != null) auditStoreNames.add(auditKey(record.q2_name));
-          }
-          if (map && labelLayer) refreshMapLabels();
-          await refreshAuditStoreIds();
-          const td = todayISO();
-          let n = 0;
-          S.plan.forEach((p) => {
-            if (p.customerId === s.id && p.visitDate === td && p.visit !== "done") {
-              p.visit = "done";
-              n++;
-            }
-          });
-          if (n) {
-            savePlan();
-            toast(t("v_done") + " \u2714");
-          }
-          render();
-        } });
-      };
+      if (fm) fm.onclick = () => { closeSheet(); openAuditHistory(s); };
     });
   }
   function addPlanDialog(s, prefDate) {
