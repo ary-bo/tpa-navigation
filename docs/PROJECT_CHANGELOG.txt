@@ -469,3 +469,20 @@ Verification:
 
 - Follow-up fix commit: 37418e3908ddabe8e000e1a4bb912f6a91f7c099 — retained the existing post-save audit indexing, visit-plan completion and map refresh behavior when returning to history.
 - Final index.html blob: ef8932220f1545ca8c50913c191b9715f869f562
+
+
+2026-11-14 — Emergency rollback of audit-history release
+---------------------------------------------------------
+
+- User reported that the application stopped working after the audit-history
+  and draft-removal release.
+- Restored index.html to the exact stable pre-feature source blob, preserving
+  the already released «سایر برندها» option and compact brand layout.
+- Rollback commit: 36b84922031cdee53ec31373f312c39c042039fb
+- Restored source blob: df23d7642c72862a6db4d27f7bc6e93be2e17b95
+- Investigation backup branch: backup/main-before-emergency-audit-rollback-20261114
+- The history/draft-removal feature is not active on main. Existing workflow,
+  including its former draft behavior, is restored. No local user data was
+  intentionally deleted by this source rollback.
+- Source blob match verified; browser/runtime and live deployment recovery
+  remain unverified.
