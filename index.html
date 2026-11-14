@@ -1232,10 +1232,14 @@ input,select,textarea{font-size:16px!important}
       $2("#tf-bar").style.width = (v.length ? d / v.length * 100 : 0) + "%";
       if (dirty) clearTimeout(update.tm), update.tm = setTimeout(saveDraft, 600);
     }
-    const saveDraft = () => {
+    const saveDraft = async () => {
       dirty = false;
-      return db.dbSet(draftKey, { a, other, t: Date.now() }).catch(() => {
-      });
+      try {
+        await db.dbSet(draftKey, { a, other, t: Date.now() });
+        try { await saveLocalAuditDrafts(); } catch (backupError) { console.warn("Local audit draft backup:", backupError); }
+      } catch (e) {
+        console.warn("Audit draft save:", e);
+      }
     };
     function record() {
       const now = (/* @__PURE__ */ new Date()).toISOString();
@@ -1285,6 +1289,7 @@ input,select,textarea{font-size:16px!important}
         await db.dbSet("forms", all);
         try { await saveLocalAuditForms(all); } catch (backupError) { console.warn("Local audit backup:", backupError); }
         await db.dbDel(draftKey);
+        try { await saveLocalAuditDrafts(); } catch (backupError) { console.warn("Local audit draft backup:", backupError); }
       } catch (e) {
         return toast2("Storage: " + e.message);
       }
@@ -2575,6 +2580,42 @@ input,select,textarea{font-size:16px!important}
       req.onerror = () => reject(req.error);
     });
   }
+  async function saveLocalAuditDrafts() {
+    const idb = await localAuditDb();
+    const source = await open();
+    const keys = await new Promise((resolve, reject) => {
+      const req = source.transaction(ST, "readonly").objectStore(ST).getAllKeys();
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => reject(req.error);
+    });
+    const draftKeys = keys.filter((k) => typeof k === "string" && k.startsWith("fd_"));
+    const drafts = await Promise.all(draftKeys.map(async (key) => ({ key, value: await dbGet(key) })));
+    return await new Promise((resolve, reject) => {
+      const tx = idb.transaction("backup", "readwrite");
+      tx.objectStore("backup").put({ v: 1, at: Date.now(), drafts }, "drafts");
+      tx.oncomplete = () => resolve(drafts.length);
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error);
+    });
+  }
+  async function restoreLocalAuditDrafts() {
+    const idb = await localAuditDb();
+    const saved = await new Promise((resolve, reject) => {
+      const req = idb.transaction("backup", "readonly").objectStore("backup").get("drafts");
+      req.onsuccess = () => resolve(req.result && Array.isArray(req.result.drafts) ? req.result.drafts : []);
+      req.onerror = () => reject(req.error);
+    });
+    let restored = 0;
+    for (const item of saved) {
+      if (!item || typeof item.key !== "string" || !item.key.startsWith("fd_") || !item.value) continue;
+      const current = await dbGet(item.key);
+      if (!current || Number(item.value.t || 0) > Number(current.t || 0)) {
+        await dbSet(item.key, item.value);
+        restored++;
+      }
+    }
+    return restored;
+  }
   async function restoreLocalAuditForms() {
     const [primary, backup] = await Promise.all([dbGet("forms"), readLocalAuditForms()]);
     const merged = new Map();
@@ -2884,6 +2925,7 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
     });
     try {
       await restoreLocalAuditForms();
+      await restoreLocalAuditDrafts();
       await refreshAuditStoreIds();
     } catch (e) {
       console.warn("Local audit restore:", e);
