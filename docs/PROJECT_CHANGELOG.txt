@@ -229,3 +229,35 @@ Verification:
 - Assistant browser/mobile interaction and saved-draft/export regression tests
   have not been performed.
 - Deployment/live state has not been independently verified.
+
+
+2026-11-14 — Auditor form: hide Section 5 when oil products unavailable
+--------------------------------------------------------------------------
+User-approved requirement:
+- If Q13A (oil products available and visible) is answered “خیر”, hide
+  Section 5 and all questions Q18–Q23.
+- If answered “بله”, retain the existing Section 5 observation-block rule.
+
+Implementation:
+- Added the q14_gate === “بله” requirement to the Section 5 heading predicate.
+- Added the same requirement to the shared visibility predicate for the
+  generated competitor-brand questions Q18–Q23.
+- Preserved question IDs, brand option lists, multi-select and None behavior.
+- Existing update() logic clears active answers when questions become hidden;
+  hidden mandatory answers serialize as N/A.
+- No bulk migration or rewrite of saved records/drafts.
+
+Git traceability:
+- Repository: ary-bo/tpa-navigation
+- Branch: main
+- Base commit: f86f99c8463cfd890ffb7e516fc30cf53e6302d1
+- Code commit: 2349e4a6ee46450a9700417407b16eaef6cec156
+- index.html blob: aad828a0782c29941b36aed8f412059fe877f710
+- Safety branch: backup/main-before-section5-oil-gate-20261114
+- Technical handover updated to version 4.6.
+
+Verification:
+- Post-commit source fetch confirms Section 5 heading and generated Q18–Q23
+  use the Q13A affirmative condition in addition to the prior observation rule.
+- Browser/mobile interaction, saved-draft/export regression and deployment/live
+  verification have not yet been performed.
