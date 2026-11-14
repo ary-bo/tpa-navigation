@@ -1,6 +1,6 @@
 # TPA Navigation — Technical Reconstruction & Continuation Specification
 
-**Document version:** 5.3  
+**Document version:** 5.4  
 **Date:** 14 November 2026  
 **Repository:** https://github.com/ary-bo/tpa-navigation  
 **Target branch:** `main`  
@@ -592,3 +592,13 @@ Verification boundaries:
 Verification boundaries:
 - Source checks confirm the history entry point, explicit record editing, independent new-record creation, initial timestamp preservation, draft UI/autosave removal, and legacy draft purge hooks.
 - iPhone/Safari interaction, multi-visit persistence, view/edit flows, date rendering, Drive backup/restore, full-system restore, Excel exports and live deployment have not been independently tested by the assistant.
+
+
+## 6.15 Emergency rollback of audit-history release (14 November 2026)
+
+- The audit-history and draft-removal code release was rolled back after the user reported that the application stopped working.
+- `index.html` on `main` was restored byte-for-byte to the stable pre-feature version from baseline commit `bb2e93e867b3716e70f62e11fbc9b64cca6d1968`, preserving the already released «سایر برندها» option and prior compact layout.
+- Rollback commit: `36b84922031cdee53ec31373f312c39c042039fb`; restored blob: `df23d7642c72862a6db4d27f7bc6e93be2e17b95`.
+- Failed implementation retained for investigation on safety branch `backup/main-before-emergency-audit-rollback-20261114`. Earlier pre-change safety branch: `backup/main-before-audit-form-history-20261114`.
+- The history-management feature is NOT active on `main`. The original form workflow, including its existing draft behavior, is restored. No user-local data was intentionally deleted by this source rollback.
+- Source restoration was verified by matching the restored file blob to the pre-feature blob. Browser/runtime and Pages deployment recovery still require user verification.
