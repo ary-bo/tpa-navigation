@@ -1821,7 +1821,9 @@ input,select,textarea{font-size:16px!important}
     mapTouchTarget.addEventListener("touchend", finishOneFingerZoom, { capture: true, passive: false });
     mapTouchTarget.addEventListener("touchcancel", finishOneFingerZoom, { capture: true, passive: false });
     L.tileLayer(S.settings.tile, { maxZoom: 19, attribution: "\xA9 OpenStreetMap" }).addTo(map);
-    layer = L.layerGroup().addTo(map);\n    labelLayer = L.layerGroup();\n    map.on("zoomend", refreshMapLabels);
+    layer = L.layerGroup().addTo(map);
+    labelLayer = L.layerGroup();
+    map.on("zoomend", refreshMapLabels);
     drawMarkers(list, !previousView && !(fs && fs.lat !== null));
     if (fs && fs.lat !== null) map.setView([fs.lat, fs.lng], 17);
     requestAnimationFrame(() => map && map.invalidateSize());
@@ -1866,7 +1868,29 @@ input,select,textarea{font-size:16px!important}
     requestAnimationFrame(() => map && map.invalidateSize());
     setTimeout(() => map && map.invalidateSize(), 300);
   }
-  function refreshMapLabels() {\n    if (!map || !labelLayer) return;\n    labelLayer.clearLayers();\n    if (S.settings.showMapNames === false || map.getZoom() < 15) {\n      if (map.hasLayer(labelLayer)) map.removeLayer(labelLayer);\n      return;\n    }\n    const stores = withNearby(filtered());\n    for (const s of stores) {\n      if (s.lat === null) continue;\n      const storeName = str(s.storeName).trim();\n      const managerName = str(s.name).trim();\n      const isStore = !!storeName;\n      const name = storeName || managerName;\n      if (!name) continue;\n      const kind = isStore ? "store" : "manager";\n      const symbol = isStore ? "🏪" : "👤";\n      const html = `<span class="tpa-map-label ${kind}" title="${esc(name)}"><span class="kind">${symbol}</span><span class="name">${esc(name)}</span></span>`;\n      L.marker([s.lat, s.lng], { icon: L.divIcon({ className: "", html, iconSize: [0, 0], iconAnchor: [0, 0] }), interactive: false, keyboard: false, zIndexOffset: 500 }).addTo(labelLayer);\n    }\n    if (!map.hasLayer(labelLayer)) labelLayer.addTo(map);\n  }\n  function drawMarkers(list, fit) {
+  function refreshMapLabels() {
+    if (!map || !labelLayer) return;
+    labelLayer.clearLayers();
+    if (S.settings.showMapNames === false || map.getZoom() < 15) {
+      if (map.hasLayer(labelLayer)) map.removeLayer(labelLayer);
+      return;
+    }
+    const stores = withNearby(filtered());
+    for (const s of stores) {
+      if (s.lat === null) continue;
+      const storeName = str(s.storeName).trim();
+      const managerName = str(s.name).trim();
+      const isStore = !!storeName;
+      const name = storeName || managerName;
+      if (!name) continue;
+      const kind = isStore ? "store" : "manager";
+      const symbol = isStore ? "🏪" : "👤";
+      const html = `<span class="tpa-map-label ${kind}" title="${esc(name)}"><span class="kind">${symbol}</span><span class="name">${esc(name)}</span></span>`;
+      L.marker([s.lat, s.lng], { icon: L.divIcon({ className: "", html, iconSize: [0, 0], iconAnchor: [0, 0] }), interactive: false, keyboard: false, zIndexOffset: 500 }).addTo(labelLayer);
+    }
+    if (!map.hasLayer(labelLayer)) labelLayer.addTo(map);
+  }
+  function drawMarkers(list, fit) {
     if (!map) return;
     layer.clearLayers();
     const pts = [];
@@ -1886,7 +1910,8 @@ input,select,textarea{font-size:16px!important}
     }
     const fo = S.focus && byId.get(S.focus);
     if (fo && fo.lat !== null) L.circleMarker([fo.lat, fo.lng], { radius: 15, color: "#dc2626", weight: 3, fill: false }).addTo(layer);
-    drawMe();\n    refreshMapLabels();
+    drawMe();
+    refreshMapLabels();
     if (fit && pts.length) map.fitBounds(pts, { padding: [24, 24], maxZoom: 15 });
     const lg = document.querySelector(".legend .mu");
     if (lg) lg.textContent = `${list.length} ${t("results")} \xB7 ${list.filter((s) => s.lat === null).length} ${t("noGPS")}`;
