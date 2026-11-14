@@ -77,7 +77,13 @@ main.mapv{position:relative}#map{flex:1;min-height:0;z-index:0}
 .tpa-map-label.manager{border-color:#2563eb}
 .tpa-map-label .kind{width:18px;height:18px;flex:none;display:grid;place-items:center;border-radius:50%;background:#15803d;color:#fff;font-size:11px}
 .tpa-map-label.manager .kind{background:#2563eb}
-.tpa-map-label .name{overflow:hidden;text-overflow:ellipsis;max-width:175px}\n:root[data-theme=dark] .tpa-map-label{background:#f8fafc;color:#14202b}
+.tpa-map-label .name{overflow:hidden;text-overflow:ellipsis;max-width:145px}
+.tpa-audit-status{width:24px;height:24px;flex:none;display:inline-flex;align-items:center;justify-content:center;border-radius:7px;font:700 17px/1 Arial,sans-serif;margin-inline-start:2px}
+.tpa-audit-status.done{background:#16a34a;color:#fff;border:1px solid #15803d}
+.tpa-audit-status.missing{background:#f8fafc;color:#64748b;border:1.5px solid #94a3b8;font-size:16px}
+.tpa-audit-legend{display:inline-flex;align-items:center;gap:5px}
+.tpa-audit-legend .tpa-audit-status{width:18px;height:18px;font-size:13px}
+:root[data-theme=dark] .tpa-map-label{background:#f8fafc;color:#14202b}
 .vp-map-marker .ic{width:12px;height:12px;stroke:#fff;stroke-width:2.2;vertical-align:0}
 .vp-map-legend{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
 .vp-map-legend .vp-map-marker{transform:none;flex:none}
@@ -189,6 +195,8 @@ input,select,textarea{font-size:16px!important}
       legR: "آخرین سفارش: Closed/Undelivered",
       noGPS: "\u0628\u062F\u0648\u0646 GPS",
       inVisitPlan: "\u062F\u0631 \u0628\u0631\u0646\u0627\u0645\u0647 \u0648\u06CC\u0632\u06CC\u062A",
+      auditSubmitted: "\u0641\u0631\u0645 \u0645\u0645\u06CC\u0632\u06CC: \u062B\u0628\u062A\u200C\u0634\u062F\u0647",
+      auditMissing: "\u0628\u062F\u0648\u0646 \u0641\u0631\u0645 \u0645\u0645\u06CC\u0632\u06CC",
       details: "\u062C\u0632\u0626\u06CC\u0627\u062A \u0641\u0631\u0648\u0634\u06AF\u0627\u0647",
       custId: "\u0634\u0646\u0627\u0633\u0647 \u0645\u0634\u062A\u0631\u06CC",
       custName: "\u0646\u0627\u0645 \u0645\u0634\u062A\u0631\u06CC",
@@ -368,6 +376,8 @@ input,select,textarea{font-size:16px!important}
       legR: "Latest order: Closed/Undelivered",
       noGPS: "No GPS",
       inVisitPlan: "In visit plan",
+      auditSubmitted: "Audit form: Submitted",
+      auditMissing: "No audit form",
       details: "Store details",
       custId: "Customer ID",
       custName: "Customer name",
@@ -1458,6 +1468,14 @@ input,select,textarea{font-size:16px!important}
   var labelLayer;
   var locationLayer;
   var geoWatchId = null;
+  var auditStoreIds = new Set();
+  async function refreshAuditStoreIds() {
+    try {
+      const forms = await dbGet("forms") || [];
+      auditStoreIds = new Set(forms.filter((f) => f && f.storeId !== void 0 && f.storeId !== null).map((f) => String(f.storeId)));
+      if (map && labelLayer) refreshMapLabels();
+    } catch (e) { console.warn("Audit status load:", e); }
+  }
   var byId = /* @__PURE__ */ new Map();
   var toastT;
   var nameDate = (n) => {
@@ -1789,7 +1807,7 @@ input,select,textarea{font-size:16px!important}
     const fs = S.focus && byId.get(S.focus);
     if (fs && !list.includes(fs)) list = [...list, fs];
     v.innerHTML = `<div class="mapbar"><input type="search" id="q" placeholder="${esc(t("search"))}" value="${esc(S.filters.q)}"><button class="btn" id="fb">${ic("filter")}</button><button class="btn" id="loc" title="${t("locate")}">${ic("locate")}</button></div><div id="map"></div>
-  <div class="legend"><span><i class="dot g"></i>${t("legG")}</span><span><i class="dot o"></i>${t("legO")}</span><span><i class="dot r"></i>${t("legR")}</span><span class="vp-map-legend"><i class="vp-map-marker">${ic("plan")}</i>${t("inVisitPlan")}</span><span class="mu">${list.length} ${t("results")} \xB7 ${list.filter((s) => s.lat === null).length} ${t("noGPS")}</span></div>`;
+  <div class="legend"><span><i class="dot g"></i>${t("legG")}</span><span><i class="dot o"></i>${t("legO")}</span><span><i class="dot r"></i>${t("legR")}</span><span class="vp-map-legend"><i class="vp-map-marker">${ic("plan")}</i>${t("inVisitPlan")}</span><span class="tpa-audit-legend"><i class="tpa-audit-status done">✓</i>${t("auditSubmitted")}</span><span class="tpa-audit-legend"><i class="tpa-audit-status missing">▤</i>${t("auditMissing")}</span><span class="mu">${list.length} ${t("results")} \xB7 ${list.filter((s) => s.lat === null).length} ${t("noGPS")}</span></div>`;
     $("#q").oninput = (e) => {
       S.filters.q = e.target.value;
       clearTimeout(pageMap.tm);
@@ -1948,7 +1966,11 @@ input,select,textarea{font-size:16px!important}
       const kind = s.isStore ? "store" : "manager";
       const symbol = s.isStore ? "🏪" : "👤";
       const shortName = s.name.length > 25 ? s.name.slice(0, 24) + "…" : s.name;
-      const html = `<span class="tpa-map-label ${kind}" title="${esc(s.name)}"><span class="kind">${symbol}</span><span class="name">${esc(shortName)}</span></span>`;
+      const audited = auditStoreIds.has(String(s.id !== void 0 ? s.id : s.customerId));
+      const auditBadge = audited
+        ? `<span class="tpa-audit-status done" title="${esc(t("auditSubmitted"))}">✓</span>`
+        : `<span class="tpa-audit-status missing" title="${esc(t("auditMissing"))}">▤</span>`;
+      const html = `<span class="tpa-map-label ${kind}" title="${esc(s.name)}"><span class="kind">${symbol}</span><span class="name">${esc(shortName)}</span>${auditBadge}</span>`;
       L.marker([s.lat, s.lng], { icon: L.divIcon({ className: "tpa-map-label-icon", html, iconSize: [190, 32], iconAnchor: [-7, 16] }), interactive: false, keyboard: false, zIndexOffset: 500 }).addTo(labelLayer);
     }
     if (!map.hasLayer(labelLayer)) labelLayer.addTo(map);
@@ -2094,6 +2116,7 @@ input,select,textarea{font-size:16px!important}
       if (fm) fm.onclick = () => {
         closeSheet();
         openForm({ store: s, db: { dbGet, dbSet, dbDel }, toast, onSaved: () => {
+          refreshAuditStoreIds();
           const td = todayISO();
           let n = 0;
           S.plan.forEach((p) => {
@@ -2810,6 +2833,7 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
     });
     try {
       await restoreLocalAuditForms();
+      await refreshAuditStoreIds();
     } catch (e) {
       console.warn("Local audit restore:", e);
     }
