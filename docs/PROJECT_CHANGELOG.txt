@@ -486,3 +486,46 @@ Verification:
   intentionally deleted by this source rollback.
 - Source blob match verified; browser/runtime and live deployment recovery
   remain unverified.
+
+
+2026-11-14 — Reimplement per-store audit history and draft retirement (isolated candidate)
+-----------------------------------------------------------------------------------------
+
+User approval:
+- User re-approved the complete agreed outcome after the previous release was
+  root-cause reviewed. This candidate is isolated and has not been merged to
+  main or deployed.
+
+Implementation:
+- Store Audit Form action opens per-store finalized audit history, newest first.
+- Added per-record viewing, editing of the exact selected record, and a blank
+  independent new-visit flow with a new record ID.
+- Existing timestamp is retained on edit; updated is refreshed. Missing record
+  IDs cause the edit save to stop instead of silently creating a new record.
+- Preserved audit indexing, map label refresh, today's Journey Plan completion,
+  and return to history after a successful save.
+- Removed draft save/autosave/recovery and draft UI. Startup purges legacy fd_*
+  keys and the local draft backup bucket.
+- Audit Drive backups use v2 finalized-form payloads. Restore accepts older
+  backups with draft arrays but ignores the draft payload. Full-system restore
+  filters draft keys; rollback does not intentionally purge the pre-restore
+  draft entries.
+
+Git traceability:
+- Repository: ary-bo/tpa-navigation
+- Candidate branch: backup/main-before-audit-history-reimplementation-20261114
+- Baseline main HEAD: 80162f2a27f28fd12a2b7664b9082e570769ae9c
+- Safety branch created before edits: backup/main-before-audit-history-reimplementation-20261114
+- Source commits: 5ecc12988e82dc752424e6eef717d3ca0fbb4894;
+  0ea774d1e74233c41426795ec2ec443eb928b2de;
+  b4e0271115ef61c540dcc428efcd9116477dc8bf
+- Technical documentation commit: 4fe7031a1fd92f6e5d2cd3bbe828edbcaed6ae17
+- index.html blob: 401553fdcdf8431ec12721237c1ff7b5b9a0ff40
+
+Verification:
+- JavaScript syntax parse passed using new Function on the complete script.
+- Source assertions passed for the key history/edit/timestamp/draft-removal and
+  legacy backup compatibility conditions.
+- No browser or iPhone Safari test has been performed. Backup/restore, full
+  restore rollback, exports and Pages deployment remain unverified.
+- Candidate is NOT approved for merge/release until the outstanding tests pass.
