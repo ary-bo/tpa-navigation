@@ -179,6 +179,7 @@ input,select,textarea{font-size:16px!important}
       basket: "\u0627\u0642\u0644\u0627\u0645 \u062E\u0631\u06CC\u062F\u0627\u0631\u06CC\u200C\u0634\u062F\u0647",
       noOrders: "\u0633\u0641\u0627\u0631\u0634\u06CC \u062B\u0628\u062A \u0646\u0634\u062F\u0647",
       orderNo: "\u0634\u0645\u0627\u0631\u0647 \u0633\u0641\u0627\u0631\u0634",
+      amount: "\u0645\u0628\u0644\u063A \u0633\u0641\u0627\u0631\u0634",
       orderDate: "\u062A\u0627\u0631\u06CC\u062E \u0633\u0641\u0627\u0631\u0634",
       targetDate: "\u062A\u062D\u0648\u06CC\u0644 \u0645\u0648\u0631\u062F \u0627\u0646\u062A\u0638\u0627\u0631",
       invoiceDate: "\u062A\u0627\u0631\u06CC\u062E \u0641\u0627\u06A9\u062A\u0648\u0631",
@@ -347,6 +348,7 @@ input,select,textarea{font-size:16px!important}
       basket: "Purchased items",
       noOrders: "No orders",
       orderNo: "Order no.",
+      amount: "Order amount",
       orderDate: "Order date",
       targetDate: "Expected delivery",
       invoiceDate: "Invoice date",
@@ -778,6 +780,7 @@ input,select,textarea{font-size:16px!important}
       const itemCode = normCode(cell(r, h.idx, "\u06A9\u062F \u06A9\u0627\u0644\u0627"));
       const itemName = str(cell(r, h.idx, "\u0646\u0627\u0645 \u06A9\u0627\u0644\u0627"));
       const qty = (_a = num(cell(r, h.idx, "\u062A\u0639\u062F\u0627\u062F"))) != null ? _a : 0;
+      const unitPrice = num(cell(r, h.idx, "\u0642\u06CC\u0645\u062A \u0648\u0627\u062D\u062F"));
       const orderDate = parseDate(cell(r, h.idx, "\u062A\u0627\u0631\u06CC\u062E"), fy) || parseDate(cell(r, h.idx, "Confirm Date"), fy);
       const target = parseDate((_b = cell(r, h.idx, "Target Deilvery Date")) != null ? _b : cell(r, h.idx, "Target Delivery Date"), fy);
       const inv = parseDate(cell(r, h.idx, "invoicedate"), fy);
@@ -792,6 +795,7 @@ input,select,textarea{font-size:16px!important}
         itemCode,
         product: mapping.get(itemCode) || itemName,
         qty,
+        unitPrice,
         route: str(cell(r, h.idx, "\u0646\u0627\u0645 \u0645\u0633\u06CC\u0631")),
         name: str(cell(r, h.idx, "\u0646\u0627\u0645 \u0645\u0634\u062A\u0631\u06CC")),
         address: str(cell(r, h.idx, "\u0622\u062F\u0631\u0633")),
@@ -825,13 +829,15 @@ input,select,textarea{font-size:16px!important}
       const key = o.order + "#" + o.cust;
       let ord = orderMap.get(key);
       if (!ord) {
-        ord = { order: o.order, status: o.status, orderDate: o.orderDate, target: o.target, inv: o.inv, items: [], _lines: /* @__PURE__ */ new Set() };
+        ord = { order: o.order, status: o.status, orderDate: o.orderDate, target: o.target, inv: o.inv, items: [], amount: 0, amountComplete: true, _lines: /* @__PURE__ */ new Set() };
         orderMap.set(key, ord);
         s.orders.push(ord);
         s._routes = s._routes || {};
         if (o.route) s._routes[o.route] = (s._routes[o.route] || 0) + 1;
       }
       const lk = o.itemCode;
+      if (o.unitPrice === null) ord.amountComplete = false;
+      else ord.amount += o.unitPrice * o.qty;
       ord.items.push({ k: lk, code: o.itemCode, product: o.product, qty: o.qty });
     }
     const all = [...stores, ...salesOnly.values()];
