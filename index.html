@@ -1431,7 +1431,8 @@ input,select,textarea{font-size:16px!important}
   S.settings.clientId = S.settings.clientId || DEF.clientId;
   S.settings.folderId = S.settings.folderId || DEF.folderId;
   var map;
-  var layer;\n  var labelLayer;
+  var layer;
+  var labelLayer;
   var byId = /* @__PURE__ */ new Map();
   var toastT;
   var nameDate = (n) => {
@@ -2643,7 +2644,8 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
         $("#msg").textContent = t("errParse") + " " + e.message;
       }
     };
-    v.querySelector("#mapNames").onchange = (e) => { S.settings.showMapNames = e.target.checked; saveSettings(); toast(t("ok")); };\n    v.querySelector("#ds").onclick = driveSync;
+    v.querySelector("#mapNames").onchange = (e) => { S.settings.showMapNames = e.target.checked; saveSettings(); toast(t("ok")); };
+    v.querySelector("#ds").onclick = driveSync;
     v.querySelector("#bk3").onclick = backupPlan;
     v.querySelector("#rs3").onclick = restorePlan;
     v.querySelector("#afb").onclick = backupAuditForms;
