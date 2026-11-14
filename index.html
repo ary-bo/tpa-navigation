@@ -51,8 +51,18 @@ button.btn,label.btn{cursor:pointer;display:inline-flex;align-items:center;gap:6
 button.btn:active{transform:scale(.97)}
 button.pri{background:var(--pr);color:var(--prt);border-color:var(--pr)}button.dng{color:var(--r);border-color:color-mix(in srgb,var(--r) 35%,var(--bd))}
 button.sm{min-height:34px;padding:4px 12px;font-size:13px;border-radius:10px}button:disabled{opacity:.4}
+.visit-plan-box{border:1px solid var(--bd);border-radius:16px;padding:13px;margin:12px 0;background:var(--card);box-shadow:var(--sh)}
+.visit-plan-box h3{margin:0 0 11px;color:var(--pr);font-size:15px}
+.visit-plan-actions,.store-action-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.visit-plan-actions .btn,.store-action-row .btn{width:100%;min-width:0;min-height:44px;padding:8px 6px;font-size:clamp(12px,2.4vw,16px);line-height:1.2;white-space:nowrap;letter-spacing:-.02em}
+button.vp-add{background:#16864a;color:#fff;border-color:#16864a}
+button.vp-add:disabled{background:#246b3e;color:#fff;border-color:#246b3e;opacity:.58;cursor:not-allowed}
+button.vp-remove{background:#c83d4d;color:#fff;border-color:#c83d4d}
+button.vp-remove:disabled{background:#8f2935;color:#fff;border-color:#8f2935;opacity:.72;cursor:not-allowed}
+button.store-map-action{background:#2876b9;color:#fff;border-color:#2876b9}
+button.store-audit-action{background:#8054b8;color:#fff;border-color:#8054b8}
 .chip{display:inline-block;padding:1px 9px;border-radius:99px;font-size:12px;font-weight:600;border:1px solid var(--bd);color:var(--mu);background:var(--bg)}
-.chip.r{color:#fff;background:var(--r);border-color:var(--r)}.chip.o{background:var(--o);color:#2a1d00;border-color:var(--o)}.chip.g{background:var(--g);color:#fff;border-color:var(--g)}
+.chip.r{color:#fff;background:var(--r);border-color:var(--r)}.chip.o{background:var(--o);color:#2a1d00;border-color:var(--o)}.chip.g{background:var(--g);color:#fff;border-color:var(--g)}.chip.vp{background:#9333ea;color:#fff;border-color:#9333ea}
 .dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-inline-end:6px;vertical-align:middle}
 .g{background:var(--g)}.o{background:var(--o)}.b{background:var(--b)}.r{background:var(--r)}
 .num{display:inline-grid;place-items:center;min-width:26px;height:26px;border-radius:50%;background:var(--pr);color:var(--prt);font-weight:700;font-size:13px;margin-inline-end:8px}
@@ -62,6 +72,21 @@ main.mapv{position:relative}#map{flex:1;min-height:0;z-index:0}
 .mapbar input{border:0;background:transparent;min-height:38px;flex:1}.mapbar input:focus{outline:0}
 .mapbar .btn{min-height:38px;border-radius:12px}
 .legend{position:absolute;bottom:12px;left:10px;max-width:calc(100% - 84px);z-index:500;font-size:12px;padding:7px 11px;background:var(--card);border-radius:12px;box-shadow:var(--sh);display:flex;gap:10px;flex-wrap:wrap}
+.vp-map-marker{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:#7b2cbf;border:2px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.55);transform:translate(6px,-13px);pointer-events:none}
+.tpa-map-label{display:inline-flex;align-items:center;gap:5px;max-width:210px;padding:3px 8px;border:2px solid #15803d;border-radius:10px;background:#fff;color:#14202b;font:600 12px/1.35 "Vazirmatn",Tahoma,sans-serif;white-space:nowrap;box-shadow:0 2px 7px rgba(0,0,0,.28);direction:rtl;transform:translate(9px,-50%);pointer-events:none}
+.tpa-map-label.manager{border-color:#2563eb}
+.tpa-map-label .kind{width:18px;height:18px;flex:none;display:grid;place-items:center;border-radius:50%;background:#15803d;color:#fff;font-size:11px}
+.tpa-map-label.manager .kind{background:#2563eb}
+.tpa-map-label .name{overflow:hidden;text-overflow:ellipsis;max-width:145px}
+.tpa-audit-status{width:24px;height:24px;flex:none;display:inline-flex;align-items:center;justify-content:center;border-radius:7px;font:700 17px/1 Arial,sans-serif;margin-inline-start:2px}
+.tpa-audit-status.done{background:#16a34a;color:#fff;border:1px solid #15803d}
+.tpa-audit-status.missing{background:#f8fafc;color:#64748b;border:1.5px solid #94a3b8;font-size:16px}
+.tpa-audit-legend{display:inline-flex;align-items:center;gap:5px}
+.tpa-audit-legend .tpa-audit-status{width:18px;height:18px;font-size:13px}
+:root[data-theme=dark] .tpa-map-label{background:#f8fafc;color:#14202b}
+.vp-map-marker .ic{width:12px;height:12px;stroke:#fff;stroke-width:2.2;vertical-align:0}
+.vp-map-legend{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.vp-map-legend .vp-map-marker{transform:none;flex:none}
 .leaflet-bottom.leaflet-right{margin-bottom:6px}.leaflet-control-zoom{border:0!important;box-shadow:var(--sh)!important;border-radius:12px!important;overflow:hidden}
 .pin{width:30px;height:30px;border-radius:50% 50% 50% 4px;transform:rotate(-45deg);background:var(--pr);color:#fff;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35);display:grid;place-items:center}
 .pin>span{transform:rotate(45deg);font:700 13px system-ui}.pin.pHigh{background:#dc2626}.pin.pLow{background:#64748b}
@@ -79,6 +104,9 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
 #lock .box{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:22px;width:100%;max-width:320px;display:flex;flex-direction:column;gap:10px;text-align:center;box-shadow:var(--sh)}#lock input{text-align:center;letter-spacing:6px}
 input,select,textarea{font-size:16px!important}
 @media(min-width:900px){.wrap{max-width:900px;margin:0 auto}}
+.analytics-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}.analytics-kpi{border:1px solid var(--bd);border-radius:13px;padding:11px;background:var(--card);min-width:0}.analytics-kpi strong{display:block;font-size:19px;color:var(--pr);overflow-wrap:anywhere}.analytics-person{border:1px solid var(--bd);border-radius:14px;padding:11px;margin:9px 0;background:var(--card)}.analytics-person summary{cursor:pointer;list-style:none}.analytics-person summary::-webkit-details-marker{display:none}.analytics-person .area-row{display:flex;justify-content:space-between;gap:8px;padding:8px 2px;border-top:1px solid var(--bd);font-size:13px}.analytics-bar{height:7px;border-radius:99px;background:var(--bd);overflow:hidden;margin-top:7px}.analytics-bar span{display:block;height:100%;background:var(--pr);border-radius:99px}.analytics-meta{font-size:12px;color:var(--mu)}
+/* Jalali sales date picker */
+.sales-date-wrap{position:relative;flex:1;min-width:145px}.sales-date-wrap input{width:100%;cursor:pointer;background:var(--card)}.jalali-picker{position:fixed;z-index:1200;top:auto;right:auto;width:min(320px,calc(100vw - 48px));padding:12px;background:var(--card);border:1px solid var(--bd);border-radius:14px;box-shadow:var(--sh);direction:rtl}.jalali-picker[hidden]{display:none}.jp-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:10px}.jp-head button,.jp-day,.jp-foot button{border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);min-height:34px;padding:4px 8px;font:inherit}.jp-month{font-weight:700;text-align:center;flex:1}.jp-week,.jp-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;text-align:center}.jp-week{font-size:11px;color:var(--mu);margin-bottom:5px}.jp-day{padding:5px 0;min-width:0}.jp-day:disabled{visibility:hidden}.jp-day.selected{background:var(--pr);color:var(--prt);border-color:var(--pr)}.jp-day.today{outline:1px solid var(--pr)}.jp-foot{display:flex;justify-content:space-between;gap:8px;margin-top:10px}.jp-foot button{flex:1;font-size:13px}
 /* audit form */
 #tform{position:fixed;inset:0;z-index:1500;background:var(--bg);color:var(--tx);display:flex;flex-direction:column;overflow:hidden}
 .tf-h{display:flex;gap:10px;align-items:center;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;background:linear-gradient(135deg,var(--pr),var(--pr2));color:#fff}
@@ -93,6 +121,30 @@ input,select,textarea{font-size:16px!important}
 .tf-q .er{color:#dc2626;font-size:13px;margin-top:6px}.tf-ll{margin-top:8px}
 .tf-f{display:flex;gap:8px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--bd);background:var(--card)}.tf-f .pri{flex:1}
 
+/* compact order cards */
+.orders-list{display:grid;gap:9px;margin:8px 0 16px}.order-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:10px;align-items:center;padding:11px 12px;background:var(--card);border:1px solid var(--bd);border-radius:14px;box-shadow:var(--sh);min-width:0}.order-main{min-width:0;display:grid;gap:6px}.order-head{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0}.order-head b{font-size:14px;overflow-wrap:anywhere}.order-head .chip{font-size:11px;padding:2px 8px;white-space:nowrap}.order-amount{display:flex;align-items:baseline;gap:6px;color:var(--tx);font-weight:700;font-size:13px;direction:ltr;justify-content:flex-start;flex-wrap:wrap}.order-amount small{font-size:11px;color:var(--mu);font-weight:500}.order-dates{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;min-width:0;border-inline-start:1px solid var(--bd);padding-inline-start:9px}.order-dates>div{display:grid;gap:4px;min-width:0;text-align:center}.order-dates span{font-size:10px;color:var(--mu);line-height:1.35}.order-dates b{font-size:11px;font-weight:600;white-space:nowrap;direction:ltr}@media(max-width:390px){.order-card{grid-template-columns:1fr;gap:8px}.order-dates{border-inline-start:0;border-top:1px solid var(--bd);padding:8px 0 0}.order-head b{font-size:13px}.order-dates b{font-size:10px}}
+
+/* Order detail layout: dates stay on one horizontal line; products belong to each order. */
+.order-card{grid-template-columns:minmax(0,1fr);gap:9px;padding:12px}
+.order-main{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.order-head{flex:1 1 auto}
+.order-amount{flex:0 1 auto;white-space:nowrap}
+.order-dates{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;border-inline-start:0;border-top:1px solid var(--bd);padding:9px 0 0}
+.order-dates>div{gap:3px}
+.order-dates span{font-size:clamp(9px,2.7vw,11px);white-space:nowrap;line-height:1.2}
+.order-dates b{font-size:clamp(10px,3vw,13px);white-space:nowrap;letter-spacing:-.035em}
+.order-items{display:flex;align-items:flex-start;gap:8px;min-width:0;padding:9px 10px;border-radius:11px;background:var(--prs);font-size:13px;line-height:1.5}
+.order-items>b{flex:none;color:var(--pr)}
+.order-items>span{min-width:0;overflow-wrap:anywhere}
+@media(max-width:360px){.order-head b{font-size:12px}.order-amount{font-size:12px}.order-dates{gap:2px}.order-dates span{font-size:9px}.order-dates b{font-size:10px}}
+
+
+/* Put the order amount below the order number and status badge. */
+.order-main{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;justify-content:initial;gap:6px}
+.order-head{width:100%;flex:none}
+.order-amount{justify-content:flex-start;white-space:nowrap;flex-wrap:nowrap}
+
+.tf-map{height:240px;border-radius:12px;margin-top:8px;overflow:hidden;z-index:0}
 </style>
 </head>
 <body>
@@ -102,17 +154,19 @@ input,select,textarea{font-size:16px!important}
 <div id="sheet" hidden></div>
 <div id="toast" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 <script>
 (() => {
   // js/i18n.js
   var D = {
     fa: {
+      auditForm: "فرم ممیزی",
       app: "TPA Navigation",
       map: "\u0646\u0642\u0634\u0647",
       stores: "\u0641\u0631\u0648\u0634\u06AF\u0627\u0647\u200C\u0647\u0627",
       plan: "\u0628\u0631\u0646\u0627\u0645\u0647",
       data: "\u062F\u0627\u062F\u0647",
+      analytics: "تحلیل فروش",
       settings: "\u062A\u0646\u0638\u06CC\u0645\u0627\u062A",
       search: "\u062C\u0633\u062A\u062C\u0648: \u0646\u0627\u0645 \u0641\u0631\u0648\u0634\u06AF\u0627\u0647\u060C \u0645\u0634\u062A\u0631\u06CC\u060C \u06A9\u062F\u060C \u0622\u062F\u0631\u0633",
       filters: "\u0641\u06CC\u0644\u062A\u0631\u0647\u0627",
@@ -121,6 +175,7 @@ input,select,textarea{font-size:16px!important}
       hasSales: "\u062F\u0627\u0631\u0627\u06CC \u0633\u0627\u0628\u0642\u0647 \u0641\u0631\u0648\u0634",
       noSales: "\u0628\u062F\u0648\u0646 \u0633\u0627\u0628\u0642\u0647 \u0641\u0631\u0648\u0634",
       salesOnly: "\u0641\u0642\u0637 \u0645\u0648\u062C\u0648\u062F \u062F\u0631 \u06AF\u0632\u0627\u0631\u0634 \u0641\u0631\u0648\u0634",
+      closedUndelivered: "آخرین سفارش: Closed/Undelivered",
       regions: "\u0645\u0646\u0637\u0642\u0647 (Route)",
       noRoute: "\u0628\u062F\u0648\u0646 \u0645\u0633\u06CC\u0631",
       salesman: "\u0648\u06CC\u0632\u06CC\u062A\u0648\u0631",
@@ -138,8 +193,11 @@ input,select,textarea{font-size:16px!important}
       d_Friday: "\u062C\u0645\u0639\u0647",
       legG: "\u062F\u0631 JP \u0628\u0627 \u0633\u0627\u0628\u0642\u0647 \u0641\u0631\u0648\u0634",
       legO: "\u062F\u0631 JP \u0628\u062F\u0648\u0646 \u0633\u0627\u0628\u0642\u0647 \u0641\u0631\u0648\u0634",
-      legB: "\u062E\u0627\u0631\u062C \u0627\u0632 JP \u0628\u0627 \u0633\u0627\u0628\u0642\u0647 \u0641\u0631\u0648\u0634",
+      legR: "آخرین سفارش: Closed/Undelivered",
       noGPS: "\u0628\u062F\u0648\u0646 GPS",
+      inVisitPlan: "\u062F\u0631 \u0628\u0631\u0646\u0627\u0645\u0647 \u0648\u06CC\u0632\u06CC\u062A",
+      auditSubmitted: "\u0641\u0631\u0645 \u0645\u0645\u06CC\u0632\u06CC: \u062B\u0628\u062A\u200C\u0634\u062F\u0647",
+      auditMissing: "\u0628\u062F\u0648\u0646 \u0641\u0631\u0645 \u0645\u0645\u06CC\u0632\u06CC",
       details: "\u062C\u0632\u0626\u06CC\u0627\u062A \u0641\u0631\u0648\u0634\u06AF\u0627\u0647",
       custId: "\u0634\u0646\u0627\u0633\u0647 \u0645\u0634\u062A\u0631\u06CC",
       custName: "\u0646\u0627\u0645 \u0645\u0634\u062A\u0631\u06CC",
@@ -160,6 +218,7 @@ input,select,textarea{font-size:16px!important}
       basket: "\u0627\u0642\u0644\u0627\u0645 \u062E\u0631\u06CC\u062F\u0627\u0631\u06CC\u200C\u0634\u062F\u0647",
       noOrders: "\u0633\u0641\u0627\u0631\u0634\u06CC \u062B\u0628\u062A \u0646\u0634\u062F\u0647",
       orderNo: "\u0634\u0645\u0627\u0631\u0647 \u0633\u0641\u0627\u0631\u0634",
+      amount: "\u0645\u0628\u0644\u063A \u0633\u0641\u0627\u0631\u0634",
       orderDate: "\u062A\u0627\u0631\u06CC\u062E \u0633\u0641\u0627\u0631\u0634",
       targetDate: "\u062A\u062D\u0648\u06CC\u0644 \u0645\u0648\u0631\u062F \u0627\u0646\u062A\u0638\u0627\u0631",
       invoiceDate: "\u062A\u0627\u0631\u06CC\u062E \u0641\u0627\u06A9\u062A\u0648\u0631",
@@ -169,6 +228,10 @@ input,select,textarea{font-size:16px!important}
       noTarget: "\u0628\u062F\u0648\u0646 \u062A\u0627\u0631\u06CC\u062E \u062A\u062D\u0648\u06CC\u0644",
       qty: "\u062A\u0639\u062F\u0627\u062F",
       addPlan: "\u0627\u0641\u0632\u0648\u062F\u0646 \u0628\u0647 \u0628\u0631\u0646\u0627\u0645\u0647",
+      removePlan: "\u062D\u0630\u0641 \u0627\u0632 \u0628\u0631\u0646\u0627\u0645\u0647 \u0648\u06CC\u0632\u06CC\u062A",
+      visitPlan: "\u0628\u0631\u0646\u0627\u0645\u0647 \u0648\u06CC\u0632\u06CC\u062A",
+      addShort: "\u0627\u0641\u0632\u0648\u062F\u0646",
+      removeShort: "\u062D\u0630\u0641",
       navNeshan: "\u0645\u0633\u06CC\u0631\u06CC\u0627\u0628\u06CC \u0646\u0634\u0627\u0646",
       navGoogle: "\u0645\u0633\u06CC\u0631\u06CC\u0627\u0628\u06CC \u06AF\u0648\u06AF\u0644",
       searchDest: "\u062C\u0633\u062A\u062C\u0648\u06CC \u0645\u0642\u0635\u062F \u0628\u0627 \u0622\u062F\u0631\u0633 (\u062F\u0642\u062A \u067E\u0627\u06CC\u06CC\u0646\u200C\u062A\u0631)",
@@ -223,7 +286,26 @@ input,select,textarea{font-size:16px!important}
       clientId: "OAuth Client ID",
       folderId: "\u0634\u0646\u0627\u0633\u0647 \u067E\u0648\u0634\u0647 Drive",
       driveNote: "\u0648\u0631\u0648\u062F Drive \u0648 \u0646\u0642\u0634\u0647 \u0628\u0647 \u0627\u06CC\u0646\u062A\u0631\u0646\u062A \u0646\u06CC\u0627\u0632 \u062F\u0627\u0631\u0646\u062F\u061B \u0622\u0641\u0644\u0627\u06CC\u0646 \u0646\u06CC\u0633\u062A\u0646\u062F.",
+      auditBackup: "پشتیبان فرم‌های ممیزی",
+      auditRestore: "بازیابی فرم‌های ممیزی",
+      auditBackupNote: "پاسخ‌های ثبت‌شده و پیش‌نویس‌های فرم در یک بکاپ مستقل ذخیره می‌شوند.",
+      auditRestoreConfirm: "فرم‌های فعلی حفظ می‌شوند و فقط مواردی که وجود ندارند اضافه خواهند شد. ادامه می‌دهید؟",
       reports: "\u06AF\u0632\u0627\u0631\u0634\u200C\u0647\u0627",
+      salesSummary: "خلاصه فروش فاکتور قطعی",
+      analyticsTitle: "تحلیل فروش", analyticsHint: "بر پایه فاکتورهای قطعی ثبت‌شده",
+      salespeople: "فروشندگان", salesAmountMetric: "مبلغ فروش", buyerCustomers: "مشتریان خریدار",
+      areas: "مناطق", unassigned: "بدون منطقه مشخص", noSalespeople: "داده فروشنده‌ای برای نمایش وجود ندارد.",
+      confirmedOnly: "فقط فاکتورهای قطعی", sortSales: "مرتب‌سازی بر اساس مبلغ فروش",
+      salesFrom: "از تاریخ (شمسی)",
+      salesTo: "تا تاریخ (شمسی)",
+      salesTon: "تناژ فروش (تن)",
+      salesAmount: "مبلغ فروش (ریال)",
+      salesInvoiceRows: "مشتریان فعال",
+      salesDateHint: "برای نمایش کل فروش، تاریخ‌ها را خالی بگذارید.",
+      salesDateError: "تاریخ نامعتبر است یا بازه تاریخ صحیح نیست.",
+      salesSummaryUnavailable: "ستون‌های موردنیاز برای محاسبه فروش در فایل وجود ندارد.",
+      salesNoRows: "در این بازه فاکتور قطعی ثبت نشده است.",
+      salesIncomplete: "تعدادی از ردیف‌ها داده ناقص برای محاسبه داشته‌اند:",
       rNoGPS: "\u0641\u0631\u0648\u0634\u06AF\u0627\u0647\u200C\u0647\u0627\u06CC \u0628\u062F\u0648\u0646 GPS",
       rNoBuy: "\u0641\u0631\u0648\u0634\u06AF\u0627\u0647\u200C\u0647\u0627\u06CC \u0628\u062F\u0648\u0646 \u062E\u0631\u06CC\u062F",
       rOpen: "\u0633\u0641\u0627\u0631\u0634\u200C\u0647\u0627\u06CC \u0628\u0627\u0632",
@@ -234,6 +316,7 @@ input,select,textarea{font-size:16px!important}
       locate: "\u0645\u06A9\u0627\u0646 \u0645\u0646",
       straight: "\u0641\u0627\u0635\u0644\u0647 \u0645\u0633\u062A\u0642\u06CC\u0645",
       locDenied: "\u062F\u0633\u062A\u0631\u0633\u06CC \u0628\u0647 \u0645\u0648\u0642\u0639\u06CC\u062A \u062F\u0627\u062F\u0647 \u0646\u0634\u062F",
+      mapLabels: "برچسب نام‌ها روی نقشه", showMapNames: "نمایش نام فروشگاه یا مسئول کنار نقطه", mapNamesHint: "نام فروشگاه در اولویت است؛ در نبود آن نام مسئول نمایش داده می‌شود. برچسب‌ها از بزرگ‌نمایی ۱۵ به بعد ظاهر می‌شوند.",
       language: "\u0632\u0628\u0627\u0646",
       theme: "\u067E\u0648\u0633\u062A\u0647",
       light: "\u0631\u0648\u0634\u0646",
@@ -243,6 +326,7 @@ input,select,textarea{font-size:16px!important}
       clearCache: "\u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u062F\u0627\u062F\u0647\u200C\u0647\u0627\u06CC \u0641\u0627\u06CC\u0644\u200C\u0647\u0627 (\u0628\u0631\u0646\u0627\u0645\u0647 \u0628\u0627\u0632\u062F\u06CC\u062F \u062D\u0641\u0638 \u0645\u06CC\u200C\u0634\u0648\u062F)",
       clearAll: "\u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u0647\u0645\u0647 \u0686\u06CC\u0632 (\u0634\u0627\u0645\u0644 \u0628\u0631\u0646\u0627\u0645\u0647 \u0628\u0627\u0632\u062F\u06CC\u062F)",
       confirmClear: "\u0645\u0637\u0645\u0626\u0646 \u0647\u0633\u062A\u06CC\u062F\u061F \u0627\u06CC\u0646 \u06A9\u0627\u0631 \u0642\u0627\u0628\u0644 \u0628\u0627\u0632\u06AF\u0634\u062A \u0646\u06CC\u0633\u062A.",
+      confirmRemoveVisit: "\u0627\u0632 \u062D\u0630\u0641 \u0627\u06CC\u0646 \u0641\u0631\u0648\u0634\u06AF\u0627\u0647 \u0627\u0632 \u0628\u0631\u0646\u0627\u0645\u0647 \u0648\u06CC\u0632\u06CC\u062A \u0645\u0637\u0645\u0626\u0646 \u0647\u0633\u062A\u06CC\u062F\u061F",
       mapOffline: "\u0646\u0642\u0634\u0647 \u067E\u0627\u06CC\u0647 \u0622\u0646\u0644\u0627\u06CC\u0646 \u0627\u0633\u062A\u061B \u0628\u062F\u0648\u0646 \u0627\u06CC\u0646\u062A\u0631\u0646\u062A \u06A9\u0627\u0634\u06CC\u200C\u0647\u0627 \u0646\u0645\u0627\u06CC\u0634 \u062F\u0627\u062F\u0647 \u0646\u0645\u06CC\u200C\u0634\u0648\u0646\u062F \u0648\u0644\u06CC \u062F\u0627\u062F\u0647\u200C\u0647\u0627 \u062F\u0631 \u062F\u0633\u062A\u0631\u0633\u200C\u0627\u0646\u062F.",
       errParse: "\u0641\u0627\u06CC\u0644 \u0646\u0627\u0645\u0639\u062A\u0628\u0631 \u0627\u0633\u062A\u061B \u062F\u0627\u062F\u0647 \u0642\u0628\u0644\u06CC \u062D\u0641\u0638 \u0634\u062F:",
       ok: "\u0627\u0646\u062C\u0627\u0645 \u0634\u062F",
@@ -257,11 +341,13 @@ input,select,textarea{font-size:16px!important}
       rs_Area: "Area Name"
     },
     en: {
+      auditForm: "Audit Form",
       app: "TPA Navigation",
       map: "Map",
       stores: "Stores",
       plan: "Plan",
       data: "Data",
+      analytics: "Analytics",
       settings: "Settings",
       search: "Search: store, customer, code, address",
       filters: "Filters",
@@ -270,6 +356,7 @@ input,select,textarea{font-size:16px!important}
       hasSales: "With sales history",
       noSales: "No sales history",
       salesOnly: "Sales report only",
+      closedUndelivered: "Latest order: Closed/Undelivered",
       regions: "Region (Route)",
       noRoute: "No route",
       salesman: "Salesman",
@@ -287,8 +374,11 @@ input,select,textarea{font-size:16px!important}
       d_Friday: "Friday",
       legG: "In JP, with sales",
       legO: "In JP, no sales",
-      legB: "Not in JP, with sales",
+      legR: "Latest order: Closed/Undelivered",
       noGPS: "No GPS",
+      inVisitPlan: "In visit plan",
+      auditSubmitted: "Audit form: Submitted",
+      auditMissing: "No audit form",
       details: "Store details",
       custId: "Customer ID",
       custName: "Customer name",
@@ -309,6 +399,7 @@ input,select,textarea{font-size:16px!important}
       basket: "Purchased items",
       noOrders: "No orders",
       orderNo: "Order no.",
+      amount: "Order amount",
       orderDate: "Order date",
       targetDate: "Expected delivery",
       invoiceDate: "Invoice date",
@@ -318,6 +409,10 @@ input,select,textarea{font-size:16px!important}
       noTarget: "No delivery date",
       qty: "Qty",
       addPlan: "Add to visit plan",
+      removePlan: "Remove from visit plan",
+      visitPlan: "Visit plan",
+      addShort: "Add",
+      removeShort: "Remove",
       navNeshan: "Navigate (Neshan)",
       navGoogle: "Navigate (Google)",
       searchDest: "Search destination by address (lower accuracy)",
@@ -357,7 +452,22 @@ input,select,textarea{font-size:16px!important}
       E_UNKNOWN_ID: "Unknown code",
       E_BAD_PRIORITY: "Invalid priority",
       E_DUPLICATE: "Duplicate",
-      imported: "valid rows queued for approval",
+      imported: "Valid rows queued for approval",
+      salesSummary: "Confirmed invoice sales summary",
+      analyticsTitle: "Sales Analytics", analyticsHint: "Based on confirmed invoices only",
+      salespeople: "Salespersons", salesAmountMetric: "Sales amount", buyerCustomers: "Buying customers",
+      areas: "Areas", unassigned: "Unassigned area", noSalespeople: "No salesperson sales data to display.",
+      confirmedOnly: "Confirmed invoices only", sortSales: "Sorted by sales amount",
+      salesFrom: "From date (Jalali)",
+      salesTo: "To date (Jalali)",
+      salesTon: "Sales volume (tons)",
+      salesAmount: "Sales amount (Rial)",
+      salesInvoiceRows: "Active Customers",
+      salesDateHint: "Leave both dates blank to show all confirmed invoices.",
+      salesDateError: "Invalid date or date range.",
+      salesSummaryUnavailable: "Required sales columns are missing from the file.",
+      salesNoRows: "No confirmed invoices in this date range.",
+      salesIncomplete: "Some invoice rows have missing values for calculation:",
       alreadyIn: "This store is already planned on this date",
       files: "Files",
       fJP: "Journey Plan (JP_\u2026)",
@@ -372,6 +482,10 @@ input,select,textarea{font-size:16px!important}
       clientId: "OAuth Client ID",
       folderId: "Drive folder ID",
       driveNote: "Drive sign-in and the base map need internet; they are not offline.",
+      auditBackup: "Back up audit forms",
+      auditRestore: "Restore audit forms",
+      auditBackupNote: "Submitted audit forms and saved drafts are stored in a separate backup.",
+      auditRestoreConfirm: "Existing forms will be kept and only missing records added. Continue?",
       reports: "Reports",
       rNoGPS: "Stores without GPS",
       rNoBuy: "Stores without purchases",
@@ -383,6 +497,7 @@ input,select,textarea{font-size:16px!important}
       locate: "My location",
       straight: "straight-line",
       locDenied: "Location access denied",
+      mapLabels: "Map labels", showMapNames: "Show store or manager names beside map points", mapNamesHint: "Store name takes priority; otherwise the manager name is shown. Labels appear from zoom level 15.",
       language: "Language",
       theme: "Theme",
       light: "Light",
@@ -392,6 +507,7 @@ input,select,textarea{font-size:16px!important}
       clearCache: "Clear file data (visit plan is kept)",
       clearAll: "Clear everything (including visit plan)",
       confirmClear: "Are you sure? This cannot be undone.",
+      confirmRemoveVisit: "Remove this store from the visit plan?",
       mapOffline: "The base map is online; tiles will not show offline, but your data stays available.",
       errParse: "Invalid file; previous data kept:",
       ok: "Done",
@@ -606,6 +722,115 @@ input,select,textarea{font-size:16px!important}
     }
   };
 
+  // TPA_UNIFIED_LOCAL_BACKUP_V2
+  var TPA_LOCAL_BACKUP_DB = "tpa-nav-unified-local-backup";
+  var TPA_LOCAL_BACKUP_STORE = "snapshots";
+  var TPA_LOCAL_BACKUP_KEY = "latest";
+  var TPA_LOCAL_BACKUP_TIMER = null;
+  var TPA_LOCAL_BACKUP_WAITERS = [];
+  function openUnifiedLocalBackupDb() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(TPA_LOCAL_BACKUP_DB, 1);
+      req.onupgradeneeded = () => { if (!req.result.objectStoreNames.contains(TPA_LOCAL_BACKUP_STORE)) req.result.createObjectStore(TPA_LOCAL_BACKUP_STORE); };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+  async function writeUnifiedLocalSnapshot() {
+    const primary = await open();
+    const payload = await new Promise((resolve, reject) => {
+      const tx = primary.transaction(ST, "readonly"), store = tx.objectStore(ST);
+      const keysReq = store.getAllKeys(), valuesReq = store.getAll();
+      tx.oncomplete = () => {
+        const keys = keysReq.result || [], values = valuesReq.result || [];
+        const entries = keys.map((key, i) => [key, values[i]]), local = {};
+        for (let i = 0; i < localStorage.length; i++) { const key = localStorage.key(i); if (key !== null) local[key] = localStorage.getItem(key); }
+        resolve({ version: 2, savedAt: Date.now(), entries, localStorage: local });
+      };
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error);
+    });
+    const backupDb = await openUnifiedLocalBackupDb();
+    await new Promise((resolve, reject) => {
+      const tx = backupDb.transaction(TPA_LOCAL_BACKUP_STORE, "readwrite");
+      tx.objectStore(TPA_LOCAL_BACKUP_STORE).put(payload, TPA_LOCAL_BACKUP_KEY);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error);
+    });
+    return payload.savedAt;
+  }
+  function queueUnifiedLocalSnapshot() {
+    return new Promise(resolve => {
+      TPA_LOCAL_BACKUP_WAITERS.push(resolve);
+      if (TPA_LOCAL_BACKUP_TIMER) clearTimeout(TPA_LOCAL_BACKUP_TIMER);
+      TPA_LOCAL_BACKUP_TIMER = setTimeout(async () => {
+        TPA_LOCAL_BACKUP_TIMER = null;
+        let result = null;
+        try { result = await writeUnifiedLocalSnapshot(); } catch (error) { console.warn("Unified local backup failed:", error); }
+        TPA_LOCAL_BACKUP_WAITERS.splice(0).forEach(done => done(result));
+      }, 120);
+    });
+  }
+  async function dbSetWithoutUnifiedBackup(k, v) {
+    const idb = await open();
+    return new Promise((resolve, reject) => {
+      const tx = idb.transaction(ST, "readwrite");
+      tx.objectStore(ST).put(v, k);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error);
+    });
+  }
+  async function restoreUnifiedLocalBackup() {
+    const backupDb = await openUnifiedLocalBackupDb();
+    const snapshot = await new Promise((resolve, reject) => {
+      const req = backupDb.transaction(TPA_LOCAL_BACKUP_STORE, "readonly").objectStore(TPA_LOCAL_BACKUP_STORE).get(TPA_LOCAL_BACKUP_KEY);
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror = () => reject(req.error);
+    });
+    if (!snapshot || !Array.isArray(snapshot.entries)) return { restoredKeys: 0, restoredLocal: 0 };
+    const primary = await open();
+    let restoredKeys = 0;
+    for (const entry of snapshot.entries) {
+      if (!Array.isArray(entry) || entry.length !== 2) continue;
+      const [key, value] = entry;
+      const exists = await new Promise((resolve, reject) => {
+        const req = primary.transaction(ST, "readonly").objectStore(ST).getKey(key);
+        req.onsuccess = () => resolve(req.result !== undefined);
+        req.onerror = () => reject(req.error);
+      });
+      if (!exists) { await dbSetWithoutUnifiedBackup(key, value); restoredKeys++; }
+    }
+    let restoredLocal = 0;
+    const savedLocal = snapshot.localStorage && typeof snapshot.localStorage === "object" ? snapshot.localStorage : {};
+    for (const [key, value] of Object.entries(savedLocal)) if (localStorage.getItem(key) === null) { localStorage.setItem(key, value); restoredLocal++; }
+    return { restoredKeys, restoredLocal };
+  }
+  var dbSetOriginalForUnifiedBackup = dbSet;
+  dbSet = async function(k, v) { await dbSetOriginalForUnifiedBackup(k, v); await queueUnifiedLocalSnapshot(); };
+  var dbDelOriginalForUnifiedBackup = dbDel;
+  dbDel = async function(k) { await dbDelOriginalForUnifiedBackup(k); await queueUnifiedLocalSnapshot(); };
+  var lsSetOriginalForUnifiedBackup = lsSet;
+  lsSet = function(k, v) { lsSetOriginalForUnifiedBackup(k, v); queueUnifiedLocalSnapshot(); };
+  try {
+    const originalStorageRemove = localStorage.removeItem.bind(localStorage);
+    localStorage.removeItem = function(k) { originalStorageRemove(k); queueUnifiedLocalSnapshot(); };
+    const originalStorageClear = localStorage.clear.bind(localStorage);
+    localStorage.clear = function() { originalStorageClear(); queueUnifiedLocalSnapshot(); };
+  } catch (storageWrapError) { console.warn("Local storage change tracking unavailable:", storageWrapError); }
+  var saveUnifiedViewState = function() {
+    try {
+      localStorage.setItem("tpaUnifiedViewState", JSON.stringify({
+        page: S.page || "map", filters: S.filters || {}, weekStart: S.weekStart || null,
+        radius: Number(S.radius || 0), savedAt: Date.now()
+      }));
+      queueUnifiedLocalSnapshot();
+    } catch (e) { console.warn("View-state persistence:", e); }
+  };
+  var originalRenderForUnifiedBackup = render;
+  render = function() { const result = originalRenderForUnifiedBackup.apply(this, arguments); saveUnifiedViewState(); return result; };
+
   // js/data.js
   var NAME_KEYWORDS = ["\u0633\u0648\u067E\u0631\u0645\u0627\u0631\u06A9\u062A", "\u0633\u0648\u067E\u0631 \u0645\u0627\u0631\u06A9\u062A", "\u0647\u0627\u06CC\u067E\u0631", "\u0633\u0648\u067E\u0631", "\u0645\u0627\u0631\u06A9\u062A", "\u0641\u0631\u0648\u0634\u06AF\u0627\u0647", "\u0645\u0648\u0627\u062F \u063A\u0630\u0627\u06CC\u06CC", "\u0627\u0631\u0632\u0627\u0646\u0633\u0631\u0627\u06CC"];
   var trimH = (h) => String(h != null ? h : "").trim();
@@ -638,15 +863,84 @@ input,select,textarea{font-size:16px!important}
   function extractStoreName(address) {
     const a = str(address);
     if (!a) return "";
-    const words = a.split(/\s+/);
-    const n = normText(a).split(" ");
-    for (let i = n.length - 1; i >= 0 && i >= n.length - 6; i--) {
-      for (const k of NAME_KEYWORDS) {
-        const kw = normText(k).split(" ");
-        if (kw.every((w, j) => n[i + j] === w)) {
-          const rest = words.slice(i);
-          if (rest.length >= kw.length + 1 && rest.length <= 5) return rest.join(" ");
+    // Normalize separators, attached address numbers, and common missing spaces.
+    const cleaned = a.replace(/[()]/g, " ").replace(/[ـ‐‑‒–—−،,;|/\\=]+/g, " ").replace(/-/g, " ")
+      .replace(/(\d)(?=[\u0600-\u06FFA-Za-z])/g, "$1 ")
+      .replace(/([\u0600-\u06FFA-Za-z])(?=\d)/g, "$1 ");
+    const splitMarkers = [
+      "فروشگاه", "ارزانسرای", "ارزانسرا", "موادغذایی", "موادغذائی", "سوپرمارکت", "هایپرمارکت",
+      "خواروبارفروشی", "خواربارفروشی", "لبنیاتی", "پروتئینی", "فرآورده", "فراورده", "بازارچه",
+      "بازارروز", "سوپر", "هایپر", "مارکت", "پخش", "سورنا", "فستفود", "پیتزا", "رستوران",
+      "عطاری", "خشکبار", "قنادی", "تنقلات", "مرکزخرید", "market", "super", "store", "fastfood",
+      "هاییر", "هايير"
+    ];
+    const rawTokens = normText(cleaned).replace(/ئ/g, "ی").split(" ").filter(Boolean);
+    const n = [];
+    for (const token of rawTokens) {
+      let parts = [token];
+      for (const marker of splitMarkers) {
+        parts = parts.flatMap((part) => {
+          const at = part.indexOf(marker);
+          return at > 0 ? [part.slice(0, at), part.slice(at)] : [part];
+        });
+      }
+      n.push(...parts.filter(Boolean));
+    }
+    if (!n.length) return "";
+    const markers = [
+      ["فروشگاه", "زنجیره", "ای"], ["فروشگاه", "های", "زنجیره", "ای"], ["فروشگاههای", "زنجیره", "ای"],
+      ["بازار", "روز"], ["بازار", "چه"], ["بازارچه"], ["بازارروز"], ["مینی", "سوپر"],
+      ["مواد", "غذایی"], ["مواد", "غذائی"], ["موادغذایی"], ["موادغذائی"],
+      ["ارزان", "سرای"], ["ارزان", "خرید"], ["ارزانسرای"], ["ارزانسرا"], ["ارزانسر"],
+      ["خواروبار", "فروشی"], ["خواربار", "فروشی"], ["خواروبارفروشی"], ["خواربارفروشی"],
+      ["خواروبار"], ["خواربار"], ["خوار", "بار"], ["خوار", "و", "بار"],
+      ["سوپر", "مارکت"], ["هایپر", "مارکت"], ["سوپرمارکت"], ["هایپرمارکت"],
+      ["فروشگاه"], ["سوپری"], ["سوپر"], ["هایپر"], ["مارکت"], ["market"], ["super", "market"],
+      ["هاییر"], ["هايير"], ["لبنیاتی"], ["لبنیات"], ["پروتئینی"], ["پروتئین"],
+      ["فرآورده", "های", "غذایی"], ["فراورده", "های", "غذایی"], ["فرآورده", "های", "لبنی"],
+      ["فراورده", "های", "لبنی"], ["فرآورده", "های", "گوشتی"], ["فراورده", "های", "گوشتی"],
+      ["فرآورده"], ["فراورده"], ["عمده", "فروشی"], ["بنکداری"], ["پخش"], ["بازرگانی"],
+      ["محصولات"], ["صنایع", "غذایی"], ["نرخ", "شکن"], ["برنج", "فروشی"], ["برنج"],
+      ["سوغات"], ["بورس"], ["تعاونی"], ["میوه"], ["آجیل"], ["خشکبار"], ["حبوبات"],
+      ["قنادی"], ["عطاری"], ["رستوران"], ["کافه", "رستوران"], ["فست", "فود"], ["fast", "food"],
+      ["پیتزا"], ["فلافل"], ["کترینگ"], ["شیرینی"], ["نان"], ["گوشت"], ["سورنا"],
+      ["تنقلات"], ["دخانیات"], ["کبابسرا"], ["تخفیف"], ["آشکده"], ["شوینده"],
+      ["مرکز", "خرید"], ["سرای"]
+    ];
+    const trimTail = (parts) => {
+      const out = parts.slice();
+      while (out.length && /^(کرج|ir|i)$/i.test(out[out.length - 1])) out.pop();
+      return out;
+    };
+    const prefixes = [
+      "سوپرمارکت", "هایپرمارکت", "خواروبارفروشی", "خواربارفروشی", "موادغذایی", "موادغذائی",
+      "ارزانسرای", "فراورده", "فرآورده", "سورنا", "بازارروز", "مرکزخرید", "کبابسرا", "مینی",
+      "تخفیف", "market", "super", "store", "هاییر", "هايير", "ارزانسرا", "بازارچه",
+      "فروشگاه", "لبنیاتی", "لبنیات", "پروتئینی", "پروتئین", "خواربار", "خواروبار",
+      "هایپر", "سوپر", "سوپری", "پخش", "بنکداری", "عطاری", "رستوران", "کترینگ",
+      "پیتزا", "فلافل", "شیرینی", "قنادی", "خشکبار", "محصولات", "گوشتیران", "نان"
+    ];
+    // Scan a wider tail because some addresses append booth, branch, or contact details.
+    for (let i = n.length - 1; i >= Math.max(0, n.length - 20); i--) {
+      const token = n[i];
+      for (const prefix of prefixes) {
+        if (token.startsWith(prefix) && token.length > prefix.length) {
+          const tail = trimTail([prefix, token.slice(prefix.length), ...n.slice(i + 1)]);
+          if (tail.length >= 2 && tail.length <= 7) return tail.join(" ");
         }
+      }
+      // Brand-first names such as رزمارکت، شهروندمارکت، OMID MARKET.
+      if (token.length > 6 && token.endsWith("مارکت")) {
+        const tail = trimTail([token.slice(0, -5), "مارکت", ...n.slice(i + 1)]);
+        if (tail.length >= 2 && tail.length <= 7) return tail.join(" ");
+      }
+      for (const marker of markers) {
+        if (!marker.every((word, j) => n[i + j] === word)) continue;
+        let tail = trimTail(n.slice(i));
+        if (marker.length === 1 && ["مارکت", "market"].includes(marker[0]) && i > 0 && tail.length === 1) {
+          tail = trimTail([n[i - 1], ...n.slice(i)]);
+        }
+        if (tail.length >= marker.length + 1 && tail.length <= 7) return tail.join(" ");
       }
     }
     return "";
@@ -724,6 +1018,7 @@ input,select,textarea{font-size:16px!important}
       const itemCode = normCode(cell(r, h.idx, "\u06A9\u062F \u06A9\u0627\u0644\u0627"));
       const itemName = str(cell(r, h.idx, "\u0646\u0627\u0645 \u06A9\u0627\u0644\u0627"));
       const qty = (_a = num(cell(r, h.idx, "\u062A\u0639\u062F\u0627\u062F"))) != null ? _a : 0;
+      const unitPrice = num(cell(r, h.idx, "\u0642\u06CC\u0645\u062A \u0648\u0627\u062D\u062F"));
       const orderDate = parseDate(cell(r, h.idx, "\u062A\u0627\u0631\u06CC\u062E"), fy) || parseDate(cell(r, h.idx, "Confirm Date"), fy);
       const target = parseDate((_b = cell(r, h.idx, "Target Deilvery Date")) != null ? _b : cell(r, h.idx, "Target Delivery Date"), fy);
       const inv = parseDate(cell(r, h.idx, "invoicedate"), fy);
@@ -738,6 +1033,7 @@ input,select,textarea{font-size:16px!important}
         itemCode,
         product: mapping.get(itemCode) || itemName,
         qty,
+        unitPrice,
         route: str(cell(r, h.idx, "\u0646\u0627\u0645 \u0645\u0633\u06CC\u0631")),
         name: str(cell(r, h.idx, "\u0646\u0627\u0645 \u0645\u0634\u062A\u0631\u06CC")),
         address: str(cell(r, h.idx, "\u0622\u062F\u0631\u0633")),
@@ -771,13 +1067,15 @@ input,select,textarea{font-size:16px!important}
       const key = o.order + "#" + o.cust;
       let ord = orderMap.get(key);
       if (!ord) {
-        ord = { order: o.order, status: o.status, orderDate: o.orderDate, target: o.target, inv: o.inv, items: [], _lines: /* @__PURE__ */ new Set() };
+        ord = { order: o.order, status: o.status, orderDate: o.orderDate, target: o.target, inv: o.inv, items: [], amount: 0, amountComplete: true, _lines: /* @__PURE__ */ new Set() };
         orderMap.set(key, ord);
         s.orders.push(ord);
         s._routes = s._routes || {};
         if (o.route) s._routes[o.route] = (s._routes[o.route] || 0) + 1;
       }
       const lk = o.itemCode;
+      if (o.unitPrice === null) ord.amountComplete = false;
+      else ord.amount += o.unitPrice * o.qty;
       ord.items.push({ k: lk, code: o.itemCode, product: o.product, qty: o.qty });
     }
     const all = [...stores, ...salesOnly.values()];
@@ -810,7 +1108,8 @@ input,select,textarea{font-size:16px!important}
         s.routeSource = "";
       }
       s.storeName = extractStoreName(s.address);
-      s.status = s.inJP ? s.hasSales ? "green" : "orange" : "blue";
+      const latestOrderStatus = s.orders[0] ? str(s.orders[0].status) : "";
+      s.status = s.inJP ? /closed\s*\/\s*undelivered/i.test(latestOrderStatus) ? "red" : s.hasSales ? "green" : "orange" : "blue";
     }
     return { stores: all, builtAt: today, stats: { jp: jp.length, salesOnly: salesOnly.size, orders: orderMap.size, droppedRows: sales.dropped } };
   }
@@ -875,7 +1174,7 @@ input,select,textarea{font-size:16px!important}
   function openForm({ store: s, db, toast: toast2, onSaved }) {
     if (!canForm(s)) return toast2("\u0641\u0631\u0645 \u0641\u0642\u0637 \u0628\u0631\u0627\u06CC \u0641\u0631\u0648\u0634\u06AF\u0627\u0647\u200C\u0647\u0627\u06CC Journey Plan \u0628\u0627\u0632 \u0645\u06CC\u200C\u0634\u0648\u062F");
     const a = { q1: s.salesman, q2: s.newCode }, other = {}, els = {};
-    let dirty = false;
+    let dirty = false, previousRecord = null;
     const isVis = (q) => !q.show || q.show(a);
     const hasOther = (q) => {
       const v = a[q.id];
@@ -982,16 +1281,38 @@ input,select,textarea{font-size:16px!important}
         };
         c.append(t2);
       } else if (q.type === "map") {
-        const loc = a.q3a;
-        c.innerHTML = `<div class="row"><button class="btn sm pri" type="button" id="gps">\u062B\u0628\u062A \u0645\u0648\u0642\u0639\u06CC\u062A \u0641\u0639\u0644\u06CC (GPS)</button></div><div class="tf-ll mu">${loc ? `<span dir="ltr">${loc.lat}, ${loc.lng}</span>` : "\u0647\u0646\u0648\u0632 \u062B\u0628\u062A \u0646\u0634\u062F\u0647"}</div>`;
+        const loc = a.q3a, st0 = s.lat != null && s.lat !== null ? [s.lat, s.lng] : null;
+        const fmt = (l) => l ? `${l.lat}, ${l.lng}` : "\u0647\u0646\u0648\u0632 \u062B\u0628\u062A \u0646\u0634\u062F\u0647";
+        c.innerHTML = `<div class="row"><button class="btn sm pri" type="button" id="gps">\u062B\u0628\u062A \u0645\u0648\u0642\u0639\u06CC\u062A \u0641\u0639\u0644\u06CC (GPS)</button></div><div class="tf-map"></div><div class="mu" style="margin-top:6px">\u067E\u06CC\u0646 \u0631\u0627 \u0628\u06A9\u0634\u06CC\u062F \u06CC\u0627 \u0631\u0648\u06CC \u0646\u0642\u0634\u0647 \u0644\u0645\u0633 \u06A9\u0646\u06CC\u062F\u060C \u0633\u067E\u0633 \u062A\u0623\u06CC\u06CC\u062F \u06A9\u0646\u06CC\u062F.</div><div class="row" style="margin-top:6px"><button class="btn sm pri" type="button" id="pok">\u062A\u0623\u06CC\u06CC\u062F \u0645\u0648\u0642\u0639\u06CC\u062A \u0631\u0648\u06CC \u0646\u0642\u0634\u0647</button></div><div class="tf-ll mu"><span dir="ltr">${fmt(loc)}</span></div>`;
+        const ll = c.querySelector(".tf-ll span");
+        let mm = null, mk = null;
+        const setSaved = (lat, lng) => {
+          a.q3a = { lat: +Number(lat).toFixed(6), lng: +Number(lng).toFixed(6) };
+          dirty = true;
+          ll.textContent = fmt(a.q3a);
+          update();
+        };
+        if (typeof L !== "undefined") {
+          const start = loc ? [loc.lat, loc.lng] : st0 || [32.4, 53.7];
+          mm = L.map(c.querySelector(".tf-map"), { zoomControl: true }).setView(start, loc ? 17 : st0 ? 16 : 5);
+          L.tileLayer(S.settings.tile, { maxZoom: 19, attribution: "\xA9 OpenStreetMap" }).addTo(mm);
+          mk = L.marker(start, { draggable: true, icon: L.divIcon({ className: "", html: '<div style="width:22px;height:22px;border-radius:50%;background:#dc2626;border:3px solid #fff;box-shadow:0 0 5px #0008"></div>', iconSize: [22, 22], iconAnchor: [11, 11] }) }).addTo(mm);
+          mm.on("click", (e) => mk.setLatLng(e.latlng));
+          setTimeout(() => mm.invalidateSize(), 250);
+        } else c.querySelector(".tf-map").outerHTML = '<div class="mu">\u0646\u0642\u0634\u0647 \u062F\u0631 \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A\u061B \u0627\u0632 GPS \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u06A9\u0646\u06CC\u062F.</div>';
+        c.querySelector("#pok").onclick = () => {
+          if (!mk) return toast2("\u0646\u0642\u0634\u0647 \u062F\u0631 \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A");
+          const p = mk.getLatLng();
+          setSaved(p.lat, p.lng);
+          toast2("\u0645\u0648\u0642\u0639\u06CC\u062A \u062B\u0628\u062A \u0634\u062F");
+        };
         c.querySelector("#gps").onclick = () => {
           if (!navigator.geolocation) return toast2("GPS \u062F\u0631 \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A");
           navigator.geolocation.getCurrentPosition((p) => {
-            a.q3a = { lat: +p.coords.latitude.toFixed(6), lng: +p.coords.longitude.toFixed(6) };
-            dirty = true;
-            control(q, c);
-            update();
-          }, () => toast2("\u062F\u0631\u06CC\u0627\u0641\u062A \u0645\u0648\u0642\u0639\u06CC\u062A \u0645\u0645\u06A9\u0646 \u0646\u0634\u062F"), { enableHighAccuracy: true, timeout: 15e3 });
+            const lat = p.coords.latitude, lng = p.coords.longitude;
+            if (mk) { mk.setLatLng([lat, lng]); mm.setView([lat, lng], 17); }
+            setSaved(lat, lng);
+          }, () => toast2("\u062F\u0631\u06CC\u0627\u0641\u062A \u0645\u0648\u0642\u0639\u06CC\u062A \u0645\u0645\u06A9\u0646 \u0646\u0634\u062F\u061B \u067E\u06CC\u0646 \u0631\u0627 \u062F\u0633\u062A\u06CC \u0628\u06AF\u0630\u0627\u0631\u06CC\u062F"), { enableHighAccuracy: true, timeout: 15e3 });
         };
       }
     }
@@ -1041,15 +1362,20 @@ input,select,textarea{font-size:16px!important}
       const v = QS.filter((q) => !SKIP.includes(q.id) || q.id === "q3a").filter((q) => isVis(q) && !q.optional), d = v.filter(filled).length;
       $2("#tf-pt").textContent = `${FA2(d)} \u0627\u0632 ${FA2(v.length)} \u0633\u0624\u0627\u0644 \u0627\u0644\u0632\u0627\u0645\u06CC`;
       $2("#tf-bar").style.width = (v.length ? d / v.length * 100 : 0) + "%";
-      if (dirty) clearTimeout(update.tm), update.tm = setTimeout(saveDraft, 600);
+      if (dirty) clearTimeout(update.tm), update.tm = setTimeout(saveDraft, 0);
     }
-    const saveDraft = () => {
+    const saveDraft = async () => {
       dirty = false;
-      return db.dbSet(draftKey, { a, other, t: Date.now() }).catch(() => {
-      });
+      try {
+        await db.dbSet(draftKey, { a, other, t: Date.now() });
+        try { await saveLocalAuditDrafts(); } catch (backupError) { console.warn("Local audit draft backup:", backupError); }
+      } catch (e) {
+        console.warn("Audit draft save:", e);
+      }
     };
     function record() {
-      const r = { id: uid(), timestamp: (/* @__PURE__ */ new Date()).toISOString(), updated: "", storeId: s.id, visitor: s.salesman, q2_code: s.newCode, q2_name: s.name };
+      const now = (/* @__PURE__ */ new Date()).toISOString();
+      const r = { id: previousRecord ? previousRecord.id : uid(), timestamp: previousRecord ? previousRecord.timestamp : now, updated: previousRecord ? now : "", storeId: s.id, visitor: s.salesman, q2_code: s.newCode, q2_name: s.name };
       QS.forEach((q) => {
         if (SKIP.includes(q.id)) return;
         let v;
@@ -1088,10 +1414,14 @@ input,select,textarea{font-size:16px!important}
       }
       const r = record();
       const all = await loadForms(db);
-      all.push(r);
+      const previousIndex = previousRecord ? all.findIndex((x) => x.id === previousRecord.id) : -1;
+      if (previousIndex >= 0) all[previousIndex] = r;
+      else all.push(r);
       try {
         await db.dbSet("forms", all);
+        try { await saveLocalAuditForms(all); } catch (backupError) { console.warn("Local audit backup:", backupError); }
         await db.dbDel(draftKey);
+        try { await saveLocalAuditDrafts(); } catch (backupError) { console.warn("Local audit draft backup:", backupError); }
       } catch (e) {
         return toast2("Storage: " + e.message);
       }
@@ -1100,13 +1430,27 @@ input,select,textarea{font-size:16px!important}
       toast2("\u0641\u0631\u0645 \u062B\u0628\u062A \u0634\u062F \u2714");
       if (onSaved) onSaved(r, s);
     };
-    db.dbGet(draftKey).then((d) => {
-      if (d && d.a) {
-        Object.assign(a, d.a, { q1: s.salesman, q2: s.newCode });
-        Object.assign(other, d.other || {});
-        QS.forEach((q) => els[q.id] && control(q, els[q.id].ctl));
-        toast2("\u067E\u06CC\u0634\u200C\u0646\u0648\u06CC\u0633 \u0642\u0628\u0644\u06CC \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0634\u062F");
+    Promise.all([loadForms(db), db.dbGet(draftKey)]).then(([all, d]) => {
+      previousRecord = all.filter((r) => String(r.storeId) === String(s.id))
+        .sort((x, y) => String(y.updated || y.timestamp || "").localeCompare(String(x.updated || x.timestamp || "")))[0] || null;
+      if (previousRecord) {
+        if (previousRecord._a && typeof previousRecord._a === "object") Object.assign(a, previousRecord._a);
+        else QS.forEach((q) => {
+          if (SKIP.includes(q.id)) return;
+          const value = previousRecord[q.id];
+          if (value !== void 0 && value !== null && value !== "") a[q.id] = q.type === "multi" && typeof value === "string" ? value.split(" | ").filter(Boolean) : value;
+        });
+        Object.assign(other, previousRecord._o || {});
+        if (!a.q3a && Number.isFinite(Number(previousRecord.q3_lat)) && Number.isFinite(Number(previousRecord.q3_lng))) a.q3a = { lat: Number(previousRecord.q3_lat), lng: Number(previousRecord.q3_lng) };
       }
+      if (d && d.a) {
+        Object.assign(a, d.a);
+        Object.assign(other, d.other || {});
+      }
+      Object.assign(a, { q1: s.salesman, q2: s.newCode });
+      QS.forEach((q) => els[q.id] && control(q, els[q.id].ctl));
+      if (d && d.a) toast2("\u067E\u06CC\u0634\u200C\u0646\u0648\u06CC\u0633 \u0642\u0628\u0644\u06CC \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0634\u062F");
+      else if (previousRecord) toast2("\u0641\u0631\u0645 \u0642\u0628\u0644\u06CC \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0634\u062F");
       update();
     }).catch(() => update());
     update();
@@ -1115,18 +1459,9 @@ input,select,textarea{font-size:16px!important}
   // js/plan.js
   var PLAN_FILE = "Audit_Visit_Plan.xlsx";
   var SHEET = "Audit Visit Plan";
-  var INSTR = "Instructions";
-  var COLS = ["Visit Date", "Customer ID", "Store Name", "Customer Name", "Address", "Route Name", "Latitude", "Longitude", "Priority", "Selection Reason", "Auditor Comment", "Selection Source"];
+  var INSTR = "Instructions"; // Legacy import compatibility only; never exported.
+  var COLS = ["Visit Date", "Customer ID", "Store Name", "Customer Name", "Address", "Route Name", "Latitude", "Longitude", "Store Status", "Selection Source"];
   var PRIORITIES = ["High", "Medium", "Low"];
-  var INSTRUCTIONS = [
-    ["Audit_Visit_Plan.xlsx \u2014 instructions / \u0631\u0627\u0647\u0646\u0645\u0627"],
-    ["Keep sheet names, column order and column names unchanged. / \u0646\u0627\u0645 \u0634\u06CC\u062A\u200C\u0647\u0627 \u0648 \u0633\u062A\u0648\u0646\u200C\u0647\u0627 \u0648 \u062A\u0631\u062A\u06CC\u0628 \u0622\u0646\u200C\u0647\u0627 \u0631\u0627 \u062A\u063A\u06CC\u06CC\u0631 \u0646\u062F\u0647\u06CC\u062F."],
-    ["Required: Visit Date and Customer ID. Visit Date may be Jalali (1405/08/20) or Gregorian (2026-11-11). / \u062A\u0627\u0631\u06CC\u062E \u0634\u0645\u0633\u06CC \u06CC\u0627 \u0645\u06CC\u0644\u0627\u062F\u06CC \u0642\u0627\u0628\u0644 \u0642\u0628\u0648\u0644 \u0627\u0633\u062A."],
-    ["Customer ID must match the store list, e.g. 5955|4817191. / \u0634\u0646\u0627\u0633\u0647 \u0645\u0634\u062A\u0631\u06CC \u0628\u0627\u06CC\u062F \u0628\u0627 \u0641\u0647\u0631\u0633\u062A \u0641\u0631\u0648\u0634\u06AF\u0627\u0647\u200C\u0647\u0627 \u0645\u0637\u0627\u0628\u0642\u062A \u062F\u0627\u0634\u062A\u0647 \u0628\u0627\u0634\u062F."],
-    ["Priority: High, Medium or Low. All other columns are optional. / \u0633\u0627\u06CC\u0631 \u0633\u062A\u0648\u0646\u200C\u0647\u0627 \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC \u0647\u0633\u062A\u0646\u062F."],
-    ["Selection Source is set by the app (Internal / External); managers do not need to fill it. / \u0627\u06CC\u0646 \u0633\u062A\u0648\u0646 \u0631\u0627 \u0628\u0631\u0646\u0627\u0645\u0647 \u062A\u0639\u06CC\u06CC\u0646 \u0645\u06CC\u200C\u06A9\u0646\u062F."],
-    ["Add new rows below the existing rows; they are imported as External suggestions and need the Auditor's approval. / \u0631\u062F\u06CC\u0641\u200C\u0647\u0627\u06CC \u062C\u062F\u06CC\u062F \u0628\u0647\u200C\u0639\u0646\u0648\u0627\u0646 \u067E\u06CC\u0634\u0646\u0647\u0627\u062F External \u0648\u0627\u0631\u062F \u0648 \u067E\u0633 \u0627\u0632 \u062A\u0623\u06CC\u06CC\u062F Auditor \u0627\u0636\u0627\u0641\u0647 \u0645\u06CC\u200C\u0634\u0648\u0646\u062F."]
-  ];
   var seq = 0;
   var newPid = () => "p" + Date.now().toString(36) + (seq++).toString(36) + Math.random().toString(36).slice(2, 6);
   function makeRecord(s, visitDate, x = {}) {
@@ -1154,19 +1489,30 @@ input,select,textarea{font-size:16px!important}
       p.order = i + 1;
     });
   }
-  var isDuplicate = (plan, customerId, visitDate) => plan.some((p) => p.customerId === customerId && p.visitDate === visitDate);
+  var isDuplicate = (plan, customerId, visitDate, exceptPid) => plan.some((p) => String(p.customerId) === String(customerId) && p.pid !== exceptPid);
   var safe = (v) => {
     const s = String(v != null ? v : "");
     return /^[=+\-@]/.test(s) ? "'" + s : s;
   };
   function exportPlan(XLSX2, plan) {
+    const range = mapFilterDateRange();
     const rows = [...plan].sort((a, b) => a.visitDate.localeCompare(b.visitDate) || a.order - b.order).map((p) => {
       var _a, _b;
-      return [isoToJalaliStr(p.visitDate), safe(p.customerId), safe(p.storeName), safe(p.customerName), safe(p.address), safe(p.route), (_a = p.lat) != null ? _a : "", (_b = p.lng) != null ? _b : "", p.priority, safe(p.reason), safe(p.comment), p.source];
+      const store = byId.get(String(p.customerId));
+      const state = store ? mapRangeSalesStatus(store, range) : { hasSales: false, latestOrder: null };
+      const undelivered = !!(state.latestOrder && /closed\s*\/\s*undelivered/i.test(str(state.latestOrder.status)));
+      const storeStatus = undelivered ? "Undelivered" : state.hasSales ? "Purchased" : "No Purchase";
+      return [isoToJalaliStr(p.visitDate), safe(p.customerId), safe(p.storeName), safe(p.customerName), safe(p.address), safe(p.route), (_a = p.lat) != null ? _a : "", (_b = p.lng) != null ? _b : "", storeStatus, p.source];
     });
     const wb = XLSX2.utils.book_new();
-    XLSX2.utils.book_append_sheet(wb, XLSX2.utils.aoa_to_sheet([COLS, ...rows]), SHEET);
-    XLSX2.utils.book_append_sheet(wb, XLSX2.utils.aoa_to_sheet(INSTRUCTIONS), INSTR);
+    const ws = XLSX2.utils.aoa_to_sheet([COLS, ...rows]);
+    rows.forEach((row, i) => {
+      if (row[8] === "Undelivered") {
+        const cell = ws[XLSX2.utils.encode_cell({ r: i + 1, c: 8 })];
+        if (cell) cell.s = { font: { color: { rgb: "FFFF0000" }, bold: true } };
+      }
+    });
+    XLSX2.utils.book_append_sheet(wb, ws, SHEET);
     return wb;
   }
   function validatePlanRows(aoa, byId2, plan, pending = []) {
@@ -1214,7 +1560,7 @@ input,select,textarea{font-size:16px!important}
         }
         pr = f;
       }
-      const k = s.id + "|" + date;
+      const k = String(s.id);
       if (seen.has(k) || isDuplicate(plan, s.id, date) || isDuplicate(pending, s.id, date)) {
         err("DUPLICATE");
         continue;
@@ -1251,11 +1597,33 @@ input,select,textarea{font-size:16px!important}
   var ic = (k) => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${IC[k]}</svg>`;
   var DEF = { clientId: "1098731892951-2e7jipvf33evn0a69tt0tje94oor54lm.apps.googleusercontent.com", folderId: "1sgTsZu2zzSBi-pz2M9pVBHtjCtQELYhk" };
   var $ = (s) => document.querySelector(s);
-  var S = { ds: null, raw: null, plan: [], pending: [], page: "map", filters: { q: "", type: "all", route: "", salesman: "", day: "" }, weekStart: null, pos: null, radius: 0, importErrors: [], settings: lsGet("settings", { lang: "fa", theme: "auto", clientId: "", folderId: "", tile: "https://tile.openstreetmap.org/{z}/{x}/{y}.png" }) };
+  var S = { ds: null, raw: null, plan: [], pending: [], page: "map", filters: { q: "", type: "all", route: "", salesman: "", day: "", fromDate: "", toDate: "" }, weekStart: null, pos: null, radius: 0, importErrors: [], settings: lsGet("settings", { lang: "fa", theme: "auto", clientId: "", folderId: "", tile: "https://tile.openstreetmap.org/{z}/{x}/{y}.png" }) };
   S.settings.clientId = S.settings.clientId || DEF.clientId;
   S.settings.folderId = S.settings.folderId || DEF.folderId;
   var map;
   var layer;
+  var labelLayer;
+  var locationLayer;
+  var geoWatchId = null;
+  var auditStoreIds = new Set();
+  var auditStoreCodes = new Set();
+  var auditStoreNames = new Set();
+  var auditKey = (v) => String(v == null ? "" : v).trim().replace(/\\.0+$/, "").toLowerCase();
+  async function refreshAuditStoreIds() {
+    try {
+      const forms = await dbGet("forms") || [];
+      auditStoreIds = new Set();
+      auditStoreCodes = new Set();
+      auditStoreNames = new Set();
+      for (const f of forms) {
+        if (!f) continue;
+        if (f.storeId != null && auditKey(f.storeId)) auditStoreIds.add(auditKey(f.storeId));
+        if (f.q2_code != null && auditKey(f.q2_code)) auditStoreCodes.add(auditKey(f.q2_code));
+        if (f.q2_name != null && auditKey(f.q2_name)) auditStoreNames.add(auditKey(f.q2_name));
+      }
+      if (map && labelLayer) refreshMapLabels();
+    } catch (e) { console.warn("Audit status load:", e); }
+  }
   var byId = /* @__PURE__ */ new Map();
   var toastT;
   var nameDate = (n) => {
@@ -1269,6 +1637,12 @@ input,select,textarea{font-size:16px!important}
     return h;
   };
   var savedFilters = () => lsGet("savedFilters", []);
+  var filterState = () => ({ filters: { ...S.filters }, savedFilters: savedFilters() });
+  var saveFilterState = () => {
+    lsSet("currentFilters", S.filters);
+    lsSet("savedFilters", savedFilters());
+    dbSet("filters", filterState()).catch((e) => console.warn("Filter state storage:", e));
+  };
   var toast = (m) => {
     const e = $("#toast");
     e.textContent = m;
@@ -1289,7 +1663,7 @@ input,select,textarea{font-size:16px!important}
     return addDaysISO(iso2, -((w + 1) % 7));
   };
   var NO_ROUTE = "__none__";
-  var COLOR = { green: "#16a34a", orange: "#f59e0b", blue: "#2563eb" };
+  var COLOR = { green: "#16a34a", orange: "#f59e0b", red: "#dc2626" };
   async function rebuild() {
     const r = S.raw;
     if (!r || !r.jp || !r.sales) {
@@ -1333,11 +1707,37 @@ input,select,textarea{font-size:16px!important}
     const ws = wb.Sheets[wb.SheetNames[0]];
     return XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, cellDates: true, defval: null });
   };
+  function mapFilterDateRange() {
+    const fy = yearFromFileName(S.raw && S.raw.names && S.raw.names.sales);
+    const from = S.filters.fromDate ? parseDate(S.filters.fromDate, fy) : null;
+    const to = S.filters.toDate ? parseDate(S.filters.toDate, fy) : null;
+    return { from, to, active: !!(from || to) };
+  }
+  function inMapDateRange(date, range) {
+    return !!date && (!range.from || date >= range.from) && (!range.to || date <= range.to);
+  }
+  function mapRangeSalesStatus(store, range = mapFilterDateRange()) {
+    const orders = store.orders || [];
+    const hasSales = orders.some((o) => o.inv && inMapDateRange(o.inv, range));
+    const latestOrder = orders.filter((o) => inMapDateRange(o.orderDate || o.inv, range)).slice().sort((a, b) => (b.orderDate || b.inv || "").localeCompare(a.orderDate || a.inv || ""))[0] || null;
+    return { hasSales, latestOrder };
+  }
+  function refreshMapRangeStatuses() {
+    if (!S.ds) return;
+    const range = mapFilterDateRange();
+    for (const store of S.ds.stores) {
+      if (!store.inJP) { store.status = "blue"; continue; }
+      const state = mapRangeSalesStatus(store, range);
+      store.status = state.latestOrder && /closed\s*\/\s*undelivered/i.test(str(state.latestOrder.status)) ? "red" : state.hasSales ? "green" : "orange";
+    }
+  }
   function matches(s, f, skip) {
     if (skip !== "type") {
-      if (f.type === "hasSales" && !s.hasSales) return false;
-      if (f.type === "noSales" && (s.hasSales || !s.inJP)) return false;
-      if (f.type === "salesOnly" && s.inJP) return false;
+      const rangeState = mapRangeSalesStatus(s);
+      if (f.type === "hasSales" && !rangeState.hasSales) return false;
+      if (f.type === "noSales" && (rangeState.hasSales || !s.inJP)) return false;
+      if (f.type === "salesOnly" && (s.inJP || !rangeState.hasSales)) return false;
+      if (f.type === "closedUndelivered" && (!s.inJP || !rangeState.latestOrder || !/closed\s*\/\s*undelivered/i.test(str(rangeState.latestOrder.status)))) return false;
     }
     if (skip !== "route" && f.route && (f.route === NO_ROUTE ? !!s.route : s.route !== f.route)) return false;
     if (skip !== "salesman" && f.salesman && s.salesman !== f.salesman) return false;
@@ -1351,7 +1751,11 @@ input,select,textarea{font-size:16px!important}
     }
     return true;
   }
-  var filtered = () => S.ds ? S.ds.stores.filter((s) => matches(s, S.filters)) : [];
+  var filtered = () => {
+    if (!S.ds) return [];
+    refreshMapRangeStatuses();
+    return S.ds.stores.filter((s) => matches(s, S.filters));
+  };
   var options = (key) => [...new Set(S.ds.stores.filter((s) => matches(s, S.filters, key)).map((s) => s[key]).filter(Boolean))].sort((a, b) => a.localeCompare(b, "fa"));
   function withNearby(list) {
     if (!S.pos || !S.radius) return list;
@@ -1362,8 +1766,12 @@ input,select,textarea{font-size:16px!important}
       const [v, l] = Array.isArray(o) ? o : [o, o];
       return `<option value="${esc(v)}" ${f[k] === v ? "selected" : ""}>${esc(l)}</option>`;
     }).join("")}</select>`;
-    const dayOpts = [["", t("allDays")], ["today", t("today")], ...DAY_KEYS.map((d) => [d, t("d_" + d)])];
-    return `<label class="f">${t("type")}</label><select data-f="type">${["all", "hasSales", "noSales", "salesOnly"].map((v) => `<option value="${v}" ${f.type === v ? "selected" : ""}>${t(v)}</option>`).join("")}</select>
+    const dayOpts = [["", t("allDays")], ["today", t("today")], ...[...DAY_KEYS, "Friday"].map((d) => [d, t("d_" + d)])];
+    const dateField = (id, key, label) => `<div class="sales-date-wrap"><label class="f" for="${id}">${label}</label><input id="${id}" data-range="${key}" type="text" readonly value="${esc(f[key] || "")}" placeholder="${getLang() === "fa" ? "انتخاب تاریخ" : "Select date"}" dir="ltr" autocomplete="off" aria-haspopup="dialog" aria-expanded="false"><div class="jalali-picker" id="${id}Picker" hidden></div></div>`;
+    return `<div class="row" style="gap:10px;margin-bottom:12px">
+    ${dateField("mapFrom", "fromDate", t("salesFrom"))}${dateField("mapTo", "toDate", t("salesTo"))}
+  </div><div class="mu" style="margin-bottom:12px">${t("salesDateHint")}</div>
+  <label class="f">${t("type")}</label><select data-f="type">${["all", "hasSales", "noSales", "salesOnly", "closedUndelivered"].map((v) => `<option value="${v}" ${f.type === v ? "selected" : ""}>${t(v)}</option>`).join("")}</select>
   ${sel("route", t("regions"), [...options("route"), ...S.ds.stores.some((x) => !x.route && matches(x, S.filters, "route")) ? [[NO_ROUTE, t("noRoute")]] : []], t("all"))}${sel("salesman", t("salesman"), options("salesman"), t("all"))}
   <label class="f">${t("day")}</label><select data-f="day">${dayOpts.map(([v, l]) => `<option value="${v}" ${f.day === v ? "selected" : ""}>${l}</option>`).join("")}</select>
   <h3>${t("savedF")}</h3><div class="row">${savedFilters().map((x, i) => `<span class="row" style="gap:2px"><button class="btn sm" data-sf="${i}">${esc(x.name)}</button><button class="btn sm dng" data-sx="${i}">\u2715</button></span>`).join("") || `<span class="mu">\u2014</span>`}</div>
@@ -1374,10 +1782,92 @@ input,select,textarea{font-size:16px!important}
     sheet(`<h2>${t("filters")}</h2>${filterUI()}`, (el) => {
       el.querySelectorAll("select[data-f]").forEach((s) => s.onchange = () => {
         S.filters[s.dataset.f] = s.value;
+        saveFilterState();
         openFilters();
       });
+      const todayJ = isoToJalaliStr(todayISO()).split("/").map(Number);
+      const pickerState = {};
+      const padJ = (n) => String(n).padStart(2, "0");
+      const months = getLang() === "fa" ? ["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"] : ["Farvardin","Ordibehesht","Khordad","Tir","Mordad","Shahrivar","Mehr","Aban","Azar","Dey","Bahman","Esfand"];
+      const week = getLang() === "fa" ? ["ش","ی","د","س","چ","پ","ج"] : ["Sa","Su","Mo","Tu","We","Th","Fr"];
+      const daysInMonth = (year, month) => {
+        if (month <= 6) return 31;
+        if (month <= 11) return 30;
+        const first = jToIso(year, 1, 1), next = jToIso(year + 1, 1, 1);
+        return Math.round((Date.parse(next + "T00:00:00Z") - Date.parse(first + "T00:00:00Z")) / 864e5) - 336;
+      };
+      const renderPicker = (input, panel) => {
+        const state = pickerState[input.id], first = jToIso(state.year, state.month, 1).split("-").map(Number);
+        const offset = (new Date(Date.UTC(first[0], first[1] - 1, first[2])).getUTCDay() + 1) % 7;
+        const count = daysInMonth(state.year, state.month), chosen = input.value ? toStdDigits(input.value).split("/").map(Number) : [], cells = [];
+        for (let n = 0; n < offset; n++) cells.push('<button class="jp-day" type="button" disabled tabindex="-1"></button>');
+        for (let day = 1; day <= count; day++) {
+          const selected = chosen.length === 3 && chosen[0] === state.year && chosen[1] === state.month && chosen[2] === day;
+          const today = todayJ[0] === state.year && todayJ[1] === state.month && todayJ[2] === day;
+          const label = getLang() === "fa" ? String(day).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[+d]) : day;
+          cells.push('<button type="button" class="jp-day' + (selected ? ' selected' : '') + (today ? ' today' : '') + '" data-day="' + day + '">' + label + '</button>');
+        }
+        panel.innerHTML = '<div class="jp-head"><button type="button" data-nav="-1" aria-label="' + (getLang() === "fa" ? "ماه قبل" : "Previous month") + '">‹</button><div class="jp-month">' + months[state.month - 1] + ' ' + state.year + '</div><button type="button" data-nav="1" aria-label="' + (getLang() === "fa" ? "ماه بعد" : "Next month") + '">›</button></div><div class="jp-week">' + week.map((d) => '<span>' + d + '</span>').join("") + '</div><div class="jp-days">' + cells.join("") + '</div><div class="jp-foot"><button type="button" data-action="today">' + (getLang() === "fa" ? "امروز" : "Today") + '</button><button type="button" data-action="clear">' + (getLang() === "fa" ? "پاک کردن" : "Clear") + '</button></div>';
+        panel.querySelectorAll("button[data-nav]").forEach((button) => {
+          button.onclick = (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const delta = Number(button.dataset.nav);
+            state.month += delta;
+            if (state.month < 1) { state.month = 12; state.year--; }
+            if (state.month > 12) { state.month = 1; state.year++; }
+            renderPicker(input, panel);
+          };
+        });
+      };
+      ["mapFrom", "mapTo"].forEach((id) => {
+        const input = el.querySelector("#" + id), panel = el.querySelector("#" + id + "Picker"), key = input.dataset.range;
+        const initial = input.value ? toStdDigits(input.value).split("/").map(Number) : todayJ;
+        pickerState[id] = { year: initial[0], month: initial[1] };
+        const closePicker = () => { panel.hidden = true; input.setAttribute("aria-expanded", "false"); };
+        const openPicker = () => {
+          const selected = input.value ? toStdDigits(input.value).split("/").map(Number) : todayJ;
+          pickerState[id] = { year: selected[0], month: selected[1] };
+          renderPicker(input, panel);
+          const rect = input.getBoundingClientRect(), width = Math.min(320, window.innerWidth - 48);
+          panel.style.left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12)) + "px";
+          panel.style.top = Math.max(12, Math.min(rect.bottom + 6, window.innerHeight - 360)) + "px";
+          panel.hidden = false;
+          input.setAttribute("aria-expanded", "true");
+        };
+        input.addEventListener("click", () => panel.hidden ? openPicker() : closePicker());
+        panel.addEventListener("click", (event) => {
+          const day = event.target.closest("[data-day]"), action = event.target.closest("[data-action]");
+          if (day) {
+            event.preventDefault();
+            S.filters[key] = pickerState[id].year + "/" + padJ(pickerState[id].month) + "/" + padJ(Number(day.dataset.day));
+            saveFilterState();
+            openFilters();
+          } else if (action && action.dataset.action === "today") {
+            event.preventDefault();
+            S.filters[key] = todayJ[0] + "/" + padJ(todayJ[1]) + "/" + padJ(todayJ[2]);
+            saveFilterState();
+            openFilters();
+          } else if (action && action.dataset.action === "clear") {
+            event.preventDefault();
+            S.filters[key] = "";
+            saveFilterState();
+            openFilters();
+          }
+        });
+      });
+      el.addEventListener("click", (event) => {
+        ["mapFrom", "mapTo"].forEach((id) => {
+          const input = el.querySelector("#" + id), panel = el.querySelector("#" + id + "Picker");
+          if (!panel.hidden && !input.parentElement.contains(event.target)) {
+            panel.hidden = true;
+            input.setAttribute("aria-expanded", "false");
+          }
+        });
+      });
       el.querySelector("#fclr").onclick = () => {
-        S.filters = { q: S.filters.q, type: "all", route: "", salesman: "", day: "" };
+        S.filters = { q: S.filters.q, type: "all", route: "", salesman: "", day: "", fromDate: "", toDate: "" };
+        saveFilterState();
         openFilters();
       };
       el.querySelector("#fok").onclick = () => {
@@ -1388,6 +1878,7 @@ input,select,textarea{font-size:16px!important}
         const x = savedFilters()[+b.dataset.sf];
         if (x) {
           S.filters = { ...x.f, q: S.filters.q };
+          saveFilterState();
           openFilters();
         }
       });
@@ -1395,15 +1886,17 @@ input,select,textarea{font-size:16px!important}
         const a = savedFilters();
         a.splice(+b.dataset.sx, 1);
         lsSet("savedFilters", a);
+        saveFilterState();
         openFilters();
       });
       el.querySelector("#sfs").onclick = () => {
         const n = el.querySelector("#sfn").value.trim();
         if (!n) return toast(t("savedName"));
         const a = savedFilters().filter((x) => x.name !== n);
-        const { type, route, salesman, day } = S.filters;
-        a.push({ name: n, f: { type, route, salesman, day } });
+        const { type, route, salesman, day, fromDate, toDate } = S.filters;
+        a.push({ name: n, f: { type, route, salesman, day, fromDate, toDate } });
         lsSet("savedFilters", a.slice(-12));
+        saveFilterState();
         openFilters();
       };
     });
@@ -1426,7 +1919,7 @@ input,select,textarea{font-size:16px!important}
   }
   function nav() {
     var _a;
-    const items = [["map", ic("map")], ["stores", ic("stores")], ["plan", ic("plan")], ["data", ic("data")], ["settings", ic("settings")]];
+    const items = [["map", ic("map")], ["stores", ic("stores")], ["plan", ic("plan")], ["data", ic("data")], ["analytics", ic("data")], ["settings", ic("settings")]];
     $("#nav").innerHTML = items.map(([k, i]) => `<button data-p="${k}" class="${S.page === k ? "on" : ""}"><span class="i">${i}</span>${t(k)}</button>`).join("");
     $("#nav").querySelectorAll("button").forEach((b) => b.onclick = () => {
       S.page = b.dataset.p;
@@ -1445,12 +1938,16 @@ input,select,textarea{font-size:16px!important}
     if (S.page !== "map") {
       S.focus = null;
       S.planMap = null;
+      stopLocationWatch();
     }
     if (map && S.page !== "map") {
       map.remove();
       map = null;
+      layer = null;
+      labelLayer = null;
+      locationLayer = null;
     }
-    ({ map: pageMap, stores: pageStores, plan: pagePlan, data: pageData, settings: pageSettings })[S.page](v);
+    ({ map: pageMap, stores: pageStores, plan: pagePlan, data: pageData, analytics: pageAnalytics, settings: pageSettings })[S.page](v);
   }
   var needData = (v) => {
     v.innerHTML = `<div class="pad wrap"><div class="card">${t("needData")}</div><button class="btn pri" id="go">${t("data")}</button></div>`;
@@ -1462,13 +1959,20 @@ input,select,textarea{font-size:16px!important}
   function pageMap(v) {
     if (!S.ds) return needData(v);
     if (S.planMap) return pagePlanMap(v);
+    const previousView = map ? { center: map.getCenter(), zoom: map.getZoom() } : null;
+    if (map) {
+      map.remove();
+      map = null;
+      layer = null;
+    }
     let list = withNearby(filtered());
     const fs = S.focus && byId.get(S.focus);
     if (fs && !list.includes(fs)) list = [...list, fs];
     v.innerHTML = `<div class="mapbar"><input type="search" id="q" placeholder="${esc(t("search"))}" value="${esc(S.filters.q)}"><button class="btn" id="fb">${ic("filter")}</button><button class="btn" id="loc" title="${t("locate")}">${ic("locate")}</button></div><div id="map"></div>
-  <div class="legend"><span><i class="dot g"></i>${t("legG")}</span><span><i class="dot o"></i>${t("legO")}</span><span><i class="dot b"></i>${t("legB")}</span><span class="mu">${list.length} ${t("results")} \xB7 ${list.filter((s) => s.lat === null).length} ${t("noGPS")}</span></div>`;
+  <div class="legend"><span><i class="dot g"></i>${t("legG")}</span><span><i class="dot o"></i>${t("legO")}</span><span><i class="dot r"></i>${t("legR")}</span><span class="vp-map-legend"><i class="vp-map-marker">${ic("plan")}</i>${t("inVisitPlan")}</span><span class="tpa-audit-legend"><i class="tpa-audit-status done">✓</i>${t("auditSubmitted")}</span><span class="tpa-audit-legend"><i class="tpa-audit-status missing">▤</i>${t("auditMissing")}</span><span class="mu">${list.length} ${t("results")} \xB7 ${list.filter((s) => s.lat === null).length} ${t("noGPS")}</span></div>`;
     $("#q").oninput = (e) => {
       S.filters.q = e.target.value;
+      saveFilterState();
       clearTimeout(pageMap.tm);
       pageMap.tm = setTimeout(() => drawMarkers(withNearby(filtered())), 250);
     };
@@ -1478,11 +1982,62 @@ input,select,textarea{font-size:16px!important}
       $("#map").innerHTML = `<div class="pad">Leaflet not loaded (offline first run?). ${t("mapOffline")}</div>`;
       return;
     }
-    map = L.map("map", { preferCanvas: true, zoomControl: false }).setView([35.8, 51], 11);
+    map = L.map("map", { preferCanvas: true, zoomControl: false }).setView(
+      previousView ? previousView.center : [35.8, 51],
+      previousView ? previousView.zoom : 11
+    );
     L.control.zoom({ position: "bottomright" }).addTo(map);
+    // Google Maps-style one-finger zoom: double-tap, hold the second tap, then drag vertically.
+    const mapTouchTarget = map.getContainer();
+    let oneFingerLastTap = 0, oneFingerLastPoint = null, oneFingerActive = false;
+    let oneFingerStartY = 0, oneFingerStartZoom = map.getZoom();
+    mapTouchTarget.addEventListener("touchstart", (event) => {
+      if (event.touches.length !== 1) {
+        oneFingerLastTap = 0;
+        oneFingerLastPoint = null;
+        return;
+      }
+      const touch = event.touches[0], now = Date.now();
+      const closeToLastTap = oneFingerLastPoint &&
+        Math.hypot(touch.clientX - oneFingerLastPoint.x, touch.clientY - oneFingerLastPoint.y) < 32;
+      if (oneFingerLastTap && now - oneFingerLastTap < 380 && closeToLastTap) {
+        oneFingerActive = true;
+        oneFingerStartY = touch.clientY;
+        oneFingerStartZoom = map.getZoom();
+        map.dragging.disable();
+        if (event.cancelable) event.preventDefault();
+      }
+    }, { capture: true, passive: false });
+    mapTouchTarget.addEventListener("touchmove", (event) => {
+      if (!oneFingerActive || event.touches.length !== 1) return;
+      if (event.cancelable) event.preventDefault();
+      const delta = oneFingerStartY - event.touches[0].clientY;
+      const zoomDelta = Math.round(delta / 90);
+      const nextZoom = Math.max(map.getMinZoom(), Math.min(map.getMaxZoom(), oneFingerStartZoom + zoomDelta));
+      if (nextZoom !== map.getZoom()) map.setZoom(nextZoom, { animate: false });
+    }, { capture: true, passive: false });
+    const finishOneFingerZoom = (event) => {
+      if (oneFingerActive) {
+        if (event && event.cancelable) event.preventDefault();
+        oneFingerActive = false;
+        map.dragging.enable();
+        oneFingerLastTap = 0;
+        oneFingerLastPoint = null;
+      } else if (event && event.type === "touchend" && event.changedTouches.length === 1) {
+        const touch = event.changedTouches[0];
+        oneFingerLastTap = Date.now();
+        oneFingerLastPoint = { x: touch.clientX, y: touch.clientY };
+      }
+    };
+    mapTouchTarget.addEventListener("touchend", finishOneFingerZoom, { capture: true, passive: false });
+    mapTouchTarget.addEventListener("touchcancel", finishOneFingerZoom, { capture: true, passive: false });
     L.tileLayer(S.settings.tile, { maxZoom: 19, attribution: "\xA9 OpenStreetMap" }).addTo(map);
     layer = L.layerGroup().addTo(map);
-    drawMarkers(list, !(fs && fs.lat !== null));
+    labelLayer = L.layerGroup();
+    locationLayer = L.layerGroup().addTo(map);
+    map.on("moveend", refreshMapLabels);
+    startLocationWatch();
+    drawMarkers(list, !previousView && !(fs && fs.lat !== null));
     if (fs && fs.lat !== null) map.setView([fs.lat, fs.lng], 17);
     requestAnimationFrame(() => map && map.invalidateSize());
     setTimeout(() => map && map.invalidateSize(), 300);
@@ -1494,9 +2049,26 @@ input,select,textarea{font-size:16px!important}
     addEventListener("offline", nav);
   }
   function drawMe() {
-    if (!S.pos || !layer) return;
-    L.circleMarker([S.pos.lat, S.pos.lng], { radius: 18, stroke: false, fillColor: "#1a73e8", fillOpacity: 0.2, interactive: false }).addTo(layer);
-    L.circleMarker([S.pos.lat, S.pos.lng], { radius: 8, color: "#fff", weight: 3, fillColor: "#1a73e8", fillOpacity: 1, interactive: false }).addTo(layer);
+    if (!S.pos || !locationLayer || !map) return;
+    locationLayer.clearLayers();
+    L.circleMarker([S.pos.lat, S.pos.lng], { radius: 22, stroke: false, fillColor: "#1a73e8", fillOpacity: 0.18, interactive: false }).addTo(locationLayer);
+    L.circleMarker([S.pos.lat, S.pos.lng], { radius: 9, color: "#fff", weight: 3, fillColor: "#1a73e8", fillOpacity: 1, interactive: false }).addTo(locationLayer);
+  }
+  function startLocationWatch() {
+    if (!navigator.geolocation || geoWatchId !== null) return;
+    geoWatchId = navigator.geolocation.watchPosition((p) => {
+      S.pos = { lat: p.coords.latitude, lng: p.coords.longitude, accuracy: p.coords.accuracy };
+      drawMe();
+    }, () => {
+      if (geoWatchId !== null) {
+        navigator.geolocation.clearWatch(geoWatchId);
+        geoWatchId = null;
+      }
+    }, { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 });
+  }
+  function stopLocationWatch() {
+    if (geoWatchId !== null && navigator.geolocation) navigator.geolocation.clearWatch(geoWatchId);
+    geoWatchId = null;
   }
   function pagePlanMap(v) {
     const iso2 = S.planMap, items = sortedForDay(S.plan, iso2), has = (p) => p.lat !== null && p.lat !== "" && p.lng !== null && p.lng !== "", withG = items.filter(has), noG = items.length - withG.length;
@@ -1515,6 +2087,8 @@ input,select,textarea{font-size:16px!important}
     L.control.zoom({ position: "bottomright" }).addTo(map);
     L.tileLayer(S.settings.tile, { maxZoom: 19, attribution: "\xA9 OpenStreetMap" }).addTo(map);
     layer = L.layerGroup().addTo(map);
+    labelLayer = L.layerGroup();
+    map.on("moveend", refreshMapLabels);
     items.forEach((p, i) => {
       if (has(p)) L.marker([p.lat, p.lng], { icon: L.divIcon({ className: "", html: `<div class="pin p${p.priority}"><span>${i + 1}</span></div>`, iconSize: [30, 30], iconAnchor: [15, 30] }) }).on("click", () => {
         if (byId.get(p.customerId)) detail(p.customerId);
@@ -1523,48 +2097,117 @@ input,select,textarea{font-size:16px!important}
     drawMe();
     const pts = withG.map((p) => [p.lat, p.lng]);
     if (pts.length) map.fitBounds(pts, { padding: [60, 60], maxZoom: 16 });
+    refreshMapLabels();
     requestAnimationFrame(() => map && map.invalidateSize());
     setTimeout(() => map && map.invalidateSize(), 300);
+  }
+  function refreshMapLabels() {
+    if (!map || !labelLayer) return;
+    labelLayer.clearLayers();
+    if (S.settings.showMapNames === false || map.getZoom() < 15) {
+      if (map.hasLayer(labelLayer)) map.removeLayer(labelLayer);
+      return;
+    }
+    const bounds = map.getBounds(), center = map.getCenter();
+    const stores = S.planMap
+      ? sortedForDay(S.plan, S.planMap).map((p) => ({ ...p, name: p.customerName || "", storeName: planStoreLabel(p) }))
+      : withNearby(filtered());
+    const visible = [];
+    for (const s of stores) {
+      if (s.lat === null || s.lat === "" || s.lng === null || s.lng === "") continue;
+      const lat = Number(s.lat), lng = Number(s.lng);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng) || !bounds.contains([lat, lng])) continue;
+      const storeName = str(s.storeName).trim();
+      const managerName = str(s.name).trim();
+      const isStore = !!storeName;
+      const name = storeName || managerName;
+      if (!name) continue;
+      const sourceStore = S.planMap ? byId.get(String(s.customerId)) : s;
+      visible.push({
+        lat, lng, name, isStore,
+        id: s.id != null ? s.id : sourceStore && sourceStore.id,
+        customerId: s.customerId,
+        newCode: s.newCode || sourceStore && sourceStore.newCode,
+        auditName: s.name || s.customerName || sourceStore && sourceStore.name,
+        distance: map.distance(center, [lat, lng])
+      });
+    }
+    visible.sort((a, b) => a.distance - b.distance);
+    for (const s of visible.slice(0, 35)) {
+      const kind = s.isStore ? "store" : "manager";
+      const symbol = s.isStore ? "🏪" : "👤";
+      const shortName = s.name.length > 25 ? s.name.slice(0, 24) + "…" : s.name;
+      const audited = auditStoreIds.has(auditKey(s.id != null ? s.id : s.customerId))
+        || auditStoreIds.has(auditKey(s.customerId))
+        || auditStoreCodes.has(auditKey(s.newCode))
+        || auditStoreNames.has(auditKey(s.auditName));
+      const auditBadge = audited
+        ? `<span class="tpa-audit-status done" title="${esc(t("auditSubmitted"))}">✓</span>`
+        : `<span class="tpa-audit-status missing" title="${esc(t("auditMissing"))}">▤</span>`;
+      const html = `<span class="tpa-map-label ${kind}" title="${esc(s.name)}"><span class="kind">${symbol}</span><span class="name">${esc(shortName)}</span>${auditBadge}</span>`;
+      L.marker([s.lat, s.lng], { icon: L.divIcon({ className: "tpa-map-label-icon", html, iconSize: [190, 32], iconAnchor: [-7, 16] }), interactive: false, keyboard: false, zIndexOffset: 500 }).addTo(labelLayer);
+    }
+    if (!map.hasLayer(labelLayer)) labelLayer.addTo(map);
   }
   function drawMarkers(list, fit) {
     if (!map) return;
     layer.clearLayers();
     const pts = [];
+    const plannedCustomerIds = new Set([...S.plan, ...S.pending].map((p) => String(p.customerId)));
     for (const s of list) {
       if (s.lat === null) continue;
       pts.push([s.lat, s.lng]);
       L.circleMarker([s.lat, s.lng], { radius: 7, color: "#fff", weight: 1.5, fillColor: COLOR[s.status], fillOpacity: 0.95 }).on("click", () => detail(s.id)).addTo(layer);
+      if (plannedCustomerIds.has(String(s.id))) {
+        L.marker([s.lat, s.lng], {
+          icon: L.divIcon({ className: "", html: '<span class="vp-map-marker">' + ic("plan") + '</span>', iconSize: [20, 20], iconAnchor: [0, 0] }),
+          interactive: false,
+          keyboard: false,
+          zIndexOffset: 1000
+        }).addTo(layer);
+      }
     }
     const fo = S.focus && byId.get(S.focus);
     if (fo && fo.lat !== null) L.circleMarker([fo.lat, fo.lng], { radius: 15, color: "#dc2626", weight: 3, fill: false }).addTo(layer);
     drawMe();
+    refreshMapLabels();
     if (fit && pts.length) map.fitBounds(pts, { padding: [24, 24], maxZoom: 15 });
     const lg = document.querySelector(".legend .mu");
     if (lg) lg.textContent = `${list.length} ${t("results")} \xB7 ${list.filter((s) => s.lat === null).length} ${t("noGPS")}`;
   }
   function locate(center) {
     if (!navigator.geolocation) return toast(t("locDenied"));
-    navigator.geolocation.getCurrentPosition((p) => {
-      S.pos = { lat: p.coords.latitude, lng: p.coords.longitude };
-      if (center && map && !S.planMap) {
-        map.setView([S.pos.lat, S.pos.lng], 15);
-        drawMarkers(withNearby(filtered()));
-      } else if (S.page === "stores") render();
-    }, () => toast(t("locDenied")), { enableHighAccuracy: true, timeout: 15e3 });
+    const show = (p) => {
+      S.pos = { lat: p.coords.latitude, lng: p.coords.longitude, accuracy: p.coords.accuracy };
+      drawMe();
+      if (center && map) map.setView([S.pos.lat, S.pos.lng], Math.max(map.getZoom(), 15));
+    };
+    if (S.pos) {
+      if (center && map) map.setView([S.pos.lat, S.pos.lng], Math.max(map.getZoom(), 15));
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(show, () => toast(t("locDenied")), { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 });
   }
-  var badge = (s) => `<i class="dot ${s.status === "green" ? "g" : s.status === "orange" ? "o" : "b"}"></i>`;
+  var badge = (s) => `<i class="dot ${s.status === "red" ? "r" : s.status === "green" ? "g" : s.status === "orange" ? "o" : "b"}"></i>`;
+  const upcomingPlan = (id) => S.plan.filter((p) => String(p.customerId) === String(id) && p.visitDate >= todayISO()).sort((a, b) => a.visitDate < b.visitDate ? -1 : 1);
   function storeCard(s) {
-    return `<div class="card st ${s.status}" data-id="${esc(s.id)}"><div class="row"><b>${esc(s.storeName || s.name || s.id)}</b><span class="sp"></span>${s._d !== void 0 ? `<span class="chip">${s._d < 1e3 ? Math.round(s._d) + " m" : (s._d / 1e3).toFixed(1) + " km"} \xB7 ${t("straight")}</span>` : ""}${s.lat === null ? `<span class="chip">${t("noGPS")}</span>` : ""}</div>
+    const inVisitPlan = S.plan.some((p) => String(p.customerId) === String(s.id)) || S.pending.some((p) => String(p.customerId) === String(s.id));
+    return `<div class="card st ${s.status}" data-id="${esc(s.id)}"><div class="row"><b>${esc(s.storeName || s.name || s.id)}</b>${inVisitPlan ? (() => { const u = upcomingPlan(s.id); return `<span class="chip vp">✓ ${u.length ? t("d_" + dayKeyOfISO(u[0].visitDate)) + " " + jd(u[0].visitDate) + (u.length > 1 ? " +" + (u.length - 1) : "") : t("inVisitPlan")}</span>`; })() : ""}<span class="sp"></span>${s._d !== void 0 ? `<span class="chip">${s._d < 1e3 ? Math.round(s._d) + " m" : (s._d / 1e3).toFixed(1) + " km"} \xB7 ${t("straight")}</span>` : ""}${s.lat === null ? `<span class="chip">${t("noGPS")}</span>` : ""}</div>
   <div class="mu">${esc(s.name)} \xB7 ${esc(s.id)} \xB7 ${esc(s.cls)}</div><div class="mu">${esc(s.address)}</div><div class="mu">${esc(s.route)}${s.lastPurchase ? " \xB7 " + t("lastPurchase") + " " + jd(s.lastPurchase) : ""}${s.openOrders ? ` \xB7 <span class="chip o">${t("open")} ${s.openOrders}</span>` : ""}${s.overdueOrders ? ` <span class="chip r">${t("overdue")} ${s.overdueOrders}</span>` : ""}</div></div>`;
   }
   function pageStores(v) {
     if (!S.ds) return needData(v);
-    const list = withNearby(filtered()), shown = list.slice(0, 200);
+    let list = withNearby(filtered());
+    if (S.sort === "last") list = list.slice().sort((a, b) => String(b.lastPurchase || "").localeCompare(String(a.lastPurchase || "")));
+    else if (S.sort === "name") list = list.slice().sort((a, b) => String(a.storeName || a.name || "").localeCompare(String(b.storeName || b.name || ""), "fa"));
+    const shown = list.slice(0, 200);
     v.innerHTML = `<div class="pad wrap"><div class="row"><input type="search" id="q" placeholder="${esc(t("search"))}" value="${esc(S.filters.q)}" style="flex:1"><button class="btn" id="fb">${ic("filter")}</button></div>
   <div class="row" style="margin:8px 0"><button class="btn sm" id="loc">${ic("locate")} ${t("nearby")}</button><select id="rad" class="sm"><option value="0">${t("radius")}</option>${[500, 1e3, 5e3].map((r) => `<option value="${r}" ${S.radius === r ? "selected" : ""}>${r < 1e3 ? r + " m" : r / 1e3 + " km"}</option>`).join("")}</select><span class="mu">${list.length} ${t("results")}</span><span class="sp"></span><button class="btn sm pri" id="onmap">${ic("map")} ${t("showMap")}</button></div>
+  <div class="row" style="margin:0 0 8px"><select id="so" class="sm"><option value="">\u0645\u0631\u062A\u0628\u200C\u0633\u0627\u0632\u06CC: \u067E\u06CC\u0634\u200C\u0641\u0631\u0636</option><option value="last" ${S.sort === "last" ? "selected" : ""}>\u0622\u062E\u0631\u06CC\u0646 \u062E\u0631\u06CC\u062F</option><option value="name" ${S.sort === "name" ? "selected" : ""}>\u0646\u0627\u0645</option></select><button class="btn sm" id="fmls" style="margin-inline-start:8px">\u{1F4CB} \u0641\u0631\u0645\u200C\u0647\u0627</button></div>
   <div id="lst">${shown.map(storeCard).join("") || `<div class="card">${t("nothing")}</div>`}</div>${list.length > 200 ? `<button class="btn" id="more">+200 \u2026</button>` : ""}</div>`;
     $("#q").oninput = (e) => {
       S.filters.q = e.target.value;
+      saveFilterState();
       clearTimeout(pageStores.tm);
       pageStores.tm = setTimeout(() => {
         const pos = $("#q").selectionStart;
@@ -1579,6 +2222,11 @@ input,select,textarea{font-size:16px!important}
     $("#onmap").onclick = () => {
       S.focus = null;
       S.page = "map";
+      render();
+    };
+    $("#fmls").onclick = formsList;
+    $("#so").onchange = (e) => {
+      S.sort = e.target.value;
       render();
     };
     $("#rad").onchange = (e) => {
@@ -1602,20 +2250,73 @@ input,select,textarea{font-size:16px!important}
     const q = encodeURIComponent(s.storeName || s.name || s.address) + "%20" + encodeURIComponent(s.address);
     return `<a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${q}">${t("searchDest")}</a>`;
   }
+  async function formsList() {
+    const all = await dbGet("forms") || [];
+    sheet(`<h2>\u0641\u0631\u0645\u200C\u0647\u0627\u06CC \u062B\u0628\u062A\u200C\u0634\u062F\u0647 (<span id="fcnt">${all.length}</span>)</h2><input id="fq" type="search" placeholder="\u062C\u0633\u062A\u062C\u0648: \u0646\u0627\u0645\u060C \u06A9\u062F\u060C \u0648\u06CC\u0632\u06CC\u062A\u0648\u0631" style="width:100%;font-size:16px"><div id="fll" style="margin-top:8px"></div>`, (el) => {
+      let list = all.slice();
+      const draw = () => {
+        const q = el.querySelector("#fq").value.trim().toLowerCase();
+        const rows = list.filter((r) => !q || [r.q2_name, r.q2_code, r.visitor].some((x) => String(x || "").toLowerCase().includes(q))).sort((x, y) => String(y.updated || y.timestamp || "").localeCompare(String(x.updated || x.timestamp || ""))).slice(0, 100);
+        el.querySelector("#fcnt").textContent = list.length;
+        el.querySelector("#fll").innerHTML = rows.length ? rows.map((r) => `<div class="card"><b>${esc(r.q2_name || "")}</b><div class="mu"><span dir="ltr">${esc(r.q2_code || "")}</span> \u00B7 ${esc(r.visitor || "")} \u00B7 ${jd(String(r.updated || r.timestamp || "").slice(0, 10))}</div><div class="row" style="margin-top:6px"><button class="btn sm pri" data-e="${esc(r.id)}">\u0648\u06CC\u0631\u0627\u06CC\u0634</button><button class="btn sm dng" data-x="${esc(r.id)}">\u062D\u0630\u0641</button></div></div>`).join("") : '<div class="mu">\u2014</div>';
+        el.querySelectorAll("[data-e]").forEach((b) => b.onclick = () => {
+          const r = list.find((x) => x.id === b.dataset.e), st = r && byId.get(r.storeId);
+          if (!st) return toast("\u0641\u0631\u0648\u0634\u06AF\u0627\u0647 \u062F\u0631 \u062F\u0627\u062F\u0647\u200C\u06CC \u0641\u0639\u0644\u06CC \u0646\u06CC\u0633\u062A");
+          closeSheet();
+          openForm({ store: st, db: { dbGet, dbSet, dbDel }, toast, onSaved: () => render() });
+        });
+        el.querySelectorAll("[data-x]").forEach((b) => b.onclick = async () => {
+          if (!confirm("\u0627\u06CC\u0646 \u0641\u0631\u0645 \u062D\u0630\u0641 \u0634\u0648\u062F\u061F \u0627\u06CC\u0646 \u06A9\u0627\u0631 \u0642\u0627\u0628\u0644 \u0628\u0627\u0632\u06AF\u0634\u062A \u0646\u06CC\u0633\u062A.")) return;
+          list = list.filter((x) => x.id !== b.dataset.x);
+          try { await dbSet("forms", list); try { await saveLocalAuditForms(list); } catch (e) { } } catch (e) { return toast("Storage: " + e.message); }
+          toast("\u062D\u0630\u0641 \u0634\u062F");
+          draw();
+        });
+      };
+      el.querySelector("#fq").oninput = draw;
+      draw();
+    });
+  }
   function detail(id) {
     const s = byId.get(id);
     if (!s) return;
-    const orders = s.orders.map((o) => `<tr><td>${esc(o.order)}<br><span class="mu">${esc(o.status)}</span></td><td>${jd(o.orderDate)}</td><td>${jd(o.target)}</td><td>${jd(o.inv)}</td><td>${o.state === "open" ? `<span class="chip o">${t("open")}</span>` : `<span class="chip g">${t("invoiced")}</span>`}${o.overdue === true ? ` <span class="chip r">${t("overdue")}</span>` : ""}${o.state === "open" && o.overdue === null ? `<br><span class="mu">${t("noTarget")}</span>` : ""}</td></tr><tr><td colspan="5" class="mu">${o.items.map((i) => `${esc(i.product)} \xD7 ${i.qty}`).join(" \xB7 ")}</td></tr>`).join("");
+    const visitEntries = S.plan.filter((p) => String(p.customerId) === String(s.id));
+    const inVisitPlan = visitEntries.length > 0;
+    const orders = s.orders.map((o) => {
+      const undelivered = /closed\s*\/\s*undelivered/i.test(str(o.status));
+      const statusChip = undelivered ? `<span class="chip r">${esc(o.status)}</span>` : o.state === "open" ? `<span class="chip o">${t("open")}</span>` : `<span class="chip g">${t("invoiced")}</span>`;
+      const amount = o.amountComplete && o.amount > 0 ? new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(Math.round(o.amount)) + " Rial" : "—";
+      const itemTotals = new Map();
+      (o.items || []).forEach((item) => {
+        const name = str(item.product) || str(item.code) || "—";
+        itemTotals.set(name, (itemTotals.get(name) || 0) + (Number(item.qty) || 0));
+      });
+      const itemSummary = [...itemTotals].map(([name, qty]) => `${esc(name)} × ${qty}`).join(" · ") || "—";
+      return `<article class="order-card"><div class="order-main"><div class="order-head"><b>${esc(o.order)}</b>${statusChip}${o.overdue === true ? `<span class="chip r">${t("overdue")}</span>` : ""}</div><div class="order-amount"><span>${amount}</span><small>${t("amount")}</small></div></div><div class="order-dates"><div><span>${t("orderDate")}</span><b>${jd(o.orderDate)}</b></div><div><span>${t("targetDate")}</span><b>${jd(o.target)}</b></div><div><span>${t("invoiceDate")}</span><b>${jd(o.inv)}</b></div></div><div class="order-items"><b>${t("basket")}:</b><span>${itemSummary}</span></div></article>`;
+    }).join("");
     sheet(`<h2>${badge(s)}${esc(s.storeName || s.name || s.id)}</h2>
-  <dl class="kv"><dt>${t("custId")}</dt><dd>${esc(s.id)}</dd><dt>${t("custName")}</dt><dd>${esc(s.name)}</dd><dt>${t("storeName")}</dt><dd>${esc(s.storeName) || "\u2014"}</dd><dt>${t("cls")}</dt><dd>${esc(s.cls) || "\u2014"}</dd><dt>${t("address")}</dt><dd>${esc(s.address)}</dd><dt>${t("route")}</dt><dd>${esc(s.route) || "\u2014"} <span class="mu">(${t("rs_" + (s.routeSource || "Area"))})</span></dd><dt>${t("area")} / ${t("territory")}</dt><dd>${esc(s.area) || "\u2014"} / ${esc(s.territory) || "\u2014"}</dd><dt>${t("salesman")}</dt><dd>${esc(s.salesman) || "\u2014"}</dd><dt>${t("coords")}</dt><dd>${s.lat !== null ? s.lat.toFixed(6) + ", " + s.lng.toFixed(6) : t("noGPS")}</dd><dt>${t("inJP")}</dt><dd>${s.inJP ? t("yes") : t("no")}${s.inJP ? " \xB7 " + DAY_KEYS.filter((d) => s.days[d]).map((d) => t("d_" + d)).join("\u060C ") : ""}</dd><dt>${t("purchase")}</dt><dd>${s.hasSales ? t("yes") : t("no")} \xB7 ${t("lastPurchase")}: ${jd(s.lastPurchase)}</dd></dl>
-  <div class="row" style="margin:10px 0">${navLinks(s)}<button class="btn pri" id="addp">${t("addPlan")}</button><button class="btn" id="onm">${ic("map")} ${t("showMap")}</button>${canForm(s) ? `<button class="btn pri" id="fm">${ic("plan")} \u0641\u0631\u0645 \u0645\u0645\u06CC\u0632\u06CC</button>` : ""}</div>
-  <h3>${t("orders")} (${s.orders.length})</h3>${orders ? `<table class="t"><tr><th>${t("orderNo")}</th><th>${t("orderDate")}</th><th>${t("targetDate")}</th><th>${t("invoiceDate")}</th><th></th></tr>${orders}</table>` : `<div class="mu">${t("noOrders")}</div>`}
-  <h3>${t("basket")}</h3>${s.basket.length ? `<table class="t">${s.basket.map((b) => `<tr><td>${esc(b.product)}</td><td>${b.qty}</td></tr>`).join("")}</table>` : `<div class="mu">\u2014</div>`}
+  <dl class="kv"><dt>${t("custId")}</dt><dd>${esc(s.id)}</dd><dt>${t("custName")}</dt><dd>${esc(s.name)}</dd><dt>${t("storeName")}</dt><dd>${esc(s.storeName) || "\u2014"}</dd><dt>${t("cls")}</dt><dd>${esc(s.cls) || "\u2014"}</dd><dt>${t("address")}</dt><dd>${esc(s.address)}</dd><dt>${t("route")}</dt><dd>${esc(s.route) || "\u2014"} <span class="mu">(${t("rs_" + (s.routeSource || "Area"))})</span></dd><dt>${t("area")} / ${t("territory")}</dt><dd>${esc(s.area) || "\u2014"} / ${esc(s.territory) || "\u2014"}</dd><dt>${t("salesman")}</dt><dd>${esc(s.salesman) || "\u2014"}</dd><dt>${t("coords")}</dt><dd>${s.lat !== null ? s.lat.toFixed(6) + ", " + s.lng.toFixed(6) : t("noGPS")}</dd><dt>${t("inJP")}</dt><dd>${s.inJP ? t("yes") : t("no")}${s.inJP ? " \xB7 " + DAY_KEYS.filter((d) => s.days[d]).map((d) => t("d_" + d)).join("\u060C ") : ""}</dd>${visitEntries.length ? `<dt>${t("visitDate")}</dt><dd>${visitEntries.map((p) => `${t("d_" + dayKeyOfISO(p.visitDate))} \xB7 ${jd(p.visitDate)}`).join("، ")}</dd>` : ""}<dt>${t("purchase")}</dt><dd>${s.hasSales ? t("yes") : t("no")} \xB7 ${t("lastPurchase")}: ${jd(s.lastPurchase)}</dd></dl>
+  <div class="row" style="margin:10px 0">${navLinks(s)}</div><section class="visit-plan-box"><h3>${t("visitPlan")}</h3>${upcomingPlan(s.id).map((p) => `<div class="row" style="margin:4px 0"><span class="chip vp">\u{1F4C5} ${t("d_" + dayKeyOfISO(p.visitDate))} ${jd(p.visitDate)}</span><span class="mu">${p.visit === "done" ? "\u2714" : ""}</span></div>`).join("")}<div class="visit-plan-actions"><button class="btn vp-add" id="addp" ${inVisitPlan ? "disabled" : ""}>${t("addShort")}</button><button class="btn vp-remove" id="remp" ${inVisitPlan ? "" : "disabled"}>${t("removeShort")}</button></div></section><div class="store-action-row"><button class="btn store-map-action" id="onm">${ic("map")} ${t("showMap")}</button>${canForm(s) ? `<button class="btn store-audit-action" id="fm">${ic("plan")} ${t("auditForm")}</button>` : ""}</div>
+  <h3>${t("orders")} (${s.orders.length})</h3>${orders ? `<div class="orders-list">${orders}</div>` : `<div class="mu">${t("noOrders")}</div>`}
+
   <div class="row" style="margin-top:12px"><button class="btn" id="cl">${t("close")}</button></div>`, (el) => {
       el.querySelector("#cl").onclick = () => {
         closeSheet();
       };
-      el.querySelector("#addp").onclick = () => addPlanDialog(s);
+      const addPlanButton = el.querySelector("#addp");
+      if (!inVisitPlan) addPlanButton.onclick = () => addPlanDialog(s);
+      const removePlanButton = el.querySelector("#remp");
+      if (inVisitPlan) removePlanButton.onclick = () => {
+        if (!confirm("\u062D\u0630\u0641 \u0647\u0645\u0647\u200C\u06CC \u0631\u0648\u0632\u0647\u0627\u06CC \u0627\u06CC\u0646 \u0641\u0631\u0648\u0634\u06AF\u0627\u0647 \u0627\u0632 \u0628\u0631\u0646\u0627\u0645\u0647\u061F")) return;
+        const dates = [...new Set(visitEntries.map((p) => p.visitDate))];
+        const entryIds = new Set(visitEntries.map((p) => p.pid));
+        S.plan = S.plan.filter((p) => !entryIds.has(p.pid));
+        dates.forEach((d) => renumber(S.plan, d));
+        savePlan();
+        toast(t("removePlan") + " ✓");
+        detail(s.id);
+        render();
+      };
       el.querySelector("#onm").onclick = () => {
         if (s.lat === null) return toast(t("noGPS"));
         S.focus = s.id;
@@ -1627,7 +2328,14 @@ input,select,textarea{font-size:16px!important}
       const fm = el.querySelector("#fm");
       if (fm) fm.onclick = () => {
         closeSheet();
-        openForm({ store: s, db: { dbGet, dbSet, dbDel }, toast, onSaved: () => {
+        openForm({ store: s, db: { dbGet, dbSet, dbDel }, toast, onSaved: async (record) => {
+          if (record) {
+            if (record.storeId != null) auditStoreIds.add(auditKey(record.storeId));
+            if (record.q2_code != null) auditStoreCodes.add(auditKey(record.q2_code));
+            if (record.q2_name != null) auditStoreNames.add(auditKey(record.q2_name));
+          }
+          if (map && labelLayer) refreshMapLabels();
+          await refreshAuditStoreIds();
           const td = todayISO();
           let n = 0;
           S.plan.forEach((p) => {
@@ -1646,38 +2354,38 @@ input,select,textarea{font-size:16px!important}
     });
   }
   function addPlanDialog(s, prefDate) {
-    const base = weekStartOf(todayISO());
-    const dd = prefDate || todayISO();
-    const quick = [...Array(14)].map((_, i) => addDaysISO(base, i)).filter((d) => dayKeyOfISO(d) !== "Friday");
+    const today = todayISO();
+    const base = weekStartOf(today);
+    // Keep the current/future dates only; Friday remains unavailable for visit planning.
+    const quick = [...Array(21)].map((_, i) => addDaysISO(base, i))
+      .filter((d) => d >= today && dayKeyOfISO(d) !== "Friday");
+    const dd = quick.includes(prefDate) ? prefDate : quick[0];
     sheet(`<h2>${t("addPlan")}</h2><div class="mu">${esc(s.storeName || s.name)} \xB7 ${esc(s.id)}</div>
   <label class="f">${t("visitDate")}</label><select id="pd">${quick.map((d) => `<option value="${d}" ${d === dd ? "selected" : ""}>${t("d_" + dayKeyOfISO(d))} ${jd(d)}</option>`).join("")}</select>
-  <label class="f">${t("priority")}</label><select id="pp">${PRIORITIES.map((p) => `<option value="${p}" ${p === "Medium" ? "selected" : ""}>${t(p)}</option>`).join("")}</select>
-  <label class="f">${t("reason")}</label><input type="text" id="pr"><label class="f">${t("comment")}</label><textarea id="pc" rows="2" style="width:100%"></textarea>
+  <label class="f">${t("comment")}</label><textarea id="pc" rows="2" style="width:100%"></textarea>
   <div class="row" style="margin-top:12px"><button class="btn pri" id="ok">${t("save")}</button><button class="btn" id="no">${t("cancel")}</button></div>`, (el) => {
       el.querySelector("#no").onclick = () => detail(s.id);
       el.querySelector("#ok").onclick = () => {
         const date = el.querySelector("#pd").value;
-        if (isDuplicate(S.plan, s.id, date)) return toast(t("alreadyIn"));
-        S.plan.push(makeRecord(s, date, { priority: el.querySelector("#pp").value, reason: el.querySelector("#pr").value, comment: el.querySelector("#pc").value, source: "Internal", order: 9999 }));
+        if (isDuplicate(S.plan, s.id, date) || isDuplicate(S.pending, s.id, date)) return toast(t("alreadyIn"));
+        S.plan.push(makeRecord(s, date, { comment: el.querySelector("#pc").value, source: "Internal", order: 9999 }));
         renumber(S.plan, date);
         savePlan();
         toast(t("ok"));
         closeSheet();
+        render();
       };
     });
   }
   function editPlanDialog(p) {
     sheet(`<h2>${t("edit")}</h2><div class="mu">${esc(p.storeName || p.customerName)} \xB7 ${esc(p.customerId)}</div>
-  <label class="f">${t("priority")}</label><select id="pp">${PRIORITIES.map((x) => `<option value="${x}" ${x === p.priority ? "selected" : ""}>${t(x)}</option>`).join("")}</select>
-  <label class="f">${t("reason")}</label><input type="text" id="pr" value="${esc(p.reason)}"><label class="f">${t("comment")}</label><textarea id="pc" rows="2" style="width:100%">${esc(p.comment)}</textarea>
+  <label class="f">${t("comment")}</label><textarea id="pc" rows="2" style="width:100%">${esc(p.comment)}</textarea>
   <div class="row" style="margin-top:12px"><button class="btn pri" id="ok">${t("save")}</button><button class="btn dng" id="del">${t("delete")}</button><button class="btn" id="no">${t("cancel")}</button></div>`, (el) => {
       el.querySelector("#no").onclick = () => {
         closeSheet();
         render();
       };
       el.querySelector("#ok").onclick = () => {
-        p.priority = el.querySelector("#pp").value;
-        p.reason = el.querySelector("#pr").value;
         p.comment = el.querySelector("#pc").value;
         savePlan();
         closeSheet();
@@ -1702,7 +2410,7 @@ input,select,textarea{font-size:16px!important}
       };
       el.querySelector("#ok").onclick = () => {
         const d = el.querySelector("#d").value;
-        if (isDuplicate(S.plan, p.customerId, d)) return toast(t("alreadyIn"));
+        if (isDuplicate(S.plan, p.customerId, d, p.pid)) return toast(t("alreadyIn"));
         S.pending = S.pending.filter((x) => x.pid !== p.pid);
         p.visitDate = d;
         p.order = 9999;
@@ -1730,8 +2438,15 @@ input,select,textarea{font-size:16px!important}
     toast(t("suggestNote"));
     render();
   }
+  function planStoreLabel(p) {
+    const store = byId.get(String(p.customerId));
+    return str(p.storeName) || str(store && store.storeName) || extractStoreName(p.address) || str(p.customerName) || str(p.customerId);
+  }
   function pagePlan(v) {
-    if (!S.weekStart) S.weekStart = weekStartOf(todayISO());
+    if (!S.weekStart) {
+      S.weekStart = weekStartOf(todayISO());
+      if (dayKeyOfISO(todayISO()) === "Friday") S.weekStart = addDaysISO(S.weekStart, 7);
+    }
     const days = [...Array(6)].map((_, i) => addDaysISO(S.weekStart, i));
     S.selDay = days.includes(S.selDay) ? S.selDay : days.includes(todayISO()) ? todayISO() : days[0];
     const items = sortedForDay(S.plan, S.selDay);
@@ -1739,11 +2454,10 @@ input,select,textarea{font-size:16px!important}
     v.innerHTML = `<div class="pad wrap"><div class="row"><button class="btn sm" id="pw">\u2039 ${t("prevWeek")}</button><span class="sp mu" style="text-align:center">${t("week")} <span style="direction:ltr;unicode-bidi:isolate;display:inline-block">${jd(days[0])} \u2013 ${jd(days[5])}</span></span><button class="btn sm" id="nw">${t("nextWeek")} \u203A</button></div>
   <div class="tabs" style="margin-top:8px">${days.map((d) => `<button class="btn sm ${d === S.selDay ? "on" : ""}" data-d="${d}">${t("d_" + dayKeyOfISO(d))}<br>${jd(d).slice(5)} (${cnt(d)})</button>`).join("")}</div>
   <div class="row" style="margin:6px 0"><button class="btn sm" id="sg">${t("suggest")}</button><button class="btn sm pri" id="pm">${ic("map")} ${t("planMap")}</button><span class="sp"></span><span class="mu">\u2714 ${items.filter((p) => p.visit === "done").length}/${items.length}</span></div>
-  ${S.plan.length + S.pending.length && lsGet("lastBackup", {}).sig !== sigOf() ? `<div class="card" style="border-color:var(--o)"><div class="mu">\u26A0 ${t("backupDirty")}</div><button class="btn sm pri" id="bk2" style="margin-top:6px">${t("backup")}</button></div>` : ""}
-  <div id="pl">${items.map((p, i) => `<div class="card"><div class="row"><span class="num">${i + 1}</span><b>${esc(p.storeName || p.customerName)}</b><span class="chip">${t(p.priority)}</span><span class="chip">${t(p.source)}</span>${p.visit ? `<span class="chip ${p.visit === "done" ? "g" : "r"}">${t("v_" + p.visit)}</span>` : ""}<span class="sp"></span></div><div class="mu">${esc(p.customerName)} \xB7 ${esc(p.customerId)} \xB7 ${esc(p.route)}</div><div class="mu">${esc(p.address)}</div>${p.reason ? `<div class="mu">${t("reason")}: ${esc(p.reason)}</div>` : ""}${p.comment ? `<div class="mu">${esc(p.comment)}</div>` : ""}<div class="row" style="margin-top:6px"><button class="btn sm" data-up="${p.pid}" ${i === 0 ? "disabled" : ""}>\u2191</button><button class="btn sm" data-dn="${p.pid}" ${i === items.length - 1 ? "disabled" : ""}>\u2193</button><button class="btn sm" data-ed="${p.pid}">${t("edit")}</button><button class="btn sm" data-sd="${p.pid}">${t("details")}</button><button class="btn sm" data-vd="${p.pid}">\u2714</button><button class="btn sm" data-vs="${p.pid}">\u2716</button></div></div>`).join("") || `<div class="card mu">${t("noVisits")}</div>`}</div>
-  ${S.pending.length ? `<h3>${t("pending")} (${S.pending.length})</h3>${S.pending.map((p) => `<div class="card"><div class="row"><b>${esc(p.storeName || p.customerName)}</b><span class="chip">${jd(p.visitDate)}</span><span class="chip">${t(p.priority)}</span><span class="chip">External</span></div><div class="mu">${esc(p.customerId)} \xB7 ${esc(p.address)}</div>${p.reason ? `<div class="mu">${esc(p.reason)}</div>` : ""}<div class="row" style="margin-top:6px"><button class="btn sm pri" data-ap="${p.pid}">${t("approve")}</button><button class="btn sm" data-mv="${p.pid}">${t("moveDay")}</button><button class="btn sm dng" data-rj="${p.pid}">${t("reject")}</button></div></div>`).join("")}` : ""}
+  <div id="pl">${items.map((p, i) => `<div class="card"><div class="row"><span class="num">${i + 1}</span><b>${esc(planStoreLabel(p))}</b><span class="chip">${t(p.source)}</span>${p.visit ? `<span class="chip ${p.visit === "done" ? "g" : "r"}">${t("v_" + p.visit)}</span>` : ""}<span class="sp"></span></div><div class="mu">${esc(p.customerName)} \xB7 ${esc(p.customerId)} \xB7 ${esc(p.route)}</div><div class="mu">${esc(p.address)}</div>${p.reason ? `<div class="mu">${t("reason")}: ${esc(p.reason)}</div>` : ""}${p.comment ? `<div class="mu">${esc(p.comment)}</div>` : ""}<div class="row" style="margin-top:6px"><button class="btn sm" data-up="${p.pid}" ${i === 0 ? "disabled" : ""}>\u2191</button><button class="btn sm" data-dn="${p.pid}" ${i === items.length - 1 ? "disabled" : ""}>\u2193</button><button class="btn sm" data-ed="${p.pid}">${t("edit")}</button><button class="btn sm" data-sd="${p.pid}">${t("details")}</button><button class="btn sm" data-vd="${p.pid}">\u2714</button><button class="btn sm" data-vs="${p.pid}">\u2716</button><button class="btn sm dng" data-rp="${p.pid}" aria-label="${t("removePlan")}" title="${t("removePlan")}">🗑️</button></div></div>`).join("") || `<div class="card mu">${t("noVisits")}</div>`}</div>
+  ${S.pending.length ? `<h3>${t("pending")} (${S.pending.length})</h3>${S.pending.map((p) => `<div class="card"><div class="row"><b>${esc(p.storeName || p.customerName)}</b><span class="chip">${jd(p.visitDate)}</span><span class="chip">External</span></div><div class="mu">${esc(p.customerId)} \xB7 ${esc(p.address)}</div>${p.reason ? `<div class="mu">${esc(p.reason)}</div>` : ""}<div class="row" style="margin-top:6px"><button class="btn sm pri" data-ap="${p.pid}">${t("approve")}</button><button class="btn sm" data-mv="${p.pid}">${t("moveDay")}</button><button class="btn sm dng" data-rj="${p.pid}">${t("reject")}</button></div></div>`).join("")}` : ""}
   ${S.importErrors.length ? `<h3 class="err">${t("errorsReport")} (${S.importErrors.length})</h3><table class="t">${S.importErrors.map((e) => `<tr><td>${t("row")} ${e.row}</td><td>${esc(e.id)}</td><td class="err">${t("E_" + e.reason)}</td></tr>`).join("")}</table>` : ""}
-  <div class="row" style="margin-top:14px"><button class="btn pri" id="ex">${t("exportPlan")}</button><label class="btn">${t("importPlan")}<input type="file" id="im" accept=".xlsx" hidden></label><button class="btn" id="bk">${t("backup")}</button><button class="btn" id="rs">${t("restore")}</button></div></div>`;
+  <div class="row" style="margin-top:14px"><button class="btn pri" id="ex">${t("exportPlan")}</button><label class="btn">${t("importPlan")}<input type="file" id="im" accept=".xlsx" hidden></label></div></div>`;
     v.querySelector("#pw").onclick = () => {
       S.weekStart = addDaysISO(S.weekStart, -7);
       render();
@@ -1771,10 +2485,14 @@ input,select,textarea{font-size:16px!important}
     };
     v.querySelectorAll("[data-vd]").forEach((b) => b.onclick = () => vis(b.dataset.vd, "done"));
     v.querySelectorAll("[data-vs]").forEach((b) => b.onclick = () => vis(b.dataset.vs, "skip"));
-    v.querySelector("#bk").onclick = backupPlan;
-    v.querySelector("#rs").onclick = restorePlan;
-    const b2 = v.querySelector("#bk2");
-    if (b2) b2.onclick = backupPlan;
+    v.querySelectorAll("[data-rp]").forEach((b) => b.onclick = () => {
+      const p = S.plan.find((x) => x.pid === b.dataset.rp);
+      if (!p || !confirm(t("confirmRemoveVisit"))) return;
+      S.plan = S.plan.filter((x) => x.pid !== p.pid);
+      renumber(S.plan, p.visitDate);
+      savePlan();
+      render();
+    });
     const mv = (pid, dir) => {
       const l = sortedForDay(S.plan, S.selDay), i = l.findIndex((p) => p.pid === pid), j = i + dir;
       if (j < 0 || j >= l.length) return;
@@ -1851,33 +2569,73 @@ input,select,textarea{font-size:16px!important}
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), "Report");
     saveXlsx(wb, `TPA_${kind}_${todayISO()}.xlsx`);
   }
+  function invoicedSalesSummary(fromText, toText) {
+    const raw = S.raw;
+    if (!raw || !raw.sales) return { error: t("salesSummaryUnavailable") };
+    const h = findHeader(raw.sales, ["Status", "invoicedate", "کد مشتری", "وزن خالص", "قیمت واحد", "تعداد"]);
+    if (!h) return { error: t("salesSummaryUnavailable") };
+    const fy = yearFromFileName(raw.names && raw.names.sales);
+    const from = fromText ? parseDate(fromText, fy) : null;
+    const to = toText ? parseDate(toText, fy) : null;
+    if ((fromText && !from) || (toText && !to) || (from && to && from > to)) {
+      return { error: t("salesDateError") };
+    }
+    let invoiceRows = 0, totalKg = 0, totalAmount = 0, missingWeight = 0, missingAmount = 0;
+    const activeCustomers = new Set();
+    for (let i = h.row + 1; i < raw.sales.length; i++) {
+      const row = raw.sales[i] || [];
+      if (str(cell(row, h.idx, "Status")).toLowerCase() !== "invoiced") continue;
+      const invoiceDate = parseDate(cell(row, h.idx, "invoicedate"), fy);
+      if (!invoiceDate || (from && invoiceDate < from) || (to && invoiceDate > to)) continue;
+      invoiceRows++;
+      const customerCode = normCode(cell(row, h.idx, "کد مشتری"));
+      if (customerCode) activeCustomers.add(customerCode);
+      const weight = num(cell(row, h.idx, "وزن خالص"));
+      if (weight === null) missingWeight++;
+      else totalKg += weight;
+      const price = num(cell(row, h.idx, "قیمت واحد"));
+      const quantity = num(cell(row, h.idx, "تعداد"));
+      if (price === null || quantity === null) missingAmount++;
+      else totalAmount += price * quantity;
+    }
+    return { invoiceRows, activeCustomers: activeCustomers.size, tons: totalKg / 1000, amount: totalAmount, missingWeight, missingAmount };
+  }
+
   function pageData(v) {
     var _a;
     const r = S.raw, st = (_a = S.ds) == null ? void 0 : _a.stats, qa = S.ds ? quality() : null;
-    v.innerHTML = `<div class="pad wrap"><div class="card"><h2>${t("files")}</h2>
-  ${[["jp", "fJP"], ["sales", "fSales"], ["map", "fMap"]].map(([k, l]) => {
-      var _a2;
-      return `<label class="f">${t(l)}${((_a2 = r == null ? void 0 : r.names) == null ? void 0 : _a2[k]) ? ` \u2014 <b>${esc(r.names[k])}</b>` : ""}</label><input type="file" data-k="${k}" accept=".xlsx,.xls,.csv">`;
-    }).join("")}
-  <div class="row" style="margin-top:10px"><button class="btn pri" id="ld">${t("load")}</button></div><div id="msg" class="err" style="margin-top:6px"></div></div>
-  <div class="card"><h2>${t("drive")}</h2><div class="mu">${t("driveNote")}</div><button class="btn pri" id="ds" style="margin-top:8px">${t("driveSync")}</button><div class="row" style="margin-top:6px"><button class="btn sm" id="bk3">${t("backup")}</button><button class="btn sm" id="rs3">${t("restore")}</button></div><div id="dmsg" class="mu"></div></div>
-  ${qa ? `<div class="card"><h2>${t("quality")}</h2><table class="t">${qa.map(([k, n, tot]) => `<tr><td>${t("q_" + k)}</td><td>${n}${tot ? ` <span class="mu">(${Math.round(n * 100 / tot)}%)</span>` : ""}</td></tr>`).join("")}</table></div>` : ""}
+    const salesSummaryCard = S.ds ? `<div class="card"><h2>${t("salesSummary")}</h2>
+      <div class="row" style="gap:18px;margin-top:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:130px"><div class="mu">${t("salesTon")}</div><b id="salesTons" style="font-size:22px">—</b></div>
+        <div style="flex:1;min-width:160px"><div class="mu">${t("salesAmount")}</div><b id="salesAmount" style="font-size:22px">—</b></div>
+      </div>
+      <div style="margin-top:18px"><div class="mu">${t("salesInvoiceRows")}</div><b id="salesInvoiceRows" style="font-size:22px">—</b></div>
+      <div id="salesSummaryNote" class="mu" role="status" aria-live="polite" style="margin-top:8px"></div>
+    </div>` : ""; 
+    v.innerHTML = `<div class="pad wrap">${salesSummaryCard}  ${qa ? `<div class="card"><h2>${t("quality")}</h2><table class="t">${qa.map(([k, n, tot]) => `<tr><td>${t("q_" + k)}</td><td>${n}${tot ? ` <span class="mu">(${Math.round(n * 100 / tot)}%)</span>` : ""}</td></tr>`).join("")}</table></div>` : ""}
   ${S.ds ? `<div class="card"><h2>${t("stats")}</h2><div class="mu">${t("lastSync")}: ${esc(r.at ? new Date(r.at).toLocaleString(getLang() === "fa" ? "fa-IR-u-ca-persian" : "en-GB") : "")}</div><div>JP: ${st.jp} \xB7 ${t("salesOnly")}: ${st.salesOnly} \xB7 ${t("orders")}: ${st.orders} \xB7 Closed/expired: ${st.droppedRows}</div><div class="mu">${t("noteClosedUndel")}</div></div>
-  <div class="card"><h2>${t("reports")}</h2><div class="row">${[["nogps", "rNoGPS"], ["nobuy", "rNoBuy"], ["open", "rOpen"], ["overdue", "rOverdue"]].map(([k, l]) => `<button class="btn sm" data-r="${k}">\u2B07 ${t(l)} (${reportRows(k).length - 1})</button>`).join("")}</div></div>` : ""}</div>`;
-    v.querySelector("#ld").onclick = async () => {
-      const files = {};
-      try {
-        for (const i of v.querySelectorAll("input[type=file]")) if (i.files[0]) files[i.dataset.k] = { aoa: await readAoa(i.files[0]), name: i.files[0].name };
-        await ingest(files);
-        toast(t("ok"));
-      } catch (e) {
-        $("#msg").textContent = t("errParse") + " " + e.message;
-      }
-    };
-    v.querySelector("#ds").onclick = driveSync;
-    v.querySelector("#bk3").onclick = backupPlan;
-    v.querySelector("#rs3").onclick = restorePlan;
+  <div class="card"><h2>${t("reports")}</h2><div class="row">${[["nogps", "rNoGPS"], ["nobuy", "rNoBuy"], ["open", "rOpen"], ["overdue", "rOverdue"]].map(([k, l]) => `<button class="btn sm" data-r="${k}">\u2B07 ${t(l)} (${reportRows(k).length - 1})</button>`).join("")}</div></div>
+  </div>` : ""}</div>`;
     v.querySelectorAll("[data-r]").forEach((b) => b.onclick = () => exportReport(b.dataset.r));
+    const refreshSalesSummary = () => {
+      const result = invoicedSalesSummary("", "");
+      const note = v.querySelector("#salesSummaryNote");
+      if (result.error) {
+        v.querySelector("#salesTons").textContent = "—";
+        v.querySelector("#salesAmount").textContent = "—";
+        v.querySelector("#salesInvoiceRows").textContent = "—";
+        note.textContent = result.error;
+        return;
+      }
+      const locale = getLang() === "fa" ? "fa-IR" : "en-US";
+      const fmt = (value, digits = 0) => new Intl.NumberFormat(locale, { maximumFractionDigits: digits, minimumFractionDigits: digits }).format(value);
+      v.querySelector("#salesTons").textContent = fmt(result.tons, 2);
+      v.querySelector("#salesAmount").textContent = fmt(result.amount);
+      v.querySelector("#salesInvoiceRows").textContent = fmt(result.activeCustomers);
+      const incomplete = result.missingWeight + result.missingAmount;
+      note.textContent = result.invoiceRows === 0 ? t("salesNoRows") : incomplete ? t("salesIncomplete") + " " + fmt(incomplete) : "";
+    };
+    refreshSalesSummary();
   }
   var gToken = null;
   var scripts = {};
@@ -1897,8 +2655,29 @@ input,select,textarea{font-size:16px!important}
   async function driveToken() {
     if (gToken && gToken.exp > Date.now() + 3e4) return gToken.v;
     if (!S.settings.clientId || !S.settings.folderId) throw new Error("Settings: Client ID / Folder ID");
-    await loadScript("https://accounts.google.com/gsi/client");
-    return new Promise((res, rej) => google.accounts.oauth2.initTokenClient({ client_id: S.settings.clientId, scope: SCOPE, error_callback: (e) => rej(new Error(e.type || "OAuth popup")), callback: (r) => r.access_token ? (gToken = { v: r.access_token, exp: Date.now() + (r.expires_in || 3e3) * 1e3 }, res(r.access_token)) : rej(new Error(r.error || "OAuth")) }).requestAccessToken());
+    // Keep the OAuth popup request in the original user-gesture call stack.
+    // Awaiting even an already-loaded script can consume Safari's transient activation.
+    if (!window.google?.accounts?.oauth2) {
+      await loadScript("https://accounts.google.com/gsi/client");
+      if (!window.google?.accounts?.oauth2) throw new Error("Google sign-in is still loading. Please tap the action again.");
+    }
+    return new Promise((res, rej) => {
+      const client = google.accounts.oauth2.initTokenClient({
+        client_id: S.settings.clientId,
+        scope: SCOPE,
+        error_callback: (e) => {
+          const reason = e && e.type;
+          const message = reason === "popup_failed_to_open"
+            ? "Google sign-in popup was blocked. Allow pop-ups for this site and tap again."
+            : (reason || "OAuth popup");
+          rej(new Error(message));
+        },
+        callback: (r) => r.access_token
+          ? (gToken = { v: r.access_token, exp: Date.now() + (r.expires_in || 3e3) * 1e3 }, res(r.access_token))
+          : rej(new Error(r.error || "OAuth"))
+      });
+      client.requestAccessToken();
+    });
   }
   async function gfetch(url, opt = {}) {
     const tok = await driveToken();
@@ -1960,13 +2739,163 @@ input,select,textarea{font-size:16px!important}
       toast(t("errParse") + " " + e.message);
     }
   }
+  var LOCAL_AUDIT_DB = "tpa-nav-audit-backup";
+  async function localAuditDb() {
+    return await new Promise((resolve, reject) => {
+      const req = indexedDB.open(LOCAL_AUDIT_DB, 1);
+      req.onupgradeneeded = () => req.result.createObjectStore("backup");
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+  async function saveLocalAuditForms(forms) {
+    const idb = await localAuditDb();
+    return await new Promise((resolve, reject) => {
+      const tx = idb.transaction("backup", "readwrite");
+      tx.objectStore("backup").put({ v: 1, at: Date.now(), forms: Array.isArray(forms) ? forms : [] }, "forms");
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error);
+    });
+  }
+  async function readLocalAuditForms() {
+    const idb = await localAuditDb();
+    return await new Promise((resolve, reject) => {
+      const req = idb.transaction("backup", "readonly").objectStore("backup").get("forms");
+      req.onsuccess = () => resolve(req.result && Array.isArray(req.result.forms) ? req.result.forms : []);
+      req.onerror = () => reject(req.error);
+    });
+  }
+  async function saveLocalAuditDrafts() {
+    const idb = await localAuditDb();
+    const source = await open();
+    const keys = await new Promise((resolve, reject) => {
+      const req = source.transaction(ST, "readonly").objectStore(ST).getAllKeys();
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => reject(req.error);
+    });
+    const draftKeys = keys.filter((k) => typeof k === "string" && k.startsWith("fd_"));
+    const drafts = await Promise.all(draftKeys.map(async (key) => ({ key, value: await dbGet(key) })));
+    return await new Promise((resolve, reject) => {
+      const tx = idb.transaction("backup", "readwrite");
+      tx.objectStore("backup").put({ v: 1, at: Date.now(), drafts }, "drafts");
+      tx.oncomplete = () => resolve(drafts.length);
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error);
+    });
+  }
+  async function restoreLocalAuditDrafts() {
+    const idb = await localAuditDb();
+    const saved = await new Promise((resolve, reject) => {
+      const req = idb.transaction("backup", "readonly").objectStore("backup").get("drafts");
+      req.onsuccess = () => resolve(req.result && Array.isArray(req.result.drafts) ? req.result.drafts : []);
+      req.onerror = () => reject(req.error);
+    });
+    let restored = 0;
+    for (const item of saved) {
+      if (!item || typeof item.key !== "string" || !item.key.startsWith("fd_") || !item.value) continue;
+      const current = await dbGet(item.key);
+      if (!current || Number(item.value.t || 0) > Number(current.t || 0)) {
+        await dbSet(item.key, item.value);
+        restored++;
+      }
+    }
+    return restored;
+  }
+  async function restoreLocalAuditForms() {
+    const [primary, backup] = await Promise.all([dbGet("forms"), readLocalAuditForms()]);
+    const merged = new Map();
+    for (const form of [...(Array.isArray(primary) ? primary : []), ...backup]) {
+      if (!form || !form.id) continue;
+      const old = merged.get(form.id);
+      const stamp = (x) => String(x.updated || x.timestamp || "");
+      if (!old || stamp(form) >= stamp(old)) merged.set(form.id, form);
+    }
+    const forms = [...merged.values()];
+    if (forms.length !== (Array.isArray(primary) ? primary.length : 0) || backup.length) {
+      await dbSet("forms", forms);
+      await saveLocalAuditForms(forms);
+    }
+    return forms.length;
+  }
+  var FBK = "tpa_audit_forms_backup.json";
+  async function findAuditBackup() {
+    const q = encodeURIComponent(`name='${FBK}' and trashed=false`);
+    const r = await gfetch(`https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=${q}&fields=files(id,name,modifiedTime)&pageSize=10`);
+    return (await r.json()).files[0] || null;
+  }
+  async function readAuditDrafts() {
+    const idb = await open();
+    const keys = await new Promise((res, rej) => {
+      const req = idb.transaction(ST, "readonly").objectStore(ST).getAllKeys();
+      req.onsuccess = () => res(req.result || []);
+      req.onerror = () => rej(req.error);
+    });
+    const draftKeys = keys.filter((k) => typeof k === "string" && k.startsWith("fd_"));
+    return Promise.all(draftKeys.map(async (key) => ({ key, value: await dbGet(key) })));
+  }
+  async function backupAuditForms() {
+    try {
+      toast(t("syncing"));
+      const [forms, drafts, ex] = await Promise.all([dbGet("forms"), readAuditDrafts(), findAuditBackup()]);
+      const safeForms = Array.isArray(forms) ? forms : [];
+      const body = JSON.stringify({ v: 1, type: "tpa-audit-forms", at: new Date().toISOString(), forms: safeForms, drafts });
+      const boundary = "tpaaudit" + Date.now();
+      const meta = ex ? {} : { name: FBK, parents: ["appDataFolder"] };
+      const multipart = `--${boundary}\r
+Content-Type: application/json; charset=UTF-8\r
+\r
+${JSON.stringify(meta)}\r
+--${boundary}\r
+Content-Type: application/json; charset=UTF-8\r
+\r
+${body}\r
+--${boundary}--`;
+      await gfetch(ex ? `https://www.googleapis.com/upload/drive/v3/files/${ex.id}?uploadType=multipart` : "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart", {
+        method: ex ? "PATCH" : "POST",
+        headers: { "Content-Type": `multipart/related; boundary=${boundary}` },
+        body: multipart
+      });
+      toast(`${t("backupOk")} · ${safeForms.length} · ${drafts.length}`);
+    } catch (e) {
+      toast(t("errParse") + " " + e.message);
+    }
+  }
+  async function restoreAuditForms() {
+    try {
+      const ex = await findAuditBackup();
+      if (!ex) return toast(t("noBackup"));
+      const backup = await (await gfetch(`https://www.googleapis.com/drive/v3/files/${ex.id}?alt=media`)).json();
+      if (backup.type !== "tpa-audit-forms" || !Array.isArray(backup.forms) || !Array.isArray(backup.drafts)) throw new Error("Invalid audit backup");
+      const localForms = await dbGet("forms") || [];
+      const incomingIds = new Set(localForms.map((x) => x && x.id).filter(Boolean));
+      const additions = backup.forms.filter((x) => x && x.id && !incomingIds.has(x.id));
+      if (!confirm(`${t("auditRestoreConfirm")}\n${new Date(ex.modifiedTime).toLocaleString()} · ${backup.forms.length} · ${backup.drafts.length}`)) return;
+      const mergedForms = localForms.concat(additions);
+      await dbSet("forms", mergedForms);
+      await saveLocalAuditForms(mergedForms);
+      let restoredDrafts = 0;
+      for (const item of backup.drafts) {
+        if (!item || typeof item.key !== "string" || !item.key.startsWith("fd_") || !item.value) continue;
+        const local = await dbGet(item.key);
+        if (!local || Number(item.value.t || 0) > Number(local.t || 0)) {
+          await dbSet(item.key, item.value);
+          restoredDrafts++;
+        }
+      }
+      toast(`${t("ok")} · +${additions.length} · ${restoredDrafts}`);
+    } catch (e) {
+      toast(t("errParse") + " " + e.message);
+    }
+  }
+
   var BK = "tpa_plan_backup.json";
   var findBackup = async () => (await (await gfetch(`https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=${encodeURIComponent(`name='${BK}'`)}&fields=files(id,modifiedTime)`)).json()).files[0];
   async function backupPlan() {
     try {
       toast(t("syncing"));
       const ex = await findBackup(), bd = "tpa" + Date.now();
-      const body = JSON.stringify({ v: 1, at: (/* @__PURE__ */ new Date()).toISOString(), plan: S.plan, pending: S.pending }), meta = ex ? {} : { name: BK, parents: ["appDataFolder"] };
+      const body = JSON.stringify({ v: 2, at: (/* @__PURE__ */ new Date()).toISOString(), plan: S.plan, pending: S.pending, filters: S.filters, savedFilters: savedFilters() }), meta = ex ? {} : { name: BK, parents: ["appDataFolder"] };
       const mp = `--${bd}\r
 Content-Type: application/json; charset=UTF-8\r
 \r
@@ -1994,6 +2923,9 @@ ${body}\r
 ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
       S.plan = d.plan;
       S.pending = Array.isArray(d.pending) ? d.pending : [];
+      if (d.filters && typeof d.filters === "object") S.filters = { ...S.filters, ...d.filters };
+      if (Array.isArray(d.savedFilters)) lsSet("savedFilters", d.savedFilters);
+      saveFilterState();
       await savePlan();
       lsSet("lastBackup", { at: Date.now(), sig: sigOf() });
       toast(t("ok"));
@@ -2002,6 +2934,221 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
       toast(t("errParse") + " " + e.message);
     }
   }
+  // TPA_FULL_SYSTEM_CLOUD_BACKUP_V1
+  var TPA_FULL_BACKUP_FILE = "tpa_full_system_backup_v1.json";
+  async function readFullBackupState() {
+    const idb = await open();
+    const entries = await new Promise((resolve, reject) => {
+      const tx = idb.transaction(ST, "readonly"), store = tx.objectStore(ST);
+      const kr = store.getAllKeys(), vr = store.getAll();
+      tx.oncomplete = () => resolve((kr.result || []).map((key, i) => [key, vr.result[i]]));
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error);
+    });
+    const local = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key !== null) local[key] = localStorage.getItem(key);
+    }
+    return { entries, localStorage: local };
+  }
+  async function replacePrimaryStore(entries) {
+    const idb = await open();
+    await new Promise((resolve, reject) => {
+      const tx = idb.transaction(ST, "readwrite"), store = tx.objectStore(ST);
+      store.clear();
+      for (const entry of entries) {
+        if (!Array.isArray(entry) || entry.length !== 2) throw new Error("Invalid backup entry");
+        store.put(entry[1], entry[0]);
+      }
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error || new Error("Restore transaction aborted"));
+    });
+  }
+  async function replaceLocalStorage(values) {
+    localStorage.clear();
+    for (const [key, value] of Object.entries(values || {})) localStorage.setItem(key, value);
+  }
+  async function listFullSystemBackups() {
+    const query = encodeURIComponent("trashed=false and (name contains 'tpa_full_system_backup_v1_' or name = '" + TPA_FULL_BACKUP_FILE + "')");
+    const files = [];
+    let pageToken = "";
+    do {
+      const page = pageToken ? "&pageToken=" + encodeURIComponent(pageToken) : "";
+      const response = await gfetch("https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=" + query + "&orderBy=createdTime desc&fields=nextPageToken,files(id,name,createdTime,modifiedTime,size,mimeType)&pageSize=100" + page);
+      const data = await response.json();
+      files.push(...(data.files || []));
+      pageToken = data.nextPageToken || "";
+    } while (pageToken);
+    return files.sort((a, b) => new Date(b.createdTime || b.modifiedTime || 0) - new Date(a.createdTime || a.modifiedTime || 0));
+  }
+  function fullBackupDate(file) {
+    const value = file.createdTime || file.modifiedTime;
+    const date = value ? new Date(value) : null;
+    return date && !Number.isNaN(date.getTime())
+      ? date.toLocaleString(getLang() === "fa" ? "fa-IR" : "en-US")
+      : (getLang() === "fa" ? "زمان نامشخص" : "Unknown date");
+  }
+  function fullBackupSize(bytes) {
+    const n = Number(bytes || 0);
+    if (!n) return getLang() === "fa" ? "حجم نامشخص" : "Size unavailable";
+    if (n < 1024) return n + " B";
+    if (n < 1048576) return (n / 1024).toFixed(1) + " KB";
+    return (n / 1048576).toFixed(2) + " MB";
+  }
+  async function refreshFullSystemBackupList() {
+    const box = $("#fullBackupList");
+    if (!box) return;
+    box.innerHTML = '<div class="mu">' + (getLang() === "fa" ? "در حال دریافت فهرست نسخه‌های پشتیبان..." : "Loading backup versions...") + '</div>';
+    try {
+      const files = await listFullSystemBackups();
+      const status = $("#fullBackupStatus");
+      if (status) status.textContent = files.length
+        ? (getLang() === "fa" ? "تعداد نسخه‌های موجود: " : "Available versions: ") + files.length + " · " + (getLang() === "fa" ? "آخرین نسخه: " : "Latest: ") + fullBackupDate(files[0])
+        : (getLang() === "fa" ? "هنوز نسخه پشتیبان ابری ثبت نشده است" : "No cloud backup has been created yet");
+      if (!files.length) {
+        box.innerHTML = '<div class="mu">' + (getLang() === "fa" ? "هیچ نسخه پشتیبانی در Google Drive پیدا نشد." : "No backup versions were found in Google Drive.") + '</div>';
+        return;
+      }
+      box.innerHTML = '<div class="mu" style="margin:8px 0">' +
+        (getLang() === "fa" ? "برای بازیابی یا حذف، عملیات موردنظر را برای نسخه انتخاب کنید." : "Choose whether to restore or delete each backup version.") +
+        '</div>' + files.map((file, index) =>
+          '<div class="card" style="margin-top:8px;padding:10px">' +
+          '<div class="row" style="justify-content:space-between;gap:8px"><b>' +
+          (index === 0 ? (getLang() === "fa" ? "آخرین نسخه" : "Latest version") : (getLang() === "fa" ? "نسخه پشتیبان" : "Backup version")) +
+          '</b><span class="mu">' + esc(fullBackupSize(file.size)) + '</span></div>' +
+          '<div style="margin-top:4px">' + esc(fullBackupDate(file)) + '</div>' +
+          '<div class="mu" style="margin-top:3px;word-break:break-all">' + esc(file.name) + '</div>' +
+          '<div class="row" style="margin-top:8px;gap:8px">' +
+          '<button type="button" class="btn sm pri" data-full-restore-id="' + esc(file.id) + '">' + (getLang() === "fa" ? "بازیابی" : "Restore") + '</button>' +
+          '<button type="button" class="btn sm dng" data-full-delete-id="' + esc(file.id) + '">' + (getLang() === "fa" ? "حذف نسخه" : "Delete backup") + '</button></div></div>'
+        ).join("");
+      box.querySelectorAll("[data-full-restore-id]").forEach(button => {
+        button.onclick = () => {
+          const selected = files.find(file => file.id === button.getAttribute("data-full-restore-id"));
+          if (selected) restoreEntireSystem(selected);
+        };
+      });
+      box.querySelectorAll("[data-full-delete-id]").forEach(button => {
+        button.onclick = () => {
+          const selected = files.find(file => file.id === button.getAttribute("data-full-delete-id"));
+          if (selected) deleteFullSystemBackup(selected);
+        };
+      });
+    } catch (e) {
+      box.innerHTML = '<div class="err">' + esc((getLang() === "fa" ? "دریافت فهرست نسخه‌ها ناموفق بود: " : "Could not load backup versions: ") + e.message) + '</div>';
+    }
+  }
+  async function deleteFullSystemBackup(file) {
+    try {
+      if (!file || !file.id) throw new Error("A backup version must be selected");
+      const confirmText = getLang() === "fa"
+        ? "آیا از حذف دائمی این نسخه پشتیبان از Google Drive مطمئن هستید؟\n\nتاریخ: " + fullBackupDate(file) + "\nنام فایل: " + file.name + "\n\nاین عملیات فقط همین فایل پشتیبان را حذف می‌کند و قابل بازگشت نیست."
+        : "Permanently delete this backup from Google Drive?\n\nDate: " + fullBackupDate(file) + "\nFile: " + file.name + "\n\nOnly this backup file will be deleted. This cannot be undone.";
+      if (!confirm(confirmText)) return;
+      await gfetch("https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(file.id), { method: "DELETE" });
+      toast(getLang() === "fa" ? "نسخه پشتیبان حذف شد" : "Backup deleted");
+      await refreshFullSystemBackupList();
+    } catch (e) {
+      toast((getLang() === "fa" ? "حذف نسخه پشتیبان ناموفق بود: " : "Could not delete backup: ") + e.message);
+    }
+  }
+  async function uploadFullSystemBackup(payload) {
+    const body = JSON.stringify(payload), bytes = new TextEncoder().encode(body);
+    const stamp = new Date(payload.createdAt).toISOString().replace(/[-:.]/g, "").replace("T", "_");
+    const fileName = "tpa_full_system_backup_v1_" + stamp + ".json";
+    const metadata = { name: fileName, parents: ["appDataFolder"], mimeType: "application/json" };
+    const session = await gfetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable", {
+      method: "POST",
+      headers: { "Content-Type": "application/json; charset=UTF-8", "X-Upload-Content-Type": "application/json", "X-Upload-Content-Length": String(bytes.length) },
+      body: JSON.stringify(metadata)
+    });
+    const uploadUrl = session.headers.get("Location");
+    if (!uploadUrl) throw new Error("Google Drive did not return a resumable upload URL");
+    await gfetch(uploadUrl, { method: "PUT", headers: { "Content-Type": "application/json" }, body: bytes });
+    return { bytes: bytes.length, fileName };
+  }
+  async function backupEntireSystem() {
+    try {
+      // Start Google OAuth synchronously from the Create Backup tap, before
+      // IndexedDB reads/checksum work can cause iOS Safari to block the popup.
+      await driveToken();
+      toast(t("syncing"));
+      const state = await readFullBackupState();
+      const payload = {
+        app: "tpa-navigation",
+        type: "tpa-full-system-backup",
+        version: 1,
+        createdAt: new Date().toISOString(),
+        database: { name: DB, store: ST, entries: state.entries },
+        localStorage: state.localStorage,
+        counts: { databaseEntries: state.entries.length, localStorageKeys: Object.keys(state.localStorage).length }
+      };
+      payload.checksum = await sha(JSON.stringify(payload));
+      const result = await uploadFullSystemBackup(payload);
+      const sizeMb = (result.bytes / 1048576).toFixed(2);
+      toast((getLang() === "fa" ? "پشتیبان کامل با موفقیت در Google Drive ذخیره شد" : "Full system backup saved to Google Drive") + " · " + sizeMb + " MB");
+      const status = document.querySelector("#fullBackupStatus");
+      if (status) status.textContent = (getLang() === "fa" ? "آخرین پشتیبان: " : "Last backup: ") + new Date(payload.createdAt).toLocaleString(getLang() === "fa" ? "fa-IR" : "en-US");
+      await refreshFullSystemBackupList();
+    } catch (e) {
+      toast(t("errParse") + " " + e.message);
+    }
+  }
+  async function restoreEntireSystem(file) {
+    try {
+      if (!file || !file.id) throw new Error("A backup version must be selected");
+      const response = await gfetch("https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(file.id) + "?alt=media");
+      const payload = await response.json();
+      if (!payload || payload.app !== "tpa-navigation" || payload.type !== "tpa-full-system-backup" ||
+          payload.version !== 1 || !payload.database || payload.database.name !== DB ||
+          payload.database.store !== ST || !Array.isArray(payload.database.entries) ||
+          !payload.localStorage || typeof payload.localStorage !== "object" || Array.isArray(payload.localStorage)) {
+        throw new Error("Invalid or unsupported full-system backup");
+      }
+      if (payload.database.entries.some(entry => !Array.isArray(entry) || entry.length !== 2 || typeof entry[0] !== "string")) throw new Error("Malformed database entries");
+      if (Object.values(payload.localStorage).some(value => typeof value !== "string")) throw new Error("Malformed local settings");
+      const suppliedChecksum = payload.checksum;
+      const unsigned = { ...payload };
+      delete unsigned.checksum;
+      if (!suppliedChecksum || await sha(JSON.stringify(unsigned)) !== suppliedChecksum) throw new Error("Backup integrity check failed");
+      const backupDate = new Date(payload.createdAt || file.createdTime || file.modifiedTime);
+      if (Number.isNaN(backupDate.getTime())) throw new Error("Backup timestamp is invalid");
+      const when = backupDate.toLocaleString(getLang() === "fa" ? "fa-IR" : "en-US");
+      const confirmText = getLang() === "fa"
+        ? "نسخه انتخاب‌شده از پشتیبان معتبر است. بازیابی کامل انجام شود؟\n\nتاریخ و ساعت: " + when + "\nنام فایل: " + file.name + "\nحجم فایل: " + fullBackupSize(file.size) + "\nنسخه قالب: " + payload.version + "\nرکوردهای پایگاه داده: " + payload.database.entries.length + "\nکلیدهای تنظیمات محلی: " + Object.keys(payload.localStorage).length + "\n\nاطلاعات فعلی با این نسخه جایگزین می‌شود. پیش از جایگزینی، وضعیت فعلی برای بازگشت اضطراری نگهداری می‌شود."
+        : "The selected backup is valid. Restore the entire application?\n\nDate and time: " + when + "\nFile: " + file.name + "\nSize: " + fullBackupSize(file.size) + "\nArchive version: " + payload.version + "\nDatabase records: " + payload.database.entries.length + "\nLocal settings: " + Object.keys(payload.localStorage).length + "\n\nCurrent data will be replaced. A rollback copy will be kept first.";
+      if (!confirm(confirmText)) return;
+      const before = await readFullBackupState();
+      try {
+        await replacePrimaryStore(payload.database.entries);
+        await replaceLocalStorage(payload.localStorage);
+        const forms = payload.database.entries.find(x => Array.isArray(x) && x[0] === "forms");
+        await saveLocalAuditForms(forms && Array.isArray(forms[1]) ? forms[1] : []);
+        await saveLocalAuditDrafts();
+        await writeUnifiedLocalSnapshot();
+      } catch (restoreError) {
+        try {
+          await replacePrimaryStore(before.entries);
+          await replaceLocalStorage(before.localStorage);
+          const oldForms = before.entries.find(x => Array.isArray(x) && x[0] === "forms");
+          await saveLocalAuditForms(oldForms && Array.isArray(oldForms[1]) ? oldForms[1] : []);
+          await saveLocalAuditDrafts();
+          await writeUnifiedLocalSnapshot();
+        } catch (rollbackError) {
+          console.error("Full restore rollback failed:", rollbackError);
+          throw new Error("Restore failed and automatic rollback also failed: " + restoreError.message);
+        }
+        throw restoreError;
+      }
+      toast(getLang() === "fa" ? "بازیابی کامل انجام شد؛ برنامه دوباره بارگذاری می‌شود" : "Full restore completed; the app will reload");
+      setTimeout(() => location.reload(), 700);
+    } catch (e) {
+      toast(t("errParse") + " " + e.message);
+    }
+  }
+
   var sha = async (x) => [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(x)))].map((b) => b.toString(16).padStart(2, "0")).join("");
   var fails = 0;
   var lockedUntil = 0;
@@ -2054,14 +3201,85 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
   document.addEventListener("touchmove", (e) => {
     if (e.touches.length > 1 && !(e.target.closest && e.target.closest("#map"))) e.preventDefault();
   }, { passive: false });
+
+  function pageAnalytics(v) {
+    if (!S.ds || !Array.isArray(S.ds.stores)) return needData(v);
+    const people = new Map(), buyers = new Set();
+    let totalAmount = 0;
+    for (const store of S.ds.stores) {
+      for (const order of (store.orders || [])) {
+        if (!order.inv) continue;
+        if (order.amountComplete !== false) totalAmount += Number(order.amount || 0);
+        buyers.add(store.id);
+        const person = str(store.salesman).trim() || t("unassigned");
+        if (!people.has(person)) people.set(person, { name: person, amount: 0, customers: new Set(), areas: new Map() });
+        const p = people.get(person);
+        if (order.amountComplete !== false) p.amount += Number(order.amount || 0);
+        p.customers.add(store.id);
+        const area = [store.territory, store.area || store.route].filter(Boolean).join(" · ") || t("unassigned");
+        if (!p.areas.has(area)) p.areas.set(area, { name: area, amount: 0, customers: new Set() });
+        const ar = p.areas.get(area);
+        if (order.amountComplete !== false) ar.amount += Number(order.amount || 0);
+        ar.customers.add(store.id);
+      }
+    }
+    const rows = [...people.values()].sort((a,b) => b.amount - a.amount);
+    const max = Math.max(1, ...rows.map(x => x.amount));
+    const locale = getLang() === "fa" ? "fa-IR" : "en-US";
+    const fmt = n => new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(n);
+    const money = n => fmt(n) + " " + (getLang() === "fa" ? "ریال" : "Rial");
+    const activeAreas = new Set(S.ds.stores.filter(x => x.orders && x.orders.some(o => o.inv)).map(x => [x.territory,x.area || x.route].filter(Boolean).join(" · ") || t("unassigned")));
+    v.innerHTML = `<div class="pad wrap">
+      <div class="card"><h2>${t("analyticsTitle")}</h2><div class="mu">${t("analyticsHint")}</div>
+        <div class="analytics-kpis">
+          <div class="analytics-kpi"><span class="analytics-meta">${t("salesAmountMetric")}</span><strong>${money(totalAmount)}</strong></div>
+          <div class="analytics-kpi"><span class="analytics-meta">${t("buyerCustomers")}</span><strong>${fmt(buyers.size)}</strong></div>
+          <div class="analytics-kpi"><span class="analytics-meta">${t("salespeople")}</span><strong>${fmt(rows.length)}</strong></div>
+          <div class="analytics-kpi"><span class="analytics-meta">${t("areas")}</span><strong>${fmt(activeAreas.size)}</strong></div>
+        </div><div class="analytics-meta">${t("confirmedOnly")}</div>
+      </div>
+      <div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">${t("salespeople")}</h2><span class="analytics-meta">${t("sortSales")}</span></div>
+      ${rows.length ? rows.map((p,i) => `<details class="analytics-person" ${i===0?"open":""}><summary><div class="row"><b>${esc(p.name)}</b><span class="sp"></span><b>${money(p.amount)}</b></div><div class="analytics-meta">${t("buyerCustomers")}: ${fmt(p.customers.size)} · ${t("areas")}: ${fmt(p.areas.size)}</div><div class="analytics-bar"><span style="width:${Math.round(p.amount/max*100)}%"></span></div></summary>
+        <div style="margin-top:9px">${[...p.areas.values()].sort((a,b)=>b.amount-a.amount).map(a=>`<div class="area-row"><span>${esc(a.name)}</span><span><b>${money(a.amount)}</b><br><span class="analytics-meta">${t("buyerCustomers")}: ${fmt(a.customers.size)}</span></span></div>`).join("")}</div></details>`).join("") : `<div class="mu">${t("noSalespeople")}</div>`}
+      </div>
+    </div>`;
+    v.setAttribute("dir", getLang() === "fa" ? "rtl" : "ltr");
+  }
+
   function pageSettings(v) {
-    const s = S.settings;
+    const s = S.settings, r = S.raw;
     v.innerHTML = `<div class="pad wrap"><div class="card"><label class="f">${t("language")}</label><select id="lg"><option value="fa" ${s.lang === "fa" ? "selected" : ""}>\u0641\u0627\u0631\u0633\u06CC</option><option value="en" ${s.lang === "en" ? "selected" : ""}>English</option></select>
   <label class="f">${t("theme")}</label><select id="th">${["auto", "light", "dark"].map((x) => `<option value="${x}" ${s.theme === x ? "selected" : ""}>${t(x)}</option>`).join("")}</select>
-  <label class="f">${t("clientId")}</label><input type="text" id="ci" value="${esc(s.clientId)}" dir="ltr"><label class="f">${t("folderId")}</label><input type="text" id="fi" value="${esc(s.folderId)}" dir="ltr"><label class="f">${t("tileUrl")}</label><input type="text" id="tl" value="${esc(s.tile)}" dir="ltr">
   <div class="row" style="margin-top:12px"><button class="btn pri" id="sv">${t("save")}</button></div></div>
-  <div class="card"><h2>${t("pinTitle")}</h2><div class="mu">${t("pinNote")}</div><div class="row" style="margin-top:6px"><input type="password" inputmode="numeric" id="pn" maxlength="12" dir="ltr" placeholder="${esc(t("pinFormat"))}" style="flex:1"><button class="btn sm pri" id="pset">${t("save")}</button>${lsGet("pin", null) ? `<button class="btn sm dng" id="prm">${t("pinRemove")}</button>` : ""}</div></div>
+  <div class="card"><h2>${t("mapLabels")}</h2><label class="row" style="gap:10px;align-items:center"><input type="checkbox" id="mapNames" ${s.showMapNames !== false ? "checked" : ""}> <span>${t("showMapNames")}</span></label><div class="mu">${t("mapNamesHint")}</div></div>\n  <div class="card"><h2>${t("files")}</h2>
+  ${[["jp", "fJP"], ["sales", "fSales"], ["map", "fMap"]].map(([k, l]) => {
+      var _a2;
+      return `<label class="f">${t(l)}${((_a2 = r == null ? void 0 : r.names) == null ? void 0 : _a2[k]) ? ` \u2014 <b>${esc(r.names[k])}</b>` : ""}</label><input type="file" data-k="${k}" accept=".xlsx,.xls,.csv">`;
+    }).join("")}
+  <div class="row" style="margin-top:10px"><button class="btn pri" id="ld">${t("load")}</button></div><div id="msg" class="err" style="margin-top:6px"></div></div>
+  <div class="card"><h2>${t("drive")}</h2><div class="mu">${t("driveNote")}</div><button class="btn pri" id="ds" style="margin-top:8px">${t("driveSync")}</button><div id="dmsg" class="mu"></div></div>
+  <div class="card"><h2>${getLang() === "fa" ? "پشتیبان‌گیری و بازیابی" : "Backup & Restore"}</h2><div class="mu">${getLang() === "fa" ? "ایجاد نسخه پشتیبان از اطلاعات و تنظیمات برنامه و بازیابی هر یک از نسخه‌های ذخیره‌شده در Google Drive" : "Back up application data and settings, or restore a saved version from Google Drive."}</div><div class="row" style="margin-top:10px"><button class="btn sm pri" id="fullBackup">${getLang() === "fa" ? "ایجاد بک‌آپ" : "Create Backup"}</button><button class="btn sm" id="fullRestore">${getLang() === "fa" ? "بازیابی بک‌آپ" : "Restore Backup"}</button></div><div id="fullBackupStatus" class="mu" style="margin-top:8px"></div><div id="fullBackupList" hidden style="margin-top:8px"></div></div>
+    <div class="card"><h2>${t("pinTitle")}</h2><div class="mu">${t("pinNote")}</div><div class="row" style="margin-top:6px"><input type="password" inputmode="numeric" id="pn" maxlength="12" dir="ltr" placeholder="${esc(t("pinFormat"))}" style="flex:1"><button class="btn sm pri" id="pset">${t("save")}</button>${lsGet("pin", null) ? `<button class="btn sm dng" id="prm">${t("pinRemove")}</button>` : ""}</div></div>
   <div class="card"><button class="btn dng" id="c1">${t("clearCache")}</button><br><br><button class="btn dng" id="c2">${t("clearAll")}</button></div><div class="mu" style="text-align:center">${t("version")} ${VERSION}</div></div>`;
+    v.querySelector("#ld").onclick = async () => {
+      const files = {};
+      try {
+        for (const i of v.querySelectorAll("input[type=file]")) if (i.files[0]) files[i.dataset.k] = { aoa: await readAoa(i.files[0]), name: i.files[0].name };
+        await ingest(files);
+        toast(t("ok"));
+      } catch (e) {
+        $("#msg").textContent = t("errParse") + " " + e.message;
+      }
+    };
+    v.querySelector("#mapNames").onchange = (e) => { S.settings.showMapNames = e.target.checked; saveSettings(); toast(t("ok")); };
+    v.querySelector("#ds").onclick = driveSync;
+    v.querySelector("#fullBackup").onclick = backupEntireSystem;
+    v.querySelector("#fullRestore").onclick = async () => {
+      const box = $("#fullBackupList");
+      if (!box) return;
+      box.hidden = !box.hidden;
+      if (!box.hidden) await refreshFullSystemBackupList();
+    };
     v.querySelector("#pset").onclick = () => setPin($("#pn").value);
     const pr = v.querySelector("#prm");
     if (pr) pr.onclick = () => {
@@ -2074,7 +3292,7 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
       }
     };
     v.querySelector("#sv").onclick = () => {
-      Object.assign(S.settings, { lang: $("#lg").value, theme: $("#th").value, clientId: $("#ci").value.trim(), folderId: $("#fi").value.trim(), tile: $("#tl").value.trim() || "https://tile.openstreetmap.org/{z}/{x}/{y}.png" });
+      Object.assign(S.settings, { lang: $("#lg").value, theme: $("#th").value });
       saveSettings();
       setLang(S.settings.lang);
       applyTheme();
@@ -2101,6 +3319,16 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
   }
   async function boot() {
     var _a, _b;
+    try {
+      const viewState = lsGet("tpaUnifiedViewState", null);
+      if (viewState && typeof viewState === "object") {
+        const validPages = ["map", "stores", "plan", "data", "analytics", "settings"];
+        if (validPages.includes(viewState.page)) S.page = viewState.page;
+        if (viewState.filters && typeof viewState.filters === "object") S.filters = { ...S.filters, ...viewState.filters };
+        if (viewState.weekStart) S.weekStart = viewState.weekStart;
+        if (Number.isFinite(Number(viewState.radius))) S.radius = Number(viewState.radius);
+      }
+    } catch (viewError) { console.warn("View-state restore:", viewError); }
     setLang(S.settings.lang);
     applyTheme();
     lockScreen();
@@ -2110,6 +3338,21 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
     }
     if (navigator.onLine) loadScript("https://accounts.google.com/gsi/client").catch(() => {
     });
+    try {
+      try { await restoreUnifiedLocalBackup(); }
+      catch (backupError) { console.warn("Unified local backup restore:", backupError); }
+      await restoreLocalAuditForms();
+      await restoreLocalAuditDrafts();
+      await refreshAuditStoreIds();
+    } catch (e) {
+      console.warn("Local audit restore:", e);
+    }
+    try {
+      const fs = await dbGet("filters");
+      const localFilters = fs && fs.filters ? fs.filters : lsGet("currentFilters", null);
+      if (localFilters && typeof localFilters === "object") S.filters = { ...S.filters, ...localFilters };
+      if (fs && Array.isArray(fs.savedFilters)) lsSet("savedFilters", fs.savedFilters);
+    } catch (e) { console.warn("Filter state restore:", e); }
     try {
       const p = await dbGet("plan");
       if (p) {
