@@ -2951,14 +2951,17 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
         return;
       }
       box.innerHTML = '<div class="mu" style="margin:8px 0">' +
-        (getLang() === "fa" ? "برای مشاهده جزئیات و بازیابی، یک نسخه را انتخاب کنید. سلامت و سازگاری فایل پس از انتخاب بررسی می‌شود." : "Select a version to inspect and restore. Integrity and compatibility are checked after selection.") +
+        (getLang() === "fa" ? "برای بازیابی یا حذف، عملیات موردنظر را برای نسخه انتخاب کنید." : "Choose whether to restore or delete each backup version.") +
         '</div>' + files.map((file, index) =>
-          '<button type="button" class="btn" data-full-restore-id="' + esc(file.id) + '" style="display:block;width:100%;text-align:start;margin-top:7px;padding:10px">' +
+          '<div class="card" style="margin-top:8px;padding:10px">' +
           '<div class="row" style="justify-content:space-between;gap:8px"><b>' +
           (index === 0 ? (getLang() === "fa" ? "آخرین نسخه" : "Latest version") : (getLang() === "fa" ? "نسخه پشتیبان" : "Backup version")) +
           '</b><span class="mu">' + esc(fullBackupSize(file.size)) + '</span></div>' +
           '<div style="margin-top:4px">' + esc(fullBackupDate(file)) + '</div>' +
-          '<div class="mu" style="margin-top:3px">' + (getLang() === "fa" ? "نسخه قالب: ۱ · بررسی پس از انتخاب" : "Archive format: 1 · validation on selection") + '</div></button>'
+          '<div class="mu" style="margin-top:3px;word-break:break-all">' + esc(file.name) + '</div>' +
+          '<div class="row" style="margin-top:8px;gap:8px">' +
+          '<button type="button" class="btn sm pri" data-full-restore-id="' + esc(file.id) + '">' + (getLang() === "fa" ? "بازیابی" : "Restore") + '</button>' +
+          '<button type="button" class="btn sm dng" data-full-delete-id="' + esc(file.id) + '">' + (getLang() === "fa" ? "حذف نسخه" : "Delete backup") + '</button></div></div>'
         ).join("");
       box.querySelectorAll("[data-full-restore-id]").forEach(button => {
         button.onclick = () => {
@@ -2966,8 +2969,28 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
           if (selected) restoreEntireSystem(selected);
         };
       });
+      box.querySelectorAll("[data-full-delete-id]").forEach(button => {
+        button.onclick = () => {
+          const selected = files.find(file => file.id === button.getAttribute("data-full-delete-id"));
+          if (selected) deleteFullSystemBackup(selected);
+        };
+      });
     } catch (e) {
       box.innerHTML = '<div class="err">' + esc((getLang() === "fa" ? "دریافت فهرست نسخه‌ها ناموفق بود: " : "Could not load backup versions: ") + e.message) + '</div>';
+    }
+  }
+  async function deleteFullSystemBackup(file) {
+    try {
+      if (!file || !file.id) throw new Error("A backup version must be selected");
+      const confirmText = getLang() === "fa"
+        ? "آیا از حذف دائمی این نسخه پشتیبان از Google Drive مطمئن هستید؟\n\nتاریخ: " + fullBackupDate(file) + "\nنام فایل: " + file.name + "\n\nاین عملیات فقط همین فایل پشتیبان را حذف می‌کند و قابل بازگشت نیست."
+        : "Permanently delete this backup from Google Drive?\n\nDate: " + fullBackupDate(file) + "\nFile: " + file.name + "\n\nOnly this backup file will be deleted. This cannot be undone.";
+      if (!confirm(confirmText)) return;
+      await gfetch("https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(file.id), { method: "DELETE" });
+      toast(getLang() === "fa" ? "نسخه پشتیبان حذف شد" : "Backup deleted");
+      await refreshFullSystemBackupList();
+    } catch (e) {
+      toast((getLang() === "fa" ? "حذف نسخه پشتیبان ناموفق بود: " : "Could not delete backup: ") + e.message);
     }
   }
   async function uploadFullSystemBackup(payload) {
