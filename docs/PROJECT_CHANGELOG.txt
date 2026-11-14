@@ -191,3 +191,41 @@ Verification:
 - Assistant browser/mobile interaction and saved-draft/export regression tests
   have not been performed.
 - Deployment/live state has not been independently verified.
+
+
+2026-11-14 — Auditor form: add Section 4 oil-availability gate
+-----------------------------------------------------------------
+User-approved requirement:
+- Add a required question at the start of Section 4, before Q14:
+  “آیا محصولات روغن در فروشگاه موجود و قابل مشاهده است ؟”
+- Choices: بله / خیر.
+- If the answer is خیر, hide Q14, Q15, Q16 and Q17.
+
+Implementation:
+- Added new internal question ID q14_gate with display number ۱۳A.
+- Added the English translation label: “Are cooking-oil products available
+  and visible in the store?”.
+- Q14–Q17 now require q14_gate === “بله” in addition to the existing
+  observation-block condition.
+- The existing update() visibility cleanup clears active answers for newly
+  hidden questions. The record serializer writes hidden mandatory questions
+  as N/A.
+- Preserved the IDs, labels, options and validation rules of Q14–Q17.
+- No bulk migration or rewrite of previously saved records or drafts.
+
+Git traceability:
+- Repository: ary-bo/tpa-navigation
+- Branch: main
+- Base commit: 505217f2dd882c4190872d48e0941c498b1226bc
+- Code commit: f0c6fe08f5d4b9813ad7e077f765847337f17285
+- index.html blob: 6f134e747d96b09828b57d13065e524b65e01e03
+- Safety branch: backup/main-before-section4-oil-availability-gate-20261114
+- Technical handover updated to version 4.5.
+
+Verification:
+- Post-commit source fetch confirms the new question, its two options, and
+  the visibility predicate on each of Q14, Q15, Q16 and Q17.
+- Source inspection confirms hidden-answer cleanup and N/A serialization.
+- Assistant browser/mobile interaction and saved-draft/export regression tests
+  have not been performed.
+- Deployment/live state has not been independently verified.
