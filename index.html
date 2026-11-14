@@ -2594,8 +2594,29 @@ input,select,textarea{font-size:16px!important}
   async function driveToken() {
     if (gToken && gToken.exp > Date.now() + 3e4) return gToken.v;
     if (!S.settings.clientId || !S.settings.folderId) throw new Error("Settings: Client ID / Folder ID");
-    await loadScript("https://accounts.google.com/gsi/client");
-    return new Promise((res, rej) => google.accounts.oauth2.initTokenClient({ client_id: S.settings.clientId, scope: SCOPE, error_callback: (e) => rej(new Error(e.type || "OAuth popup")), callback: (r) => r.access_token ? (gToken = { v: r.access_token, exp: Date.now() + (r.expires_in || 3e3) * 1e3 }, res(r.access_token)) : rej(new Error(r.error || "OAuth")) }).requestAccessToken());
+    // Keep the OAuth popup request in the original user-gesture call stack.
+    // Awaiting even an already-loaded script can consume Safari's transient activation.
+    if (!window.google?.accounts?.oauth2) {
+      await loadScript("https://accounts.google.com/gsi/client");
+      if (!window.google?.accounts?.oauth2) throw new Error("Google sign-in is still loading. Please tap the action again.");
+    }
+    return new Promise((res, rej) => {
+      const client = google.accounts.oauth2.initTokenClient({
+        client_id: S.settings.clientId,
+        scope: SCOPE,
+        error_callback: (e) => {
+          const reason = e && e.type;
+          const message = reason === "popup_failed_to_open"
+            ? "Google sign-in popup was blocked. Allow pop-ups for this site and tap again."
+            : (reason || "OAuth popup");
+          rej(new Error(message));
+        },
+        callback: (r) => r.access_token
+          ? (gToken = { v: r.access_token, exp: Date.now() + (r.expires_in || 3e3) * 1e3 }, res(r.access_token))
+          : rej(new Error(r.error || "OAuth"))
+      });
+      client.requestAccessToken();
+    });
   }
   async function gfetch(url, opt = {}) {
     const tok = await driveToken();
@@ -2966,6 +2987,9 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
   }
   async function backupEntireSystem() {
     try {
+      // Start Google OAuth synchronously from the Create Backup tap, before
+      // IndexedDB reads/checksum work can cause iOS Safari to block the popup.
+      await driveToken();
       toast(t("syncing"));
       const state = await readFullBackupState();
       const payload = {
