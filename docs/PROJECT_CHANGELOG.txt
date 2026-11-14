@@ -352,3 +352,41 @@ Verification:
 - Browser testing across conditional paths, saved-draft reload, export and
   deployment/live verification have not been performed by the assistant.
 - V06 is not used as a requirements or numbering basis.
+
+
+2026-11-14 — Auditor form: fixed stable question numbering
+----------------------------------------------------------
+User clarification:
+- Numbering must not be dynamic.
+- Every auditor-facing question must have its own fixed number and retain
+  that number even when conditional visibility hides the question.
+
+Implementation:
+- Removed the runtime numbering/re-numbering loop.
+- Assigned fixed numbers in form order:
+  q4=1, q3=2, q3a=3, q5a=4, q6=5, q7=6, q8=7, q8a=8, q9=9,
+  q10=10, q11=11, q11a=12, q12=13, q13=14, q14_gate=15,
+  q14=16, q15=17, q16=18, q17=19, q18=20, q19=21, q20=22,
+  q21=23, q22=24, q23=25, final visit note q5=26.
+- Metadata q1 and q2 remain outside the auditor-facing numbered sequence.
+- Hidden conditional questions keep their own fixed numbers; no later question
+  shifts when a question is hidden.
+- Preserved IDs, answer/data fields, validation, visibility, map behavior,
+  serialization and progress calculation.
+- This supersedes the temporary dynamic numbering implementation and the
+  intermediate q3a-only display-number adjustment.
+
+Git traceability:
+- Repository: ary-bo/tpa-navigation
+- Branch: main
+- Base commit: dc7b3f37158095c68eb7b16079a3cf084904cdfb
+- Code commit: 9a80f8c7140b6e0b84e39ce7c1b7f61931d9f8ae
+- index.html blob: 04e2801d637cd3e0010ddaafa7cae02f90ffd9cc
+- Safety branch: backup/main-before-fixed-question-numbering-20261114
+- Technical handover updated to version 5.0.
+
+Verification:
+- Source-level verification is recorded after post-commit fetch.
+- Browser testing across conditional paths, saved-draft reload, export and
+  deployment/live verification have not been performed by the assistant.
+- V06 is not used as a requirements or numbering basis.
