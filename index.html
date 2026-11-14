@@ -1273,6 +1273,7 @@ input,select,textarea{font-size:16px!important}
       else all.push(r);
       try {
         await db.dbSet("forms", all);
+        try { await saveLocalAuditForms(all); } catch (backupError) { console.warn("Local audit backup:", backupError); }
         await db.dbDel(draftKey);
       } catch (e) {
         return toast2("Storage: " + e.message);
@@ -2476,6 +2477,49 @@ input,select,textarea{font-size:16px!important}
       toast(t("errParse") + " " + e.message);
     }
   }
+  var LOCAL_AUDIT_DB = "tpa-nav-audit-backup";
+  async function localAuditDb() {
+    return await new Promise((resolve, reject) => {
+      const req = indexedDB.open(LOCAL_AUDIT_DB, 1);
+      req.onupgradeneeded = () => req.result.createObjectStore("backup");
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+  async function saveLocalAuditForms(forms) {
+    const idb = await localAuditDb();
+    return await new Promise((resolve, reject) => {
+      const tx = idb.transaction("backup", "readwrite");
+      tx.objectStore("backup").put({ v: 1, at: Date.now(), forms: Array.isArray(forms) ? forms : [] }, "forms");
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error);
+    });
+  }
+  async function readLocalAuditForms() {
+    const idb = await localAuditDb();
+    return await new Promise((resolve, reject) => {
+      const req = idb.transaction("backup", "readonly").objectStore("backup").get("forms");
+      req.onsuccess = () => resolve(req.result && Array.isArray(req.result.forms) ? req.result.forms : []);
+      req.onerror = () => reject(req.error);
+    });
+  }
+  async function restoreLocalAuditForms() {
+    const [primary, backup] = await Promise.all([dbGet("forms"), readLocalAuditForms()]);
+    const merged = new Map();
+    for (const form of [...(Array.isArray(primary) ? primary : []), ...backup]) {
+      if (!form || !form.id) continue;
+      const old = merged.get(form.id);
+      const stamp = (x) => String(x.updated || x.timestamp || "");
+      if (!old || stamp(form) >= stamp(old)) merged.set(form.id, form);
+    }
+    const forms = [...merged.values()];
+    if (forms.length !== (Array.isArray(primary) ? primary.length : 0) || backup.length) {
+      await dbSet("forms", forms);
+      await saveLocalAuditForms(forms);
+    }
+    return forms.length;
+  }
   var FBK = "tpa_audit_forms_backup.json";
   async function findAuditBackup() {
     const q = encodeURIComponent(`name='${FBK}' and trashed=false`);
@@ -2529,7 +2573,9 @@ ${body}\r
       const incomingIds = new Set(localForms.map((x) => x && x.id).filter(Boolean));
       const additions = backup.forms.filter((x) => x && x.id && !incomingIds.has(x.id));
       if (!confirm(`${t("auditRestoreConfirm")}\n${new Date(ex.modifiedTime).toLocaleString()} · ${backup.forms.length} · ${backup.drafts.length}`)) return;
-      await dbSet("forms", localForms.concat(additions));
+      const mergedForms = localForms.concat(additions);
+      await dbSet("forms", mergedForms);
+      await saveLocalAuditForms(mergedForms);
       let restoredDrafts = 0;
       for (const item of backup.drafts) {
         if (!item || typeof item.key !== "string" || !item.key.startsWith("fd_") || !item.value) continue;
@@ -2762,6 +2808,11 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
     }
     if (navigator.onLine) loadScript("https://accounts.google.com/gsi/client").catch(() => {
     });
+    try {
+      await restoreLocalAuditForms();
+    } catch (e) {
+      console.warn("Local audit restore:", e);
+    }
     try {
       const p = await dbGet("plan");
       if (p) {
