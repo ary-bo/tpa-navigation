@@ -730,8 +730,8 @@ input,select,textarea{font-size:16px!important}
     ];
     const trimTail = (parts) => {
       const out = parts.slice();
-      while (out.length && /^(کرج|البرز|ایران|ir|i|کمال|شهر|شهرستان)$/i.test(out[out.length - 1])) out.pop();
-      if (out.length > 1 && out[out.length - 1] === "شهر" && out[out.length - 2] === "کمال") out.splice(-2);
+      if (out.length > 1 && out[out.length - 2] === "کمال" && out[out.length - 1] === "شهر") out.splice(-2);
+      while (out.length && /^(کرج|البرز|ایران|ir|i)$/i.test(out[out.length - 1])) out.pop();
       return out;
     };
     // Search from the end so street/location words before the store name are ignored.
