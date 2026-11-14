@@ -466,3 +466,6 @@ Verification:
 - Source-level checks only. iPhone/Safari UI, multiple visit records, edit/date
   behavior, backup/restore, full-system restore, exports and deployment/live
   behavior require manual verification.
+
+- Follow-up fix commit: 37418e3908ddabe8e000e1a4bb912f6a91f7c099 — retained the existing post-save audit indexing, visit-plan completion and map refresh behavior when returning to history.
+- Final index.html blob: ef8932220f1545ca8c50913c191b9715f869f562
