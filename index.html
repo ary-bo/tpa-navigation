@@ -2393,7 +2393,6 @@ input,select,textarea{font-size:16px!important}
     v.innerHTML = `<div class="pad wrap"><div class="row"><button class="btn sm" id="pw">\u2039 ${t("prevWeek")}</button><span class="sp mu" style="text-align:center">${t("week")} <span style="direction:ltr;unicode-bidi:isolate;display:inline-block">${jd(days[0])} \u2013 ${jd(days[5])}</span></span><button class="btn sm" id="nw">${t("nextWeek")} \u203A</button></div>
   <div class="tabs" style="margin-top:8px">${days.map((d) => `<button class="btn sm ${d === S.selDay ? "on" : ""}" data-d="${d}">${t("d_" + dayKeyOfISO(d))}<br>${jd(d).slice(5)} (${cnt(d)})</button>`).join("")}</div>
   <div class="row" style="margin:6px 0"><button class="btn sm" id="sg">${t("suggest")}</button><button class="btn sm pri" id="pm">${ic("map")} ${t("planMap")}</button><span class="sp"></span><span class="mu">\u2714 ${items.filter((p) => p.visit === "done").length}/${items.length}</span></div>
-  ${S.plan.length + S.pending.length && lsGet("lastBackup", {}).sig !== sigOf() ? `<div class="card" style="border-color:var(--o)"><div class="mu">\u26A0 ${t("backupDirty")}</div><button class="btn sm pri" id="bk2" style="margin-top:6px">${t("backup")}</button></div>` : ""}
   <div id="pl">${items.map((p, i) => `<div class="card"><div class="row"><span class="num">${i + 1}</span><b>${esc(planStoreLabel(p))}</b><span class="chip">${t(p.source)}</span>${p.visit ? `<span class="chip ${p.visit === "done" ? "g" : "r"}">${t("v_" + p.visit)}</span>` : ""}<span class="sp"></span></div><div class="mu">${esc(p.customerName)} \xB7 ${esc(p.customerId)} \xB7 ${esc(p.route)}</div><div class="mu">${esc(p.address)}</div>${p.reason ? `<div class="mu">${t("reason")}: ${esc(p.reason)}</div>` : ""}${p.comment ? `<div class="mu">${esc(p.comment)}</div>` : ""}<div class="row" style="margin-top:6px"><button class="btn sm" data-up="${p.pid}" ${i === 0 ? "disabled" : ""}>\u2191</button><button class="btn sm" data-dn="${p.pid}" ${i === items.length - 1 ? "disabled" : ""}>\u2193</button><button class="btn sm" data-ed="${p.pid}">${t("edit")}</button><button class="btn sm" data-sd="${p.pid}">${t("details")}</button><button class="btn sm" data-vd="${p.pid}">\u2714</button><button class="btn sm" data-vs="${p.pid}">\u2716</button><button class="btn sm dng" data-rp="${p.pid}" aria-label="${t("removePlan")}" title="${t("removePlan")}">🗑️</button></div></div>`).join("") || `<div class="card mu">${t("noVisits")}</div>`}</div>
   ${S.pending.length ? `<h3>${t("pending")} (${S.pending.length})</h3>${S.pending.map((p) => `<div class="card"><div class="row"><b>${esc(p.storeName || p.customerName)}</b><span class="chip">${jd(p.visitDate)}</span><span class="chip">External</span></div><div class="mu">${esc(p.customerId)} \xB7 ${esc(p.address)}</div>${p.reason ? `<div class="mu">${esc(p.reason)}</div>` : ""}<div class="row" style="margin-top:6px"><button class="btn sm pri" data-ap="${p.pid}">${t("approve")}</button><button class="btn sm" data-mv="${p.pid}">${t("moveDay")}</button><button class="btn sm dng" data-rj="${p.pid}">${t("reject")}</button></div></div>`).join("")}` : ""}
   ${S.importErrors.length ? `<h3 class="err">${t("errorsReport")} (${S.importErrors.length})</h3><table class="t">${S.importErrors.map((e) => `<tr><td>${t("row")} ${e.row}</td><td>${esc(e.id)}</td><td class="err">${t("E_" + e.reason)}</td></tr>`).join("")}</table>` : ""}
@@ -2855,16 +2854,6 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
   }
   // TPA_FULL_SYSTEM_CLOUD_BACKUP_V1
   var TPA_FULL_BACKUP_FILE = "tpa_full_system_backup_v1.json";
-  async function readStoreEntries(dbName, storeName) {
-    const idb = await open();
-    return await new Promise((resolve, reject) => {
-      const tx = idb.transaction(storeName, "readonly"), store = tx.objectStore(storeName);
-      const kr = store.getAllKeys(), vr = store.getAll();
-      tx.oncomplete = () => resolve((kr.result || []).map((key, i) => [key, vr.result[i]]));
-      tx.onerror = () => reject(tx.error);
-      tx.onabort = () => reject(tx.error);
-    });
-  }
   async function readFullBackupState() {
     const idb = await open();
     const entries = await new Promise((resolve, reject) => {
@@ -2962,7 +2951,6 @@ ${new Date(ex.modifiedTime).toLocaleString()} \xB7 ${d.plan.length}`)) return;
       delete unsigned.checksum;
       if (!suppliedChecksum || await sha(JSON.stringify(unsigned)) !== suppliedChecksum) throw new Error("Backup integrity check failed");
       const when = new Date(payload.createdAt || file.modifiedTime).toLocaleString();
-      const counts = payload.counts || {};
       const confirmText = getLang() === "fa"
         ? "بازیابی کامل اطلاعات برنامه انجام شود؟\n\nنسخه پشتیبان: " + when + "\nرکوردهای پایگاه داده: " + payload.database.entries.length + "\nکلیدهای تنظیمات محلی: " + Object.keys(payload.localStorage).length + "\n\nاطلاعات فعلی با اطلاعات این نسخه جایگزین می‌شود. پیش از جایگزینی، وضعیت فعلی برای بازگشت اضطراری نگهداری می‌شود."
         : "Restore the entire application from this backup?\n\nBackup: " + when + "\nDatabase records: " + payload.database.entries.length + "\nLocal settings: " + Object.keys(payload.localStorage).length + "\n\nCurrent application data will be replaced. A temporary rollback copy will be kept first.";
