@@ -1,6 +1,6 @@
 # TPA Navigation — Technical Reconstruction & Continuation Specification
 
-**Document version:** 5.0  
+**Document version:** 5.1  
 **Date:** 14 November 2026  
 **Repository:** https://github.com/ary-bo/tpa-navigation  
 **Target branch:** `main`  
@@ -551,3 +551,16 @@ Verification boundaries:
 - Post-commit source verification should confirm the fixed labels and absence of runtime renumbering.
 - Browser testing across conditional paths, saved-draft reload, export and deployment/live verification have not been performed by the assistant.
 - V06 remains excluded as a requirements basis.
+
+## 6.12 Compact two-column layout for competitor-brand questions (implemented 14 November 2026)
+
+- Applied the compact two-column option layout to the six competitor-brand multi-select questions (internal IDs q18–q23).
+- Option cards use reduced padding and a compact minimum height to reduce vertical scrolling on mobile screens. The grid uses two equal columns.
+- Scope is limited to these six competitor-brand questions. Other single-select and multi-select questions retain their existing vertical layout.
+- Preserved question IDs and fixed numbers, option text/order, checkbox behavior, multi-select answer storage, and the exclusive `None` selection behavior. No data migration was performed.
+- Code commit: `7f210c206b769ef4d56cfecbb8dc5d9895ff8ebb`; updated `index.html` blob: `4141ba1abd5d3ac5da2b4f33e22e993b073efdfa`.
+- Safety branch: `backup/main-before-compact-brand-options-20261114`; base commit: `ae7c5813f0ef3640efacc32489e8e8bb97d3259f`.
+
+Verification boundaries:
+- Source-level verification is required after re-fetch to confirm the compact class is limited to q18–q23 and the original selection handlers remain intact.
+- Actual iPhone/Safari layout, touch interaction, conditional visibility, draft reload, export and live deployment have not been independently tested by the assistant.
