@@ -159,3 +159,35 @@ Verification:
 NEXT CHANGE
 -----------
 Await the next user-requested auditor-form change.
+
+
+2026-11-14 — Auditor form: revise Q12 product-return wording
+-----------------------------------------------------------
+User-approved requirement:
+- Change auditor question Q12 to: “آیا تا به حال محصولات غنچه را مرجوع کرده‌اید ؟”
+
+Implementation:
+- Changed the displayed title of Q12 (internal ID q12) to the exact requested
+  Persian wording.
+- Updated the English translation label to “Have you ever returned Ghoncheh
+  products?”.
+- Preserved the question ID, number, single-choice type, all three existing
+  response options, and the existing visibility condition.
+- Preserved Q13's conditional display rule; it remains tied to the existing
+  partial-return/all-return responses.
+- No saved audit records or drafts were migrated or rewritten.
+
+Git traceability:
+- Repository: ary-bo/tpa-navigation
+- Branch: main
+- Code commit: 95fcfee509a7e43800e4055a10a6b31a3b4cafe0
+- index.html blob: 6d99d3ef05654caad0f55c8ed7c63400b23bd32a
+- Safety branch: backup/main-before-q12-wording-20261114
+- Technical handover version: 4.4
+
+Verification:
+- Post-commit source verification: pending; confirm exact Q12 wording and
+  unchanged options/visibility rule by re-fetching committed source.
+- Assistant browser/mobile interaction and saved-draft/export regression tests
+  have not been performed.
+- Deployment/live state has not been independently verified.
