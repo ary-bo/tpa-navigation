@@ -717,15 +717,43 @@ input,select,textarea{font-size:16px!important}
   function extractStoreName(address) {
     const a = str(address);
     if (!a) return "";
-    const words = a.split(/\s+/);
-    const n = normText(a).split(" ");
-    for (let i = n.length - 1; i >= 0 && i >= n.length - 6; i--) {
-      for (const k of NAME_KEYWORDS) {
-        const kw = normText(k).split(" ");
-        if (kw.every((w, j) => n[i + j] === w)) {
-          const rest = words.slice(i);
-          if (rest.length >= kw.length + 1 && rest.length <= 5) return rest.join(" ");
+    // Address fields use hyphens, commas and slashes as separators; normalize them before matching.
+    const cleaned = a.replace(/\([^)]*\)/g, " ").replace(/[ـ‐‑‒–—−،,;|/]+/g, " ");
+    const n = normText(cleaned).split(" ").filter(Boolean);
+    if (!n.length) return "";
+    const markers = [
+      ["سوپر", "مارکت"], ["هایپر", "مارکت"], ["مواد", "غذایی"],
+      ["موادغذایی"], ["سوپرمارکت"], ["هایپرمارکت"], ["خواروبار", "فروشی"],
+      ["خواروبار"], ["خواربار"], ["ارزانسرای"], ["پروتئینی"], ["پروتئین"],
+      ["فروشگاه"], ["لبنیات"], ["خشکبار"], ["حبوبات"], ["قنادی"],
+      ["سوپری"], ["هایپر"], ["سوپر"], ["مارکت"], ["سرای"]
+    ];
+    const trimTail = (parts) => {
+      const out = parts.slice();
+      while (out.length && /^(کرج|البرز|ایران|ir|i|کمال|شهر|شهرستان)$/i.test(out[out.length - 1])) out.pop();
+      if (out.length > 1 && out[out.length - 1] === "شهر" && out[out.length - 2] === "کمال") out.splice(-2);
+      return out;
+    };
+    // Search from the end so street/location words before the store name are ignored.
+    for (let i = n.length - 1; i >= Math.max(0, n.length - 9); i--) {
+      const token = n[i];
+      // Common joined forms in this workbook: سوپروحدت، سوپریاس، هایپرلوکس، خواربارمحمدی.
+      for (const prefix of ["خواروبارفروشی", "خواربار", "خواروبار", "پروتئینی", "پروتئین", "هایپر", "سوپر"]) {
+        if (token.startsWith(prefix) && token.length > prefix.length) {
+          const tail = trimTail([prefix, token.slice(prefix.length), ...n.slice(i + 1)]);
+          if (tail.length >= 2 && tail.length <= 6) return tail.join(" ");
         }
+      }
+      for (const marker of markers) {
+        if (!marker.every((word, j) => n[i + j] === word)) continue;
+        let start = i;
+        let tail = trimTail(n.slice(start));
+        // Brand-first forms such as «رز مارکت» and «تخفیف مارکت».
+        if (marker.length === 1 && marker[0] === "مارکت" && i > 0 && tail.length === 1) {
+          start = i - 1;
+          tail = trimTail(n.slice(start));
+        }
+        if (tail.length >= marker.length + 1 && tail.length <= 6) return tail.join(" ");
       }
     }
     return "";
