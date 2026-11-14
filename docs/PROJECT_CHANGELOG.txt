@@ -415,3 +415,26 @@ Verification:
 - Source-level verification follows post-commit fetch.
 - iPhone/Safari visual and touch testing, conditional-flow testing, draft reload,
   export and deployment/live verification have not been performed by the assistant.
+
+
+2026-11-14 — Auditor form: other-brand text entry for q18–q23
+-----------------------------------------------------------------
+
+- Added a selectable «سایر برندها» option to each competitor-brand question.
+- Selecting it exposes the existing free-text field for entering additional
+  brand names; the entered text uses the existing draft and record mechanism.
+- Preserved compact two-column layout, fixed numbering, multi-select behavior,
+  None exclusivity and behavior of OTHER on unrelated questions.
+
+Git traceability:
+- Repository: ary-bo/tpa-navigation; branch: main
+- Initial feature commit: 1558089ce19693c8d7b5548e276fb00177ab9b86
+- Label correction commit: 0ce34c343e1b3961a043a102f667ea48d5685774
+- index.html blob: df23d7642c72862a6db4d27f7bc6e93be2e17b95
+- Safety branch: backup/main-before-other-products-brand-option-20261114
+- Technical documentation updated to version 5.2.
+
+Verification:
+- Source-level verification follows post-commit fetch.
+- iPhone/Safari interaction, validation, draft reload, export and deployment/live
+  verification have not been performed by the assistant.
